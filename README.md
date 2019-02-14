@@ -1,2 +1,2 @@
-# libnintendo-es
-Processes Nintendo's eShop file formats.
+# libnintendo-hac
+Library for processing Nintendo Switch file formats.
