@@ -5,7 +5,7 @@
 # Project Defines
 PROJECT_NAME = libnintendo-hac
 PROJECT_VER_MAJOR = 0
-PROJECT_VER_MINOR = 1
+PROJECT_VER_MINOR = 2
 PROJECT_VER_PATCH = 0
 
 # Project Relative Paths
