@@ -110,7 +110,7 @@ TESTSRC_OBJ = $(foreach dir,$(PROJECT_TESTSRC_SUBDIRS),$(subst .cpp,.o,$(wildcar
 # These can typically be used together however *_lib and program should not be used together
 all: static_lib
 	
-clean: clean_binaries remove_binary_dir
+clean: clean_object_files remove_binary_dir
 
 # Object Compile Rules
 %.o: %.c
@@ -129,12 +129,12 @@ create_binary_dir:
 .PHONY: remove_binary_dir
 remove_binary_dir:
 ifneq ($(PROJECT_BIN_PATH),)
-	@rm -f "$(PROJECT_BIN_PATH)"
+	@rm -rf "$(PROJECT_BIN_PATH)"
 endif
 
-.PHONY: clean_binaries
-clean_binaries:
-	@rm -f $(SRC_OBJ) $(TESTSRC_OBJ) "$(PROJECT_BIN_PATH)/$(PROJECT_NAME).a" "$(PROJECT_BIN_PATH)/$(PROJECT_SO_FILENAME)" "$(PROJECT_BIN_PATH)/$(PROJECT_NAME)"
+.PHONY: clean_object_files
+clean_object_files:
+	@rm -f $(SRC_OBJ) $(TESTSRC_OBJ)
 
 # Build Library
 static_lib: $(SRC_OBJ) create_binary_dir
@@ -161,20 +161,20 @@ endif
 .PHONY: docs
 docs:
 ifneq ($(PROJECT_DOCS_PATH),)
-	doxygen $(PROJECT_DOXYFILE_PATH)
+	doxygen "$(PROJECT_DOXYFILE_PATH)"
 endif
 
 .PHONY: clean_docs
 clean_docs:
 ifneq ($(PROJECT_DOCS_PATH),)
-	@rm -rf $(PROJECT_DOCS_PATH)
+	@rm -rf "$(PROJECT_DOCS_PATH)"
 endif
 
 # Dependencies
-.PHONY: build_deps
-build_deps:
-	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd $(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib) && $(MAKE) static_lib && cd $(PROJECT_PATH);)
+.PHONY: deps
+deps:
+	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd "$(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib)" && $(MAKE) static_lib && cd "$(PROJECT_PATH)";)
 
 .PHONY: clean_deps
 clean_deps:
-	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd $(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib) && $(MAKE) clean && cd $(PROJECT_PATH);)
+	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd "$(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib)" && $(MAKE) clean && cd "$(PROJECT_PATH)";)
