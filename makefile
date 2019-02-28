@@ -1,12 +1,9 @@
 # C++/C Recursive Project Makefile 
 # (c) Jack
-# Version 2
+# Version 3
 
 # Project Defines
 PROJECT_NAME = libnintendo-hac
-PROJECT_VER_MAJOR = 0
-PROJECT_VER_MINOR = 2
-PROJECT_VER_PATCH = 0
 
 # Project Relative Paths
 PROJECT_PATH = $(CURDIR)
@@ -27,8 +24,11 @@ ifeq ($(ROOT_PROJECT_NAME),)
 endif
 
 # Shared Library Definitions
-PROJECT_SONAME = $(PROJECT_NAME).so.$(PROJECT_VER_MAJOR)
-PROJECT_SO_FILENAME = $(PROJECT_SONAME).$(PROJECT_VER_MINOR).$(PROJECT_VER_PATCH)
+PROJECT_SO_VER_MAJOR = 0
+PROJECT_SO_VER_MINOR = 2
+PROJECT_SO_VER_PATCH = 0
+PROJECT_SONAME = $(PROJECT_NAME).so.$(PROJECT_SO_VER_MAJOR)
+PROJECT_SO_FILENAME = $(PROJECT_SONAME).$(PROJECT_SO_VER_MINOR).$(PROJECT_SO_VER_PATCH)
 
 # Project Dependencies
 PROJECT_DEPEND_LOCAL = fnd
@@ -49,9 +49,6 @@ endif
 ifneq ($(PROJECT_DEPEND_EXTERNAL),)
 	LIB +=  $(foreach dep,$(PROJECT_DEPEND_EXTERNAL), -l$(dep))
 endif
-
-# Generate compiler flags for program/library version
-PROJECT_VER_DEF = -DPROJECT_VER_MAJOR=$(PROJECT_VER_MAJOR) -DPROJECT_VER_MINOR=$(PROJECT_VER_MINOR) -DPROJECT_VER_PATCH=$(PROJECT_VER_PATCH)
 
 # Detect Platform
 ifeq ($(PROJECT_PLATFORM),)
@@ -95,8 +92,8 @@ else ifeq ($(PROJECT_PLATFORM), MACOS)
 endif
 
 # Compiler Flags
-CXXFLAGS = -std=c++11 $(INC) $(PROJECT_VER_DEF) $(WARNFLAGS) -fPIC
-CFLAGS = -std=c11 $(INC) $(PROJECT_VER_DEF) $(WARNFLAGS) -fPIC
+CXXFLAGS = -std=c++11 $(INC) $(WARNFLAGS) -fPIC
+CFLAGS = -std=c11 $(INC) $(WARNFLAGS) -fPIC
 
 # Object Files
 SRC_OBJ = $(foreach dir,$(PROJECT_SRC_SUBDIRS),$(subst .cpp,.o,$(wildcard $(dir)/*.cpp))) $(foreach dir,$(PROJECT_SRC_SUBDIRS),$(subst .c,.o,$(wildcard $(dir)/*.c)))
@@ -110,7 +107,7 @@ TESTSRC_OBJ = $(foreach dir,$(PROJECT_TESTSRC_SUBDIRS),$(subst .cpp,.o,$(wildcar
 # These can typically be used together however *_lib and program should not be used together
 all: static_lib
 	
-clean: clean_binaries remove_binary_dir
+clean: clean_object_files remove_binary_dir
 
 # Object Compile Rules
 %.o: %.c
@@ -129,12 +126,12 @@ create_binary_dir:
 .PHONY: remove_binary_dir
 remove_binary_dir:
 ifneq ($(PROJECT_BIN_PATH),)
-	@rm -f "$(PROJECT_BIN_PATH)"
+	@rm -rf "$(PROJECT_BIN_PATH)"
 endif
 
-.PHONY: clean_binaries
-clean_binaries:
-	@rm -f $(SRC_OBJ) $(TESTSRC_OBJ) "$(PROJECT_BIN_PATH)/$(PROJECT_NAME).a" "$(PROJECT_BIN_PATH)/$(PROJECT_SO_FILENAME)" "$(PROJECT_BIN_PATH)/$(PROJECT_NAME)"
+.PHONY: clean_object_files
+clean_object_files:
+	@rm -f $(SRC_OBJ) $(TESTSRC_OBJ)
 
 # Build Library
 static_lib: $(SRC_OBJ) create_binary_dir
@@ -161,20 +158,20 @@ endif
 .PHONY: docs
 docs:
 ifneq ($(PROJECT_DOCS_PATH),)
-	doxygen $(PROJECT_DOXYFILE_PATH)
+	doxygen "$(PROJECT_DOXYFILE_PATH)"
 endif
 
 .PHONY: clean_docs
 clean_docs:
 ifneq ($(PROJECT_DOCS_PATH),)
-	@rm -rf $(PROJECT_DOCS_PATH)
+	@rm -rf "$(PROJECT_DOCS_PATH)"
 endif
 
 # Dependencies
-.PHONY: build_deps
-build_deps:
-	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd $(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib) && $(MAKE) static_lib && cd $(PROJECT_PATH);)
+.PHONY: deps
+deps:
+	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd "$(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib)" && $(MAKE) static_lib && cd "$(PROJECT_PATH)";)
 
 .PHONY: clean_deps
 clean_deps:
-	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd $(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib) && $(MAKE) clean && cd $(PROJECT_PATH);)
+	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd "$(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib)" && $(MAKE) clean && cd "$(PROJECT_PATH)";)
