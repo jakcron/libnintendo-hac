@@ -18,6 +18,8 @@ namespace hac
 		static const size_t kBcatPassphraseLength = 65;
 		static const size_t kPlayLogQueryableApplicationIdCount = 16;
 		static const int8_t kUnusedAgeRating = -1;
+		static const size_t kDataConfigurationKeyLength = 16;
+		static const size_t kReceivableDataConfigurationCount = 16;
 
 		enum AocRegistrationType
 		{
@@ -178,6 +180,12 @@ namespace hac
 		char publisher[nacp::kPublisherLength];
 	};
 
+	struct sDataConfiguration
+	{
+		le_uint64_t id;
+		byte_t key[nacp::kDataConfigurationKeyLength];
+	};
+
 	struct sApplicationControlProperty
 	{
 		sApplicationTitle title[nacp::kMaxLanguageCount];
@@ -212,8 +220,8 @@ namespace hac
 		byte_t hdcp;
 		le_uint64_t seed_for_pseudo_device_id;
 		char bcat_passphrase[nacp::kBcatPassphraseLength];
-		byte_t reserved_01;
-		byte_t reserved_02[6]; //reserved_for_user_account_save_data_operation
+		byte_t startup_user_account_option;
+		byte_t reserved_01[6]; //reserved_for_user_account_save_data_operation
 		le_uint64_t user_account_save_data_size_max;
 		le_uint64_t user_account_save_data_journal_size_max;
 		le_uint64_t device_save_data_size_max;
@@ -223,13 +231,18 @@ namespace hac
 		le_uint64_t cache_storage_journal_size;
 		le_uint64_t cache_storage_data_and_journal_size_max;
 		le_uint16_t cache_storage_index_max;
-		byte_t reserved_03[6];
+		byte_t reserved_02[6];
 		le_uint64_t play_log_queryable_application_id[nacp::kPlayLogQueryableApplicationIdCount];
 		byte_t play_log_query_capability;
 		byte_t repair_flag;
 		byte_t program_index;
 		byte_t required_network_service_license_on_launch_flag;
-		byte_t reserved_04[0xDEC];
+		byte_t reserved_03[0x4];
+		sDataConfiguration send_data_configuration;
+		sDataConfiguration receivable_data_configuration[nacp::kReceivableDataConfigurationCount];
+		le_uint64_t jit_configuration_flag;
+		le_uint64_t memory_size;
+		byte_t reserved_04[0xC40];
 	};
 
 	struct sApplicationControlProperty_v0
