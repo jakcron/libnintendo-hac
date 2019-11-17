@@ -30,8 +30,7 @@ void nn::hac::GameCardHeader::operator=(const GameCardHeader& other)
 	mSelT1Key = other.mSelT1Key;
 	mSelKey = other.mSelKey;
 	mLimAreaPage = other.mLimAreaPage;
-	mFwVersion[0] = other.mFwVersion[0];
-	mFwVersion[1] = other.mFwVersion[1];
+	mFwVersion = other.mFwVersion;
 	mAccCtrl1 = other.mAccCtrl1;
 	mWait1TimeRead = other.mWait1TimeRead;
 	mWait2TimeRead = other.mWait2TimeRead;
@@ -39,6 +38,7 @@ void nn::hac::GameCardHeader::operator=(const GameCardHeader& other)
 	mWait2TimeWrite = other.mWait2TimeWrite;
 	mFwMode = other.mFwMode;
 	mUppVersion = other.mUppVersion;
+	mCompatibilityType = other.mCompatibilityType;
 	memcpy(mUppHash, other.mUppHash, gc::kUppHashLen);
 	mUppId = other.mUppId;
 }
@@ -63,8 +63,7 @@ bool nn::hac::GameCardHeader::operator==(const GameCardHeader& other) const
 		&&	(mSelT1Key == other.mSelT1Key)
 		&&	(mSelKey == other.mSelKey)
 		&&	(mLimAreaPage == other.mLimAreaPage)
-		&&	(mFwVersion[0] == other.mFwVersion[0])
-		&&	(mFwVersion[1] == other.mFwVersion[1])
+		&&	(mFwVersion == other.mFwVersion)
 		&&	(mAccCtrl1 == other.mAccCtrl1)
 		&&	(mWait1TimeRead == other.mWait1TimeRead)
 		&&	(mWait2TimeRead == other.mWait2TimeRead)
@@ -72,6 +71,7 @@ bool nn::hac::GameCardHeader::operator==(const GameCardHeader& other) const
 		&&	(mWait2TimeWrite == other.mWait2TimeWrite)
 		&&	(mFwMode == other.mFwMode)
 		&&	(mUppVersion == other.mUppVersion)
+		&&  (mCompatibilityType == other.mCompatibilityType)
 		&&	(memcmp(mUppHash, other.mUppHash, gc::kUppHashLen) == 0)
 		&&	(mUppId == other.mUppId);
 }
@@ -130,21 +130,18 @@ void nn::hac::GameCardHeader::fromBytes(const byte_t* data, size_t len)
 	mSelKey = hdr->sel_key.get();
 	mLimAreaPage = hdr->lim_area.get();
 
-	// if decrypted
-	if (hdr->reserved_02[sizeof(hdr->reserved_02)-1] == 0x00 && hdr->reserved_02[sizeof(hdr->reserved_02)-2] == 0x00)
-	{
-		mFwVersion[gc::FWVER_MAJOR] = hdr->fw_version[gc::FWVER_MAJOR].get();
-		mFwVersion[gc::FWVER_MINOR] = hdr->fw_version[gc::FWVER_MINOR].get();
-		mAccCtrl1 = hdr->acc_ctrl_1.get();
-		mWait1TimeRead = hdr->wait_1_time_read.get();
-		mWait2TimeRead = hdr->wait_2_time_read.get();
-		mWait1TimeWrite = hdr->wait_1_time_write.get();
-		mWait2TimeWrite = hdr->wait_2_time_write.get();
-		mFwMode = hdr->fw_mode.get();
-		mUppVersion = hdr->upp_version.get();
-		memcpy(mUppHash, hdr->upp_hash, gc::kUppHashLen);
-		mUppId = hdr->upp_id.get();
-	}
+	
+	mFwVersion = hdr->extended_header.fw_version.get();
+	mAccCtrl1 = hdr->extended_header.acc_ctrl_1.get();
+	mWait1TimeRead = hdr->extended_header.wait_1_time_read.get();
+	mWait2TimeRead = hdr->extended_header.wait_2_time_read.get();
+	mWait1TimeWrite = hdr->extended_header.wait_1_time_write.get();
+	mWait2TimeWrite = hdr->extended_header.wait_2_time_write.get();
+	mFwMode = hdr->extended_header.fw_mode.get();
+	mUppVersion = hdr->extended_header.upp_version.get();
+	mCompatibilityType = hdr->extended_header.region_compatibility;
+	memcpy(mUppHash, hdr->extended_header.upp_hash, gc::kUppHashLen);
+	mUppId = hdr->extended_header.upp_id.get();
 
 }
 
@@ -174,8 +171,7 @@ void nn::hac::GameCardHeader::clear()
 	mSelT1Key = 0;
 	mSelKey = 0;
 	mLimAreaPage = 0;
-	mFwVersion[0] = 0;
-	mFwVersion[1] = 0;
+	mFwVersion = 0;
 	mAccCtrl1 = 0;
 	mWait1TimeRead = 0;
 	mWait2TimeRead = 0;
@@ -183,6 +179,7 @@ void nn::hac::GameCardHeader::clear()
 	mWait2TimeWrite = 0;
 	mFwMode = 0;
 	mUppVersion = 0;
+	mCompatibilityType = 0;
 	memset(mUppHash, 0, gc::kUppHashLen);
 	mUppId = 0;
 }
@@ -247,14 +244,14 @@ void nn::hac::GameCardHeader::setCardHeaderVersion(byte_t version)
 	mCardHeaderVersion = version;
 }
 
-byte_t nn::hac::GameCardHeader::getFlags() const
+byte_t nn::hac::GameCardHeader::getCompatibilityType() const
 {
-	return mFlags;
+	return mCompatibilityType;
 }
 
-void nn::hac::GameCardHeader::setFlags(byte_t flags)
+void nn::hac::GameCardHeader::setCompatibilityType(byte_t compat_type)
 {
-	mFlags = flags;
+	mCompatibilityType = compat_type;
 }
 
 uint64_t nn::hac::GameCardHeader::getPackageId() const
@@ -368,24 +365,14 @@ void nn::hac::GameCardHeader::setLimAreaPage(uint32_t page)
 }
 
 
-uint32_t nn::hac::GameCardHeader::getFwVerMajor() const
+uint64_t nn::hac::GameCardHeader::getFwVersion() const
 {
-	return mFwVersion[gc::FWVER_MAJOR];
+	return mFwVersion;
 }
 
-void nn::hac::GameCardHeader::setFwVerMajor(uint32_t ver)
+void nn::hac::GameCardHeader::setFwVersion(uint64_t version)
 {
-	mFwVersion[gc::FWVER_MAJOR] = ver;
-}
-
-uint32_t nn::hac::GameCardHeader::getFwVerMinor() const
-{
-	return mFwVersion[gc::FWVER_MINOR];
-}
-
-void nn::hac::GameCardHeader::setFwVerMinor(uint32_t ver)
-{
-	mFwVersion[gc::FWVER_MINOR] = ver;
+	mFwVersion = version;
 }
 
 uint32_t nn::hac::GameCardHeader::getAccCtrl1() const
@@ -456,6 +443,16 @@ uint32_t nn::hac::GameCardHeader::getUppVersion() const
 void nn::hac::GameCardHeader::setUppVersion(uint32_t version)
 {
 	mUppVersion = version;
+}
+
+byte_t nn::hac::GameCardHeader::getFlags() const
+{
+	return mFlags;
+}
+
+void nn::hac::GameCardHeader::setFlags(byte_t flags)
+{
+	mFlags = flags;
 }
 
 const byte_t* nn::hac::GameCardHeader::getUppHash() const

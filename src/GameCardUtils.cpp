@@ -8,15 +8,11 @@ void nn::hac::GameCardUtils::getXciHeaderAesIv(const nn::hac::sGcHeader* hdr, by
 	}
 }
 
-void nn::hac::GameCardUtils::decryptXciHeader(const byte_t* src, byte_t* dst, const byte_t* key)
+void nn::hac::GameCardUtils::decryptXciHeader(nn::hac::sGcHeader* hdr, const byte_t* key)
 {
 	byte_t iv[fnd::aes::kAesBlockSize];
 
-	getXciHeaderAesIv((const nn::hac::sGcHeader*)src, iv);
-
-	// copy plain
-	memcpy(dst, src, nn::hac::gc::kHeaderEncOffset);
-
+	getXciHeaderAesIv(hdr, iv);
 	// decrypt encrypted data
-	fnd::aes::AesCbcDecrypt(src + nn::hac::gc::kHeaderEncOffset, nn::hac::gc::kHeaderEncSize, key, iv, dst + nn::hac::gc::kHeaderEncOffset);
+	fnd::aes::AesCbcDecrypt(hdr->extended_header.raw_data, nn::hac::gc::kHeaderEncSize, key, iv, hdr->extended_header.raw_data);
 }

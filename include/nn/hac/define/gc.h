@@ -33,8 +33,8 @@ namespace hac
 
 		enum KekIndex
 		{
-			KEK_XCIE,
-			KEK_XCIR
+			KEK_PROD = 0,
+			KEK_DEV = 1
 		};
 
 		enum RomSize
@@ -51,13 +51,16 @@ namespace hac
 		{
 			FLAG_AUTOBOOT,
 			FLAG_HISTORY_ERASE,
-			FLAG_REPAIR_TOOL
+			FLAG_REPAIR_TIME_REVISOR_TOOL,
+			FLAG_ALLOW_CUP_TO_CHINA,
+			FLAG_ALLOW_CUP_TO_GLOBAL,
 		};
 
-		enum FwVersionIndex
+		enum FwVersion
 		{
-			FWVER_MINOR,
-			FWVER_MAJOR
+			FWVER_DEV,
+			FWVER_PROD,
+			FWVER_PROD_SINCE_4_0_0NUP
 		};
 
 		enum CardClockRate
@@ -65,9 +68,21 @@ namespace hac
 			CLOCK_RATE_25 = 10551312,
 			CLOCK_RATE_50 = 10551313,
 		};
+
+		enum CompatibilityType
+		{
+			COMPAT_GLOBAL,
+			COMPAT_CHINA
+		};
 	}
 	
 #pragma pack(push,1)
+
+	struct sGcPage
+	{
+		byte_t data[gc::kPageSize];
+	};
+
 	struct sGcHeader
 	{
 		le_uint32_t st_magic;
@@ -89,44 +104,73 @@ namespace hac
 		le_uint32_t sel_t1_key;
 		le_uint32_t sel_key;
 		le_uint32_t lim_area;
-		// START ENCRYPTION
-		le_uint32_t fw_version[2];
-		le_uint32_t acc_ctrl_1;
-		le_uint32_t wait_1_time_read;
-		le_uint32_t wait_2_time_read;
-		le_uint32_t wait_1_time_write;
-		le_uint32_t wait_2_time_write;
-		le_uint32_t fw_mode;
-		le_uint32_t upp_version;
-		byte_t reserved_01[0x4];
-		byte_t upp_hash[gc::kUppHashLen];
-		le_uint64_t upp_id;
-		byte_t reserved_02[0x38];
-		// END ENCRYPTION
+		union {
+			byte_t raw_data[gc::kHeaderEncSize];
+			struct {
+				le_uint64_t fw_version;
+				le_uint32_t acc_ctrl_1;
+				le_uint32_t wait_1_time_read;
+				le_uint32_t wait_2_time_read;
+				le_uint32_t wait_1_time_write;
+				le_uint32_t wait_2_time_write;
+				le_uint32_t fw_mode;
+				le_uint32_t upp_version;
+				byte_t region_compatibility;
+				byte_t reserved_01[0x3];
+				byte_t upp_hash[gc::kUppHashLen];
+				le_uint64_t upp_id;
+			};
+		} extended_header;
 	};
 
-	struct sGcHeaderPage
+	struct sGcHeader_Rsa2048Signed
 	{
 		byte_t signature[fnd::rsa::kRsa2048Size];
 		sGcHeader header;
-	}; // sizeof() = 512 (1 page)
+	};
 
-	struct sInitialData
+	struct sGcInitialData
 	{
 		byte_t key_source[16]; // { package_id[8], zeros[8]}
 		byte_t title_key_enc[16];
 		byte_t ccm_mac[16];
 		byte_t ccm_nonce[12];
-		byte_t reserved[0x1c4];
-	}; // sizeof() = 512 (1 page)
+	};
 
-	struct sKeyDataArea
+	struct sGcKeyDataRegion
 	{
-		sInitialData initial_data; // AES128-CCM encrypted {titlekey[16]}
-		byte_t encrypted_00[gc::kPageSize * 6]; // AES128-CTR encrypted {titlekey[16]}
-		byte_t encrypted_00_aesctr_data[fnd::rsa::kRsa2048Size]; // RSA2048-OAEP-SHA256 encrypted AES-CTR data used for encrypted_00 {key[16],iv[16]}
-		byte_t reserved[gc::kPageSize - fnd::rsa::kRsa2048Size];
+		union {
+			sGcPage raw_page[1];
+			sGcInitialData initial_data; // AES128-CCM encrypted {titlekey[16]}
+		} initial_data_region;
+
+		union {
+			sGcPage raw_pages[6];
+			struct {
+				byte_t encrypted_data[gc::kPageSize * 6]; // AES128-CTR encrypted {titlekey[16]}
+			} enc;
+			struct {
+				fnd::aes::sAes128Key title_key;
+			} dec;
+		} title_key_region;
+		
+		union {
+			sGcPage raw_page[1];
+			struct {
+				byte_t encrypted_data[fnd::rsa::kRsa2048Size]; // RSA2048-OAEP-SHA256 encrypted AES-CTR data used for encrypted_00 {key[16],iv[16]}
+			} enc;
+			struct {
+				fnd::aes::sAes128Key title_key_encryption_key;
+				fnd::aes::sAesIvCtr title_key_encryption_ctr;
+			} dec;
+		} title_key_encryption_params_region;
 	}; // sizeof() = 512*8 (8 pages)
+
+	struct sSdkGcHeader
+	{
+		sGcKeyDataRegion keydata;
+		sGcHeader_Rsa2048Signed signed_header;
+	};
 
 #pragma pack(pop)
 }

@@ -62,10 +62,8 @@ namespace hac
 		uint32_t getLimAreaPage() const;
 		void setLimAreaPage(uint32_t page);
 
-		uint32_t getFwVerMajor() const;
-		void setFwVerMajor(uint32_t ver);
-		uint32_t getFwVerMinor() const;
-		void setFwVerMinor(uint32_t ver);
+		uint64_t getFwVersion() const;
+		void setFwVersion(uint64_t version);
 		uint32_t getAccCtrl1() const;
 		void setAccCtrl1(uint32_t acc_ctrl_1);
 		uint32_t getWait1TimeRead() const;
@@ -80,6 +78,8 @@ namespace hac
 		void setFwMode(uint32_t fw_mode);
 		uint32_t getUppVersion() const;
 		void setUppVersion(uint32_t version);
+		byte_t getCompatibilityType() const;
+		void setCompatibilityType(byte_t compat_type);
 		const byte_t* getUppHash() const;
 		void setUppHash(const byte_t* hash);
 		uint64_t getUppId() const;
@@ -112,7 +112,7 @@ namespace hac
 		uint32_t mLimAreaPage;
 
 		// Encrypted/Extended Data
-		uint32_t mFwVersion[2];
+		uint64_t mFwVersion;
 		uint32_t mAccCtrl1;
 		uint32_t mWait1TimeRead;
 		uint32_t mWait2TimeRead;
@@ -120,6 +120,7 @@ namespace hac
 		uint32_t mWait2TimeWrite;
 		uint32_t mFwMode;
 		uint32_t mUppVersion;
+		byte_t mCompatibilityType;
 		byte_t mUppHash[8];
 		uint64_t mUppId;
 	};
