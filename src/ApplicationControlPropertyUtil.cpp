@@ -12,7 +12,7 @@ bool nn::hac::ApplicationControlPropertyUtil::validateSaveDataSize(int64_t size)
 	return (size & 0x3fff) == 0;
 }
 
-static std::string getSaveDataSizeAsString(int64_t size)
+std::string nn::hac::ApplicationControlPropertyUtil::getSaveDataSizeAsString(int64_t size)
 {
 	static const int64_t kKiloByte = 1024;
 	static const int64_t kMegaByte = 1024 * 1024;
