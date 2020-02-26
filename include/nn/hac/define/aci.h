@@ -13,7 +13,7 @@ namespace hac
 		static const uint32_t kAciDescStructMagic = _MAKE_STRUCT_MAGIC_U32("ACID");
 		static const size_t kSectionAlignSize = 0x10;
 
-		enum Flag
+		enum AcidFlag
 		{
 			FLAG_PRODUCTION,
 			FLAG_UNQUALIFIED_APPROVAL

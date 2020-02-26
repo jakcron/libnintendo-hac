@@ -134,7 +134,7 @@ void nn::hac::AccessControlInfoDesc::fromBytes(const byte_t* data, size_t len)
 	for (size_t i = 0; i < 32; i++)
 	{
 		if (_HAS_BIT(hdr.flags.get(), i))
-			mFlags.addElement((aci::Flag)i);
+			mFlags.addElement((aci::AcidFlag)i);
 	}
 
 	mProgramIdRestrict.min = hdr.program_id_min.get();
@@ -200,12 +200,12 @@ void nn::hac::AccessControlInfoDesc::setContentArchiveHeaderSignature2Key(const 
 	mContentArchiveHeaderSignature2Key = key;
 }
 
-const fnd::List<nn::hac::aci::Flag>& nn::hac::AccessControlInfoDesc::getFlagList() const
+const fnd::List<nn::hac::aci::AcidFlag>& nn::hac::AccessControlInfoDesc::getFlagList() const
 {
 	return mFlags;
 }
 
-void nn::hac::AccessControlInfoDesc::setFlagList(const fnd::List<nn::hac::aci::Flag>& flags)
+void nn::hac::AccessControlInfoDesc::setFlagList(const fnd::List<nn::hac::aci::AcidFlag>& flags)
 {
 	mFlags = flags;
 }
