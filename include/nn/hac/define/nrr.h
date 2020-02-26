@@ -30,7 +30,7 @@ namespace hac
 	struct sNrrHeader
 	{
 		le_uint32_t st_magic;
-		le_uint32_t cert_key_generationn;
+		le_uint32_t cert_key_generation;
 		byte_t reserved_0[24];
 		sNrrCertificate certificate;
 		byte_t nrr_body_signature[fnd::rsa::kRsa2048Size];
