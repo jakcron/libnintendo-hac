@@ -24,15 +24,15 @@ namespace hac
 		bool isSet() const;
 
 		// variables
-		const fnd::List<uint8_t>& getSystemCalls() const;
-		void setSystemCallList(const fnd::List<uint8_t>& calls);
+		const fnd::List<nn::hac::kc::SystemCall>& getSystemCalls() const;
+		void setSystemCallList(const fnd::List<nn::hac::kc::SystemCall>& calls);
 
 	private:
 		const std::string kModuleName = "SYSTEM_CALL_HANDLER";
 		static const size_t kSyscallTotalEntryNum = (kMaxSystemCall / 24) + 1;
 
 		bool mIsSet;
-		fnd::List<uint8_t> mSystemCalls;
+		fnd::List<nn::hac::kc::SystemCall> mSystemCalls;
 	};
 }
 }

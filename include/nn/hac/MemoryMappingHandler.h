@@ -9,24 +9,12 @@ namespace hac
 		public IKernelCapabilityHandler
 	{
 	public:
-		enum MemoryPerm
-		{
-			MEM_RW,
-			MEM_RO
-		};
-
-		enum MappingType
-		{
-			MAP_IO,
-			MAP_STATIC
-		};
-
 		struct sMemoryMapping
 		{
 			uint32_t addr; // page index
 			uint32_t size; // page num
-			MemoryPerm perm;
-			MappingType type;
+			kc::MemoryPerm perm;
+			kc::MappingType type;
 
 			bool operator==(const sMemoryMapping& other) const
 			{

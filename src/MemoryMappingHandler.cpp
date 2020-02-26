@@ -62,7 +62,7 @@ void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const fnd::List<K
 			}
 
 			// add to list
-			mMemRange.addElement({ entries[i].getPage(), entries[i+1].getPage(), entries[i].getFlag() ? MEM_RO : MEM_RW, entries[i+1].getFlag() ? MAP_STATIC : MAP_IO });
+			mMemRange.addElement({ entries[i].getPage(), entries[i+1].getPage(), entries[i].getFlag() ? kc::MEM_RO : kc::MEM_RW, entries[i+1].getFlag() ? kc::MAP_STATIC : kc::MAP_IO });
 
 			// increment i by two
 			i += 2;
@@ -77,7 +77,7 @@ void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const fnd::List<K
 			}
 
 			// add to list
-			mMemPage.addElement({ entries[i].getPage(), 1, MEM_RW, MAP_IO });
+			mMemPage.addElement({ entries[i].getPage(), 1, kc::MEM_RW, kc::MAP_IO });
 
 			// increment i by one
 			i += 1;
@@ -99,11 +99,11 @@ void nn::hac::MemoryMappingHandler::exportKernelCapabilityList(fnd::List<KernelC
 	for (size_t i = 0; i < mMemRange.size(); i++)
 	{
 		cap.setPage(mMemRange[i].addr & kMaxPageAddr);
-		cap.setFlag(mMemRange[i].perm == MEM_RO);
+		cap.setFlag(mMemRange[i].perm == kc::MEM_RO);
 		caps.addElement(cap.getKernelCapability());
 
 		cap.setPage(mMemRange[i].size & kMaxPageNum);
-		cap.setFlag(mMemRange[i].type == MAP_STATIC);
+		cap.setFlag(mMemRange[i].type == kc::MAP_STATIC);
 		caps.addElement(cap.getKernelCapability());
 	}
 
