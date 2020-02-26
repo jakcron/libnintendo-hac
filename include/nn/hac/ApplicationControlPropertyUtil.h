@@ -5,7 +5,7 @@ namespace nn
 {
 namespace hac
 {
-	class ApplicationControlPropertyUtils
+	class ApplicationControlPropertyUtil
 	{
 	public:
 		static bool validateSaveDataSizeMax(int64_t size, int64_t alignment);

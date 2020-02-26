@@ -1,4 +1,6 @@
 #include <nn/hac/ApplicationControlPropertyUtil.h>
+#include <sstream>
+#include <iomanip>
 
 bool nn::hac::ApplicationControlPropertyUtil::validateSaveDataSizeMax(int64_t size, int64_t alignment)
 {
