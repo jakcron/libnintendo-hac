@@ -1,6 +1,6 @@
-#include <nn/hac/GameCardUtils.h>
+#include <nn/hac/GameCardUtil.h>
 
-void nn::hac::GameCardUtils::getXciHeaderAesIv(const nn::hac::sGcHeader* hdr, byte_t* iv)
+void nn::hac::GameCardUtil::getXciHeaderAesIv(const nn::hac::sGcHeader* hdr, byte_t* iv)
 {
 	for (size_t i = 0; i < 16; i++)
 	{
@@ -8,7 +8,7 @@ void nn::hac::GameCardUtils::getXciHeaderAesIv(const nn::hac::sGcHeader* hdr, by
 	}
 }
 
-void nn::hac::GameCardUtils::decryptXciHeader(nn::hac::sGcHeader* hdr, const byte_t* key)
+void nn::hac::GameCardUtil::decryptXciHeader(nn::hac::sGcHeader* hdr, const byte_t* key)
 {
 	byte_t iv[fnd::aes::kAesBlockSize];
 

@@ -5,7 +5,7 @@ namespace nn
 {
 namespace hac
 {
-	class GameCardUtils
+	class GameCardUtil
 	{
 	public:
 		static inline uint64_t blockToAddr(uint32_t block) { return ((uint64_t)block) << 9; }
