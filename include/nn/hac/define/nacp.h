@@ -97,7 +97,8 @@ namespace hac
 			ORGN_PEGIBBFC,
 			ORGN_Russian,
 			ORGN_ACB,
-			ORGN_OFLC
+			ORGN_OFLC,
+			ORGN_IARCGeneric
 		};
 
 		enum ParentalControlFlag

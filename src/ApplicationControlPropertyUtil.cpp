@@ -283,6 +283,9 @@ std::string nn::hac::ApplicationControlPropertyUtil::getOrganisationAsString(nn:
 	case (nn::hac::nacp::ORGN_OFLC):
 		ss << "OFLC";
 		break;
+	case (nn::hac::nacp::ORGN_IARCGeneric):
+		ss << "IARCGeneric";
+		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
 		break;
