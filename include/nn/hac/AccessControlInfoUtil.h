@@ -10,6 +10,7 @@ namespace hac
 	{
 	public:
 		static std::string getAcidFlagAsString(nn::hac::aci::AcidFlag flag);
+		static std::string getMemoryRegionAsString(nn::hac::aci::MemoryRegion mem_region);
 
 	private:
 		const std::string kModuleName = "ACCESS_CONTROL_INFO_UTIL";
