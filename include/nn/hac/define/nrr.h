@@ -36,10 +36,11 @@ namespace hac
 		byte_t nrr_body_signature[fnd::rsa::kRsa2048Size];
 		le_uint64_t application_id;
 		le_uint32_t size;
-		le_uint32_t nrr_kind;
+		byte_t nrr_kind;
+		byte_t reserved_1[3];
 		le_uint32_t hash_offset;
 		le_uint32_t hash_count;
-		byte_t reserved_1[8];
+		byte_t reserved_2[8];
 	};
 
 #pragma pack(pop)
