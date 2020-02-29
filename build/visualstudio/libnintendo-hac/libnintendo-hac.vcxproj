@@ -21,16 +21,18 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\include\nn\hac\AccessControlInfo.h" />
     <ClInclude Include="..\..\..\include\nn\hac\AccessControlInfoDesc.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\AccessControlInfoUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\AddOnContentMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\AesKeygen.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlProperty.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlPropertyUtils.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlPropertyUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveHeader.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveUtils.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentInfo.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentMeta.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentMetaInfo.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\ContentMetaUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\aci.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\cnmt.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\delta.h" />
@@ -52,8 +54,9 @@
     <ClInclude Include="..\..\..\include\nn\hac\define\romfs.h" />
     <ClInclude Include="..\..\..\include\nn\hac\DeltaMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessControl.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\GameCardHeader.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\GameCardUtils.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\GameCardUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HandleTableSizeEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HandleTableSizeHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HierarchicalIntegrityHeader.h" />
@@ -65,19 +68,24 @@
     <ClInclude Include="..\..\..\include\nn\hac\InteruptHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityControl.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityEntry.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessHeader.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\MemoryMappingHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\MemoryPageEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\Meta.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\MetaUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\MiscFlagsEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\MiscFlagsHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\MiscParamsEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\MiscParamsHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\NroHeader.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\NrrUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\NsoHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsHeader.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\PartitionFsUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\PatchMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\Result.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControl.h" />
@@ -90,20 +98,23 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\AccessControlInfo.cpp" />
     <ClCompile Include="..\..\..\src\AccessControlInfoDesc.cpp" />
+    <ClCompile Include="..\..\..\src\AccessControlInfoUtil.cpp" />
     <ClCompile Include="..\..\..\src\AddOnContentMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\AesKeygen.cpp" />
     <ClCompile Include="..\..\..\src\ApplicationControlProperty.cpp" />
-    <ClCompile Include="..\..\..\src\ApplicationControlPropertyUtils.cpp" />
+    <ClCompile Include="..\..\..\src\ApplicationControlPropertyUtil.cpp" />
     <ClCompile Include="..\..\..\src\ApplicationMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\ContentArchiveHeader.cpp" />
-    <ClCompile Include="..\..\..\src\ContentArchiveUtils.cpp" />
+    <ClCompile Include="..\..\..\src\ContentArchiveUtil.cpp" />
     <ClCompile Include="..\..\..\src\ContentInfo.cpp" />
     <ClCompile Include="..\..\..\src\ContentMeta.cpp" />
     <ClCompile Include="..\..\..\src\ContentMetaInfo.cpp" />
+    <ClCompile Include="..\..\..\src\ContentMetaUtil.cpp" />
     <ClCompile Include="..\..\..\src\DeltaMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\FileSystemAccessControl.cpp" />
+    <ClCompile Include="..\..\..\src\FileSystemAccessUtil.cpp" />
     <ClCompile Include="..\..\..\src\GameCardHeader.cpp" />
-    <ClCompile Include="..\..\..\src\GameCardUtils.cpp" />
+    <ClCompile Include="..\..\..\src\GameCardUtil.cpp" />
     <ClCompile Include="..\..\..\src\HandleTableSizeEntry.cpp" />
     <ClCompile Include="..\..\..\src\HandleTableSizeHandler.cpp" />
     <ClCompile Include="..\..\..\src\HierarchicalIntegrityHeader.cpp" />
@@ -114,19 +125,24 @@
     <ClCompile Include="..\..\..\src\InteruptHandler.cpp" />
     <ClCompile Include="..\..\..\src\KernelCapabilityControl.cpp" />
     <ClCompile Include="..\..\..\src\KernelCapabilityEntry.cpp" />
+    <ClCompile Include="..\..\..\src\KernelCapabilityUtil.cpp" />
     <ClCompile Include="..\..\..\src\KernelInitialProcessHeader.cpp" />
+    <ClCompile Include="..\..\..\src\KernelInitialProcessUtil.cpp" />
     <ClCompile Include="..\..\..\src\KernelVersionEntry.cpp" />
     <ClCompile Include="..\..\..\src\KernelVersionHandler.cpp" />
     <ClCompile Include="..\..\..\src\MemoryMappingHandler.cpp" />
     <ClCompile Include="..\..\..\src\MemoryPageEntry.cpp" />
     <ClCompile Include="..\..\..\src\Meta.cpp" />
+    <ClCompile Include="..\..\..\src\MetaUtil.cpp" />
     <ClCompile Include="..\..\..\src\MiscFlagsEntry.cpp" />
     <ClCompile Include="..\..\..\src\MiscFlagsHandler.cpp" />
     <ClCompile Include="..\..\..\src\MiscParamsEntry.cpp" />
     <ClCompile Include="..\..\..\src\MiscParamsHandler.cpp" />
     <ClCompile Include="..\..\..\src\NroHeader.cpp" />
+    <ClCompile Include="..\..\..\src\NrrUtil.cpp" />
     <ClCompile Include="..\..\..\src\NsoHeader.cpp" />
     <ClCompile Include="..\..\..\src\PartitionFsHeader.cpp" />
+    <ClCompile Include="..\..\..\src\PartitionFsUtil.cpp" />
     <ClCompile Include="..\..\..\src\PatchMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\Result.cpp" />
     <ClCompile Include="..\..\..\src\ServiceAccessControl.cpp" />
@@ -140,7 +156,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{8885C125-83FB-4F73-A93A-C712B1434D54}</ProjectGuid>
     <RootNamespace>libnintendohac</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

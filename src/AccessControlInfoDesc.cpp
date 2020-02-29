@@ -15,6 +15,7 @@ void nn::hac::AccessControlInfoDesc::operator=(const AccessControlInfoDesc & oth
 	mRawBinary = other.mRawBinary;
 	mContentArchiveHeaderSignature2Key = other.mContentArchiveHeaderSignature2Key;
 	mFlags = other.mFlags;
+	mMemoryRegion = other.mMemoryRegion;
 	mProgramIdRestrict = other.mProgramIdRestrict;
 	mFileSystemAccessControl = other.mFileSystemAccessControl;
 	mServiceAccessControl = other.mServiceAccessControl;
@@ -25,6 +26,7 @@ bool nn::hac::AccessControlInfoDesc::operator==(const AccessControlInfoDesc & ot
 {
 	return (mContentArchiveHeaderSignature2Key == other.mContentArchiveHeaderSignature2Key) \
 		&& (mFlags == other.mFlags) \
+		&& (mMemoryRegion == other.mMemoryRegion) \
 		&& (mProgramIdRestrict == other.mProgramIdRestrict) \
 		&& (mFileSystemAccessControl == other.mFileSystemAccessControl) \
 		&& (mServiceAccessControl == other.mServiceAccessControl) \
@@ -74,6 +76,14 @@ void nn::hac::AccessControlInfoDesc::toBytes()
 	uint32_t flags = 0;
 	for (size_t i = 0; i < mFlags.size(); i++)
 		flags |= _BIT(mFlags[i]);
+
+	// clear reserved bits for memory region
+	flags &= ~aci::kAcidFlagMemoryRegionMask;
+
+	// set memory region
+	flags |= (mMemoryRegion << aci::ACIDFLAG_MEMORY_REGION_RESERVED_BIT0) & aci::kAcidFlagMemoryRegionMask;
+	
+	// set flags into header
 	hdr->flags = flags;
 
 	// set program id restrict settings
@@ -131,15 +141,25 @@ void nn::hac::AccessControlInfoDesc::fromBytes(const byte_t* data, size_t len)
 	// save variables
 	memcpy(mContentArchiveHeaderSignature2Key.modulus, hdr.nca_rsa_signature2_modulus, fnd::rsa::kRsa2048Size);
 
+	// acid flags
 	for (size_t i = 0; i < 32; i++)
 	{
+		// skip reserved bits
+		if (i == aci::ACIDFLAG_MEMORY_REGION_RESERVED_BIT0 || i == aci::ACIDFLAG_MEMORY_REGION_RESERVED_BIT1)
+			continue;
+
 		if (_HAS_BIT(hdr.flags.get(), i))
-			mFlags.addElement((aci::Flag)i);
+			mFlags.addElement((aci::AcidFlag)i);
 	}
 
+	// memory region (from acid flags)
+	mMemoryRegion = aci::MemoryRegion((hdr.flags.get() & aci::kAcidFlagMemoryRegionMask) >> aci::ACIDFLAG_MEMORY_REGION_RESERVED_BIT0);
+
+	// program id
 	mProgramIdRestrict.min = hdr.program_id_min.get();
 	mProgramIdRestrict.max = hdr.program_id_max.get();
 
+	// fac,sac,kc
 	mFileSystemAccessControl.fromBytes(mRawBinary.data() + hdr.fac.offset.get(), hdr.fac.size.get());
 	mServiceAccessControl.fromBytes(mRawBinary.data() + hdr.sac.offset.get(), hdr.sac.size.get());
 	mKernelCapabilities.fromBytes(mRawBinary.data() + hdr.kc.offset.get(), hdr.kc.size.get());
@@ -200,14 +220,24 @@ void nn::hac::AccessControlInfoDesc::setContentArchiveHeaderSignature2Key(const 
 	mContentArchiveHeaderSignature2Key = key;
 }
 
-const fnd::List<nn::hac::aci::Flag>& nn::hac::AccessControlInfoDesc::getFlagList() const
+const fnd::List<nn::hac::aci::AcidFlag>& nn::hac::AccessControlInfoDesc::getFlagList() const
 {
 	return mFlags;
 }
 
-void nn::hac::AccessControlInfoDesc::setFlagList(const fnd::List<nn::hac::aci::Flag>& flags)
+void nn::hac::AccessControlInfoDesc::setFlagList(const fnd::List<nn::hac::aci::AcidFlag>& flags)
 {
 	mFlags = flags;
+}
+
+nn::hac::aci::MemoryRegion nn::hac::AccessControlInfoDesc::getMemoryRegion() const
+{
+	return mMemoryRegion;
+}
+
+void nn::hac::AccessControlInfoDesc::setMemoryRegion(nn::hac::aci::MemoryRegion memory_region)
+{
+	mMemoryRegion = memory_region;
 }
 
 const nn::hac::AccessControlInfoDesc::sProgramIdRestrict&  nn::hac::AccessControlInfoDesc::getProgramIdRestrict() const

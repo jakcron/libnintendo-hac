@@ -13,10 +13,22 @@ namespace hac
 		static const uint32_t kAciDescStructMagic = _MAKE_STRUCT_MAGIC_U32("ACID");
 		static const size_t kSectionAlignSize = 0x10;
 
-		enum Flag
+		enum AcidFlag
 		{
-			FLAG_PRODUCTION,
-			FLAG_UNQUALIFIED_APPROVAL
+			ACIDFLAG_PRODUCTION,
+			ACIDFLAG_UNQUALIFIED_APPROVAL,
+			ACIDFLAG_MEMORY_REGION_RESERVED_BIT0,
+			ACIDFLAG_MEMORY_REGION_RESERVED_BIT1
+		};
+
+		static const uint32_t kAcidFlagMemoryRegionMask = _BIT(ACIDFLAG_MEMORY_REGION_RESERVED_BIT0) | _BIT(ACIDFLAG_MEMORY_REGION_RESERVED_BIT1);
+
+		enum MemoryRegion
+		{
+			MEMREGION_APPLICATION,
+			MEMREGION_APPLET,
+			MEMREGION_SECURE_SYSTEM,
+			MEMREGION_NON_SECURE_SYSTEM
 		};
 	}
 #pragma pack(push,1)

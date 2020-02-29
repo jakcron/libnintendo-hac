@@ -10,26 +10,6 @@ namespace hac
 		public IKernelCapabilityHandler
 	{
 	public:
-		enum Flags
-		{
-			FLAG_ENABLE_DEBUG,
-			FLAG_FORCE_DEBUG,
-			FLAG_UNK02,
-			FLAG_UNK03,
-			FLAG_UNK04,
-			FLAG_UNK05,
-			FLAG_UNK06,
-			FLAG_UNK07,
-			FLAG_UNK08,
-			FLAG_UNK09,
-			FLAG_UNK10,
-			FLAG_UNK11,
-			FLAG_UNK12,
-			FLAG_UNK13,
-			FLAG_UNK14,
-			FLAG_NUM
-		};
-
 		MiscFlagsHandler();
 
 		void operator=(const MiscFlagsHandler& other);
@@ -43,15 +23,15 @@ namespace hac
 		bool isSet() const;
 
 		// variables
-		const fnd::List<Flags>& getFlagList() const;
-		void setFlagList(fnd::List<Flags> flags);
+		const fnd::List<nn::hac::kc::MiscFlags>& getFlagList() const;
+		void setFlagList(fnd::List<nn::hac::kc::MiscFlags> flags);
 
 	private:
 		const std::string kModuleName = "MISC_FLAGS_HANDLER";
 		static const size_t kMaxKernelCapNum = 1;
 
 		bool mIsSet;
-		fnd::List<Flags> mFlags;
+		fnd::List<nn::hac::kc::MiscFlags> mFlags;
 	};
 }
 }

@@ -38,7 +38,8 @@ namespace hac
 	struct sMetaHeader
 	{
 		le_uint32_t st_magic;
-		byte_t reserved_0[8];
+		le_uint32_t acid_key_generation;
+		byte_t reserved_0[4];
 		byte_t flags;
 		byte_t reserved_1;
 		byte_t main_thread_priority;

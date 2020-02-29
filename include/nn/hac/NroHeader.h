@@ -12,26 +12,6 @@ namespace hac
 		public fnd::IByteModel
 	{
 	public:
-		struct sRoCrt
-		{
-			byte_t data[nro::kRoCrtSize];
-
-			void operator=(const sRoCrt& other)
-			{
-				memcpy(data, other.data, nro::kRoCrtSize);
-			}
-
-			bool operator==(const sRoCrt& other) const
-			{
-				return memcmp(data, other.data, nro::kRoCrtSize) == 0;
-			}
-
-			bool operator!=(const sRoCrt& other) const
-			{
-				return !(*this == other);
-			}
-		};
-
 		struct sModuleId
 		{
 			byte_t data[nro::kModuleIdSize];
@@ -89,9 +69,12 @@ namespace hac
 
 		// variables
 		void clear();
-		
-		const sRoCrt& getRoCrt() const;
-		void setRoCrt(const sRoCrt& ro_crt);
+
+		uint32_t getRoCrtEntryPoint() const;
+		void setRoCrtEntryPoint(uint32_t addr);
+
+		uint32_t getRoCrtModOffset() const;
+		void setRoCrtModOffset(uint32_t mod_offset);
 
 		uint32_t getNroSize() const;
 		void setNroSize(uint32_t size);
@@ -126,7 +109,8 @@ namespace hac
 		fnd::Vec<byte_t> mRawBinary;
 
 		// data
-		sRoCrt mRoCrt;
+		uint32_t mRoCrtEntryPoint;
+		uint32_t mRoCrtModOffset;
 		uint32_t mNroSize;
 		sSection mTextInfo;
 		sSection mRoInfo;

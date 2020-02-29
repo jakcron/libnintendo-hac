@@ -16,6 +16,7 @@ nn::hac::Meta::Meta(const Meta & other) :
 void nn::hac::Meta::operator=(const Meta & other)
 {
 	mRawBinary = other.mRawBinary;
+	mAcidKeyGeneration = other.mAcidKeyGeneration;
 	mInstructionType = other.mInstructionType;
 	mProcAddressSpaceType = other.mProcAddressSpaceType;
 	mMainThreadPriority = other.mMainThreadPriority;
@@ -30,7 +31,8 @@ void nn::hac::Meta::operator=(const Meta & other)
 
 bool nn::hac::Meta::operator==(const Meta & other) const
 {
-	return (mInstructionType == other.mInstructionType) \
+	return (mAcidKeyGeneration == other.mAcidKeyGeneration) \
+		&& (mInstructionType == other.mInstructionType) \
 		&& (mProcAddressSpaceType == other.mProcAddressSpaceType) \
 		&& (mMainThreadPriority == other.mMainThreadPriority) \
 		&& (mMainThreadCpuId == other.mMainThreadCpuId) \
@@ -77,6 +79,7 @@ void nn::hac::Meta::toBytes()
 	hdr->st_magic = meta::kMetaStructMagic;
 
 	// set variables
+	hdr->acid_key_generation = mAcidKeyGeneration;
 	byte_t flag = ((byte_t)(mInstructionType & 1) | (byte_t)((mProcAddressSpaceType & 3) << 1)) & 0xf;
 	hdr->flags = flag;
 	hdr->main_thread_priority = mMainThreadPriority;
@@ -125,6 +128,7 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	}
 
 	// save variables
+	mAcidKeyGeneration = hdr.acid_key_generation.get();
 	byte_t flag = hdr.flags & 0xf;
 	mInstructionType = (meta::InstructionType)(flag & 1);
 	mProcAddressSpaceType = (meta::ProcAddrSpaceType)((flag >> 1) & 3);
@@ -177,6 +181,16 @@ void nn::hac::Meta::clear()
 	mProductCode.clear();
 	mAci.clear();
 	mAcid.clear();
+}
+
+uint32_t nn::hac::Meta::getAcidKeyGeneration() const
+{
+	return mAcidKeyGeneration;
+}
+
+void nn::hac::Meta::setAcidKeyGeneration(uint32_t key_generation)
+{
+	mAcidKeyGeneration = key_generation;
 }
 
 nn::hac::meta::InstructionType nn::hac::Meta::getInstructionType() const
