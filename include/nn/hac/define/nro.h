@@ -21,7 +21,7 @@ namespace hac
 		le_uint32_t size;
 	};
 
-	struct sNroCtr
+	struct sNroRoCrt
 	{
 		le_uint32_t entry_point_insn;
 		le_uint32_t mod_offset;
@@ -29,7 +29,7 @@ namespace hac
 
 	struct sNroHeader
 	{
-		sNroCtr ro_crt;
+		sNroRoCrt ro_crt;
 		byte_t reserved_0[8];
 		le_uint32_t st_magic;
 		le_uint32_t format_version;
