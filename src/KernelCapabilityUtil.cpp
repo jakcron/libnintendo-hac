@@ -143,10 +143,10 @@ std::string nn::hac::KernelCapabilityUtil::getSystemCallAsString(nn::hac::kc::Sy
 	case (nn::hac::kc::SVC_CANCEL_SYNCHRONIZATION):
 		ss << "CancelSynchronization";
 		break;
-	case (nn::hac::kc::SVC_ARBIRATE_LOCK):
+	case (nn::hac::kc::SVC_ARBITRATE_LOCK):
 		ss << "ArbitrateLock";
 		break;
-	case (nn::hac::kc::SVC_ARBIRATE_UNLOCK):
+	case (nn::hac::kc::SVC_ARBITRATE_UNLOCK):
 		ss << "ArbitrateUnlock";
 		break;
 	case (nn::hac::kc::SVC_WAIT_PROCESS_WIDE_KEY_ATOMIC):
