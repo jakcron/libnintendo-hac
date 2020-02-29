@@ -13,7 +13,7 @@ nn::hac::NroHeader::NroHeader(const NroHeader& other)
 void nn::hac::NroHeader::operator=(const NroHeader& other)
 {
 	clear();
-	mRoCrtEntryInsn = other.mRoCrtEntryInsn;
+	mRoCrtEntryPoint = other.mRoCrtEntryPoint;
 	mRoCrtModOffset = other.mRoCrtModOffset;
 	mNroSize = other.mNroSize;
 	mTextInfo = other.mTextInfo;
@@ -29,7 +29,7 @@ void nn::hac::NroHeader::operator=(const NroHeader& other)
 
 bool nn::hac::NroHeader::operator==(const NroHeader& other) const
 {
-	return (mRoCrtEntryInsn == other.mRoCrtEntryInsn) \
+	return (mRoCrtEntryPoint == other.mRoCrtEntryPoint) \
 		&& (mRoCrtModOffset == other.mRoCrtModOffset) \
 		&& (mNroSize == other.mNroSize) \
 		&& (mTextInfo == other.mTextInfo) \
@@ -59,7 +59,7 @@ void nn::hac::NroHeader::toBytes()
 	hdr->flags = 0;
 
 	// set ro crt
-	hdr->ro_crt.entry_point_insn = mRoCrtEntryInsn;
+	hdr->ro_crt.entry_point_insn = mRoCrtEntryPoint;
 	hdr->ro_crt.mod_offset = mRoCrtModOffset;
 
 	// set nro size
@@ -132,7 +132,7 @@ void nn::hac::NroHeader::fromBytes(const byte_t* data, size_t len)
 		throw fnd::Exception(kModuleName, "NRO header corrupt (unsupported flag)");
 	}
 
-	mRoCrtEntryInsn = hdr->ro_crt.entry_point_insn.get();
+	mRoCrtEntryPoint = hdr->ro_crt.entry_point_insn.get();
 	mRoCrtModOffset = hdr->ro_crt.mod_offset.get();
 	mNroSize = hdr->size.get();
 	mTextInfo.memory_offset = hdr->text.memory_offset.get();
@@ -162,7 +162,7 @@ const fnd::Vec<byte_t>& nn::hac::NroHeader::getBytes() const
 void nn::hac::NroHeader::clear()
 {
 	mRawBinary.clear();
-	mRoCrtEntryInsn = 0;
+	mRoCrtEntryPoint = 0;
 	mRoCrtModOffset = 0;
 	memset(&mTextInfo, 0, sizeof(mTextInfo));
 	memset(&mRoInfo, 0, sizeof(mRoInfo));
@@ -174,14 +174,14 @@ void nn::hac::NroHeader::clear()
 	memset(&mRoDynSymInfo, 0, sizeof(mRoDynSymInfo));
 }
 
-uint32_t nn::hac::NroHeader::getRoCrtEntryInsn() const
+uint32_t nn::hac::NroHeader::getRoCrtEntryPoint() const
 {
-	return mRoCrtEntryInsn;
+	return mRoCrtEntryPoint;
 }
 
-void nn::hac::NroHeader::setRoCrtEntryInsn(uint32_t size)
+void nn::hac::NroHeader::setRoCrtEntryPoint(uint32_t addr)
 {
-	mRoCrtEntryInsn = size;
+	mRoCrtEntryPoint = addr;
 }
 
 uint32_t nn::hac::NroHeader::getRoCrtModOffset() const
@@ -189,9 +189,9 @@ uint32_t nn::hac::NroHeader::getRoCrtModOffset() const
 	return mRoCrtModOffset;
 }
 
-void nn::hac::NroHeader::setRoCrtModOffset(uint32_t size)
+void nn::hac::NroHeader::setRoCrtModOffset(uint32_t offset)
 {
-	mRoCrtModOffset = size;
+	mRoCrtModOffset = offset;
 }
 
 uint32_t nn::hac::NroHeader::getNroSize() const
