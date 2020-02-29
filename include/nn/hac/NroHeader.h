@@ -70,8 +70,8 @@ namespace hac
 		// variables
 		void clear();
 
-		uint32_t getRoCrtEntryInsn() const;
-		void setRoCrtEntryInsn(uint32_t insn);
+		uint32_t getRoCrtEntryPoint() const;
+		void setRoCrtEntryPoint(uint32_t addr);
 
 		uint32_t getRoCrtModOffset() const;
 		void setRoCrtModOffset(uint32_t mod_offset);
@@ -109,7 +109,7 @@ namespace hac
 		fnd::Vec<byte_t> mRawBinary;
 
 		// data
-		uint32_t mRoCrtEntryInsn;
+		uint32_t mRoCrtEntryPoint;
 		uint32_t mRoCrtModOffset;
 		uint32_t mNroSize;
 		sSection mTextInfo;
