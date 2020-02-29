@@ -24,6 +24,9 @@
     <ClInclude Include="..\..\..\include\nn\hac\AccessControlInfoDesc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\AccessControlInfoUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\AddOnContentMetaExtendedHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,7 +36,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlPropertyUtils.h">
+    <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlPropertyUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationMetaExtendedHeader.h">
@@ -42,7 +45,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveUtils.h">
+    <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\ContentInfo.h">
@@ -54,16 +57,22 @@
     <ClInclude Include="..\..\..\include\nn\hac\ContentMetaInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\ContentMetaUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\DeltaMetaExtendedHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\GameCardHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\GameCardUtils.h">
+    <ClInclude Include="..\..\..\include\nn\hac\GameCardUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\HandleTableSizeEntry.h">
@@ -99,7 +108,13 @@
     <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionEntry.h">
@@ -117,6 +132,9 @@
     <ClInclude Include="..\..\..\include\nn\hac\Meta.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\MetaUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\MiscFlagsEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -132,10 +150,16 @@
     <ClInclude Include="..\..\..\include\nn\hac\NroHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\NrrUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\NsoHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\PartitionFsUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\PatchMetaExtendedHeader.h">
@@ -227,6 +251,9 @@
     <ClCompile Include="..\..\..\src\AccessControlInfoDesc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\AccessControlInfoUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\AddOnContentMetaExtendedHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -236,7 +263,7 @@
     <ClCompile Include="..\..\..\src\ApplicationControlProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\ApplicationControlPropertyUtils.cpp">
+    <ClCompile Include="..\..\..\src\ApplicationControlPropertyUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ApplicationMetaExtendedHeader.cpp">
@@ -245,7 +272,7 @@
     <ClCompile Include="..\..\..\src\ContentArchiveHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\ContentArchiveUtils.cpp">
+    <ClCompile Include="..\..\..\src\ContentArchiveUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ContentInfo.cpp">
@@ -257,16 +284,22 @@
     <ClCompile Include="..\..\..\src\ContentMetaInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\ContentMetaUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\DeltaMetaExtendedHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\FileSystemAccessControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\FileSystemAccessUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\GameCardHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\GameCardUtils.cpp">
+    <ClCompile Include="..\..\..\src\GameCardUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\HandleTableSizeEntry.cpp">
@@ -299,7 +332,13 @@
     <ClCompile Include="..\..\..\src\KernelCapabilityEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\KernelCapabilityUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\KernelInitialProcessHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\KernelInitialProcessUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\KernelVersionEntry.cpp">
@@ -317,6 +356,9 @@
     <ClCompile Include="..\..\..\src\Meta.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\MetaUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\MiscFlagsEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -332,10 +374,16 @@
     <ClCompile Include="..\..\..\src\NroHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\NrrUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\NsoHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\PartitionFsHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\PartitionFsUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\PatchMetaExtendedHeader.cpp">
