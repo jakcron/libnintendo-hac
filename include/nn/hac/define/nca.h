@@ -106,7 +106,8 @@ namespace hac
 		le_uint32_t content_index;
 		le_uint32_t sdk_addon_version;
 		byte_t key_generation_2;
-		byte_t reserved_2[0xf];
+		byte_t signature_key_generation;
+		byte_t reserved_2[0xe];
 		byte_t rights_id[nca::kRightsIdLen];
 		struct sPartitionEntry
 		{
@@ -127,7 +128,8 @@ namespace hac
 		byte_t encryption_type;
 		byte_t reserved_0[3];
 		byte_t hash_superblock[nca::kFsHeaderHashSuperblockLen];
-		byte_t aes_ctr_upper[8];
+		le_uint32_t generation;
+		le_uint32_t secure_value;
 		byte_t reserved_1[0xB8];
 	};
 

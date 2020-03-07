@@ -19,6 +19,7 @@ bool nn::hac::ContentArchiveHeader::operator==(const ContentArchiveHeader & othe
 		&& (mDistributionType == other.mDistributionType) \
 		&& (mContentType == other.mContentType) \
 		&& (mKeyGeneration == other.mKeyGeneration) \
+		&& (mSignatureKeyGeneration == other.mSignatureKeyGeneration) \
 		&& (mKaekIndex == other.mKaekIndex) \
 		&& (mContentSize == other.mContentSize) \
 		&& (mProgramId == other.mProgramId) \
@@ -40,6 +41,7 @@ void nn::hac::ContentArchiveHeader::operator=(const ContentArchiveHeader & other
 	mDistributionType = other.mDistributionType;
 	mContentType = other.mContentType;
 	mKeyGeneration = other.mKeyGeneration;
+	mSignatureKeyGeneration = other.mSignatureKeyGeneration;
 	mKaekIndex = other.mKaekIndex;
 	mContentSize = other.mContentSize;
 	mProgramId = other.mProgramId;
@@ -81,6 +83,7 @@ void nn::hac::ContentArchiveHeader::toBytes()
 		hdr->key_generation = mKeyGeneration;
 		hdr->key_generation_2 = 0;
 	}
+	hdr->signature_key_generation = mSignatureKeyGeneration;
 	hdr->key_area_encryption_key_index = mKaekIndex;
 	hdr->content_size = mContentSize;
 	hdr->program_id = mProgramId;
@@ -132,6 +135,7 @@ void nn::hac::ContentArchiveHeader::fromBytes(const byte_t * data, size_t len)
 	mDistributionType = (nca::DistributionType)hdr->distribution_type;
 	mContentType = (nca::ContentType)hdr->content_type;
 	mKeyGeneration = _MAX(hdr->key_generation, hdr->key_generation_2);
+	mSignatureKeyGeneration = hdr->signature_key_generation;
 	mKaekIndex = hdr->key_area_encryption_key_index;
 	mContentSize = *hdr->content_size;
 	mProgramId = *hdr->program_id;
@@ -208,6 +212,16 @@ byte_t nn::hac::ContentArchiveHeader::getKeyGeneration() const
 void nn::hac::ContentArchiveHeader::setKeyGeneration(byte_t gen)
 {
 	mKeyGeneration = gen;
+}
+
+byte_t nn::hac::ContentArchiveHeader::getSignatureKeyGeneration() const
+{
+	return mSignatureKeyGeneration;
+}
+
+void nn::hac::ContentArchiveHeader::setSignatureKeyGeneration(byte_t gen)
+{
+	mSignatureKeyGeneration = gen;
 }
 
 byte_t nn::hac::ContentArchiveHeader::getKeyAreaEncryptionKeyIndex() const

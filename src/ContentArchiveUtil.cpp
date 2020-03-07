@@ -50,14 +50,31 @@ byte_t nn::hac::ContentArchiveUtil::getMasterKeyRevisionFromKeyGeneration(byte_t
 	return masterkey_rev;
 }
 
-void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(const nn::hac::sNcaFsHeader* hdr, byte_t* ctr)
+void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(const nn::hac::sNcaFsHeader* hdr, byte_t* aes_ctr)
 {
+	getNcaPartitionAesCtr(hdr->generation.get(), hdr->secure_value.get(), aes_ctr);
+}
+
+void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(uint32_t generation, uint32_t secure_value, byte_t* aes_ctr)
+{
+	// hdr->aes_ctr_upper = 00 01 02 03 04 05 06 07
+	// output             = 07 06 05 04 03 02 01 00 
+	// generation = 03020100, secure_value = 07060504
+	be_uint32_t* aes_ctr_words = (be_uint32_t*)aes_ctr;
+	aes_ctr_words[0] = secure_value;
+	aes_ctr_words[1] = generation;
+	aes_ctr_words[2] = 0;
+	aes_ctr_words[3] = 0;
+
+	/*
 	for (size_t i = 0; i < 8; i++)
 	{
 		ctr[7-i] = hdr->aes_ctr_upper[i];
 		ctr[15-i] = 0;
 	}
+	*/
 }
+
 
 std::string nn::hac::ContentArchiveUtil::getFormatVersionAsString(nn::hac::nca::HeaderFormatVersion val)
 {
