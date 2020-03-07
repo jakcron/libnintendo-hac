@@ -9,9 +9,15 @@ namespace hac
 	namespace hierarchicalintegrity
 	{
 		static const uint32_t kStructMagic = _MAKE_STRUCT_MAGIC_U32("IVFC");
-		static const uint32_t kRomfsTypeId = 0x20000;
-		static const size_t kDefaultLayerNum = 6;
+		static const size_t kDefaultLayerNumForRomFs = 6;
 		static const size_t kHeaderAlignLen = 0x20;
+		static const size_t kSaltSourceLen = 0x20;
+
+		enum class TypeId
+		{
+			CTR_RomFs = 0x10000, // Nintendo 3DS
+			HAC_RomFs = 0x20000 // Nintendo Switch
+		};
 	}
 	
 #pragma pack(push,1)
@@ -29,6 +35,13 @@ namespace hac
 		le_uint64_t size;
 		le_uint32_t block_size;
 		byte_t reserved[4];
+	};
+
+	struct sHierarchicalIntegrity
+	{
+		sHierarchicalIntegrityHeader header;
+		sHierarchicalIntegrityLayerInfo layer[hierarchicalintegrity::kDefaultLayerNumForRomFs];
+		byte_t salt_source[hierarchicalintegrity::kSaltSourceLen];
 	};
 #pragma pack(pop)
 }
