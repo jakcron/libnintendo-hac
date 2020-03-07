@@ -13,22 +13,12 @@ namespace hac
 		static const uint32_t kAciDescStructMagic = _MAKE_STRUCT_MAGIC_U32("ACID");
 		static const size_t kSectionAlignSize = 0x10;
 
-		enum AcidFlag
+		enum class MemoryRegion : byte_t
 		{
-			ACIDFLAG_PRODUCTION,
-			ACIDFLAG_UNQUALIFIED_APPROVAL,
-			ACIDFLAG_MEMORY_REGION_RESERVED_BIT0,
-			ACIDFLAG_MEMORY_REGION_RESERVED_BIT1
-		};
-
-		static const uint32_t kAcidFlagMemoryRegionMask = _BIT(ACIDFLAG_MEMORY_REGION_RESERVED_BIT0) | _BIT(ACIDFLAG_MEMORY_REGION_RESERVED_BIT1);
-
-		enum MemoryRegion
-		{
-			MEMREGION_APPLICATION,
-			MEMREGION_APPLET,
-			MEMREGION_SECURE_SYSTEM,
-			MEMREGION_NON_SECURE_SYSTEM
+			Application,
+			Applet,
+			SecureSystem,
+			NonSecureSystem
 		};
 	}
 #pragma pack(push,1)
@@ -37,6 +27,7 @@ namespace hac
 		le_uint32_t offset;
 		le_uint32_t size;
 	};
+	static_assert(sizeof(sAciSection) == 0x8, "sAciSection size"); 
 
 	struct sAciHeader
 	{
@@ -48,6 +39,20 @@ namespace hac
 		sAciSection sac;
 		sAciSection kc;
 	};
+	static_assert(sizeof(sAciHeader) == 0x38, "sAciHeader size"); 
+
+	union sAciDescHeaderFlag
+	{
+		struct 
+		{
+			uint32_t production : 1;
+			uint32_t unqualified_approval : 1;
+			uint32_t memory_region : 2;
+			uint32_t :0; 
+		};
+		uint32_t raw;
+	};
+	static_assert(sizeof(sAciDescHeaderFlag) == 0x4, "sAciDescHeaderFlag size"); 
 
 	struct sAciDescHeader
 	{
@@ -63,6 +68,7 @@ namespace hac
 		sAciSection sac;
 		sAciSection kc;
 	};
+	static_assert(sizeof(sAciDescHeader) == 0x238, "sAciDescHeader size"); 
 #pragma pack(pop)
 }
 }

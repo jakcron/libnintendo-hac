@@ -14,7 +14,8 @@ void nn::hac::AccessControlInfoDesc::operator=(const AccessControlInfoDesc & oth
 {
 	mRawBinary = other.mRawBinary;
 	mContentArchiveHeaderSignature2Key = other.mContentArchiveHeaderSignature2Key;
-	mFlags = other.mFlags;
+	mProductionFlag = other.mProductionFlag;
+	mUnqualifiedApprovalFlag = other.mUnqualifiedApprovalFlag;
 	mMemoryRegion = other.mMemoryRegion;
 	mProgramIdRestrict = other.mProgramIdRestrict;
 	mFileSystemAccessControl = other.mFileSystemAccessControl;
@@ -25,7 +26,8 @@ void nn::hac::AccessControlInfoDesc::operator=(const AccessControlInfoDesc & oth
 bool nn::hac::AccessControlInfoDesc::operator==(const AccessControlInfoDesc & other) const
 {
 	return (mContentArchiveHeaderSignature2Key == other.mContentArchiveHeaderSignature2Key) \
-		&& (mFlags == other.mFlags) \
+		&& (mProductionFlag == other.mProductionFlag) \
+		&& (mUnqualifiedApprovalFlag == other.mUnqualifiedApprovalFlag) \
 		&& (mMemoryRegion == other.mMemoryRegion) \
 		&& (mProgramIdRestrict == other.mProgramIdRestrict) \
 		&& (mFileSystemAccessControl == other.mFileSystemAccessControl) \
@@ -73,18 +75,11 @@ void nn::hac::AccessControlInfoDesc::toBytes()
 	hdr->signed_size = (uint32_t)(total_size - fnd::rsa::kRsa2048Size);
 
 	// set flags
-	uint32_t flags = 0;
-	for (size_t i = 0; i < mFlags.size(); i++)
-		flags |= _BIT(mFlags[i]);
-
-	// clear reserved bits for memory region
-	flags &= ~aci::kAcidFlagMemoryRegionMask;
-
-	// set memory region
-	flags |= (mMemoryRegion << aci::ACIDFLAG_MEMORY_REGION_RESERVED_BIT0) & aci::kAcidFlagMemoryRegionMask;
-	
-	// set flags into header
-	hdr->flags = flags;
+	sAciDescHeaderFlag flags;
+	flags.production = mProductionFlag;
+	flags.unqualified_approval = mUnqualifiedApprovalFlag;
+	flags.memory_region = (byte_t)mMemoryRegion;
+	hdr->flags = flags.raw;
 
 	// set program id restrict settings
 	hdr->program_id_min = mProgramIdRestrict.min;
@@ -142,18 +137,11 @@ void nn::hac::AccessControlInfoDesc::fromBytes(const byte_t* data, size_t len)
 	memcpy(mContentArchiveHeaderSignature2Key.modulus, hdr.nca_rsa_signature2_modulus, fnd::rsa::kRsa2048Size);
 
 	// acid flags
-	for (size_t i = 0; i < 32; i++)
-	{
-		// skip reserved bits
-		if (i == aci::ACIDFLAG_MEMORY_REGION_RESERVED_BIT0 || i == aci::ACIDFLAG_MEMORY_REGION_RESERVED_BIT1)
-			continue;
-
-		if (_HAS_BIT(hdr.flags.get(), i))
-			mFlags.addElement((aci::AcidFlag)i);
-	}
-
-	// memory region (from acid flags)
-	mMemoryRegion = aci::MemoryRegion((hdr.flags.get() & aci::kAcidFlagMemoryRegionMask) >> aci::ACIDFLAG_MEMORY_REGION_RESERVED_BIT0);
+	sAciDescHeaderFlag flags;
+	flags.raw = hdr.flags.get();
+	mProductionFlag = flags.production;
+	mUnqualifiedApprovalFlag = flags.unqualified_approval;
+	mMemoryRegion = aci::MemoryRegion(flags.memory_region);
 
 	// program id
 	mProgramIdRestrict.min = hdr.program_id_min.get();
@@ -202,7 +190,9 @@ void nn::hac::AccessControlInfoDesc::clear()
 {
 	mRawBinary.clear();
 	memset((void*)&mContentArchiveHeaderSignature2Key, 0, sizeof(mContentArchiveHeaderSignature2Key));
-	mFlags.clear();
+	mProductionFlag = false;
+	mUnqualifiedApprovalFlag = false;
+	mMemoryRegion = aci::MemoryRegion::Application;
 	mProgramIdRestrict.min = 0;
 	mProgramIdRestrict.max = 0;
 	mFileSystemAccessControl.clear();
@@ -220,14 +210,24 @@ void nn::hac::AccessControlInfoDesc::setContentArchiveHeaderSignature2Key(const 
 	mContentArchiveHeaderSignature2Key = key;
 }
 
-const fnd::List<nn::hac::aci::AcidFlag>& nn::hac::AccessControlInfoDesc::getFlagList() const
+bool nn::hac::AccessControlInfoDesc::getProductionFlag() const
 {
-	return mFlags;
+	return mProductionFlag;
 }
 
-void nn::hac::AccessControlInfoDesc::setFlagList(const fnd::List<nn::hac::aci::AcidFlag>& flags)
+void nn::hac::AccessControlInfoDesc::setProductionFlag(bool flag)
 {
-	mFlags = flags;
+	mProductionFlag = flag;
+}
+
+bool nn::hac::AccessControlInfoDesc::getUnqualifiedApprovalFlag() const
+{
+	return mUnqualifiedApprovalFlag;
+}
+
+void nn::hac::AccessControlInfoDesc::setUnqualifiedApprovalFlag(bool flag)
+{
+	mUnqualifiedApprovalFlag = flag;
 }
 
 nn::hac::aci::MemoryRegion nn::hac::AccessControlInfoDesc::getMemoryRegion() const

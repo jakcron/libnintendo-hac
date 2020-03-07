@@ -9,7 +9,6 @@ namespace hac
 	class AccessControlInfoUtil
 	{
 	public:
-		static std::string getAcidFlagAsString(nn::hac::aci::AcidFlag flag);
 		static std::string getMemoryRegionAsString(nn::hac::aci::MemoryRegion mem_region);
 
 	private:
