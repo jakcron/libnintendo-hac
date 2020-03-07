@@ -15,32 +15,27 @@ namespace hac
 		static const size_t kSectionAlignSize = 0x10;
 		static const uint32_t kDefaultMainThreadStackSize = 4096;
 
-		enum InstructionType
+		enum class ProcessAddressSpace
 		{
-			INSTR_32BIT,
-			INSTR_64BIT,
-		};
-
-		enum ProcAddrSpaceType
-		{
-			ADDR_SPACE_64BIT = 1,
-			ADDR_SPACE_32BIT,
-			ADDR_SPACE_32BIT_NO_RESERVED,
+			AddressSpace32Bit,
+			AddressSpace64BitOld,
+			AddressSpace32BitNoReserved,
+			AddressSpace64Bit
 		};
 	}
 #pragma pack(push,1)
-	struct sMetaSection
-	{
-		le_uint32_t offset;
-		le_uint32_t size;
-	};
-
 	struct sMetaHeader
 	{
 		le_uint32_t st_magic;
-		byte_t acid_key_generation;
+		byte_t aci_desc_key_generation;
 		byte_t reserved_0[7];
-		byte_t flags;
+		struct sFlag
+		{
+			byte_t is_64bit_instruction : 1;
+			byte_t process_address_space : 3;
+			byte_t optimise_memory_allocation : 1;
+			byte_t :0;
+		} flag;
 		byte_t reserved_1;
 		byte_t main_thread_priority;
 		byte_t main_thread_cpu_id;
@@ -50,10 +45,13 @@ namespace hac
 		char name[meta::kNameMaxLen]; // important
 		char product_code[meta::kProductCodeMaxLen]; // can be empty
 		byte_t reserved_3[48];
-		sMetaSection aci;
-		sMetaSection acid;
+		struct sSection
+		{
+			le_uint32_t offset;
+			le_uint32_t size;
+		} aci, aci_desc;
 	};
-
+	static_assert(sizeof(sMetaHeader) == 0x80, "sMetaHeader size");
 #pragma pack(pop)
 }
 }
