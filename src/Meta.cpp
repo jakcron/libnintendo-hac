@@ -128,7 +128,7 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	}
 
 	// save variables
-	mAcidKeyGeneration = hdr.acid_key_generation.get();
+	mAcidKeyGeneration = hdr.acid_key_generation;
 	byte_t flag = hdr.flags & 0xf;
 	mInstructionType = (meta::InstructionType)(flag & 1);
 	mProcAddressSpaceType = (meta::ProcAddrSpaceType)((flag >> 1) & 3);
@@ -171,6 +171,7 @@ const fnd::Vec<byte_t>& nn::hac::Meta::getBytes() const
 void nn::hac::Meta::clear()
 {
 	mRawBinary.clear();
+	mAcidKeyGeneration = 0;
 	mInstructionType = meta::INSTR_64BIT;
 	mProcAddressSpaceType = meta::ADDR_SPACE_64BIT;
 	mMainThreadPriority = 0;
@@ -183,12 +184,12 @@ void nn::hac::Meta::clear()
 	mAcid.clear();
 }
 
-uint32_t nn::hac::Meta::getAcidKeyGeneration() const
+byte_t nn::hac::Meta::getAcidKeyGeneration() const
 {
 	return mAcidKeyGeneration;
 }
 
-void nn::hac::Meta::setAcidKeyGeneration(uint32_t key_generation)
+void nn::hac::Meta::setAcidKeyGeneration(byte_t key_generation)
 {
 	mAcidKeyGeneration = key_generation;
 }

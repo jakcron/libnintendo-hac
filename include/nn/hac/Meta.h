@@ -29,8 +29,8 @@ namespace hac
 		// variables
 		void clear();
 
-		uint32_t getAcidKeyGeneration() const;
-		void setAcidKeyGeneration(uint32_t key_generation);
+		byte_t getAcidKeyGeneration() const;
+		void setAcidKeyGeneration(byte_t key_generation);
 
 		meta::InstructionType getInstructionType() const;
 		void setInstructionType(meta::InstructionType type);
@@ -68,7 +68,7 @@ namespace hac
 		fnd::Vec<byte_t> mRawBinary;
 
 		// variables
-		uint32_t mAcidKeyGeneration;
+		byte_t mAcidKeyGeneration;
 		meta::InstructionType mInstructionType;
 		meta::ProcAddrSpaceType mProcAddressSpaceType;
 		byte_t mMainThreadPriority;
