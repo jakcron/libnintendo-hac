@@ -182,6 +182,7 @@ std::string nn::hac::ContentArchiveUtil::getFormatTypeAsString(nn::hac::nca::For
 		break;
 	case (nn::hac::nca::FORMAT_PFS0):
 		ss << "PartitionFs";
+		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
 		break;
