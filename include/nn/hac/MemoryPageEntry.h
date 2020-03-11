@@ -39,7 +39,7 @@ namespace hac
 		KernelCapabilityEntry mCap;
 		uint32_t mPage;
 		bool mFlag;
-		bool mUseFlag;
+		bool mMapMultiplePages;
 
 		inline void updateCapField()
 		{
@@ -47,7 +47,7 @@ namespace hac
 			field |= (uint32_t)(mPage & kMaxPage) << 0;
 			field |= (uint32_t)(mFlag) << kPageBits;
 			mCap.setField(field);
-			mCap.setType(mUseFlag ? kc::KC_MEMORY_MAP : kc::KC_IO_MEMORY_MAP);
+			mCap.setType(mMapMultiplePages ? kc::KC_MEMORY_MAP : kc::KC_IO_MEMORY_MAP);
 		}
 
 		inline void processCapField()
@@ -55,7 +55,7 @@ namespace hac
 			uint32_t field = mCap.getField();
 			mPage = (field >> 0) & kMaxPage;
 			mFlag = (field >> kPageBits);
-			mUseFlag = mCap.getType() == kc::KC_MEMORY_MAP;
+			mMapMultiplePages = mCap.getType() == kc::KC_MEMORY_MAP;
 		}
 	};
 }
