@@ -36,16 +36,16 @@ std::string nn::hac::ApplicationControlPropertyUtil::getSaveDataSizeAsString(int
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getAocRegistrationTypeAsString(nn::hac::nacp::AocRegistrationType val)
+std::string nn::hac::ApplicationControlPropertyUtil::getAddOnContentRegistrationTypeAsString(nn::hac::nacp::AddOnContentRegistrationType val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::AOC_AllOnLaunch):
+	case (nn::hac::nacp::AddOnContentRegistrationType::AllOnLaunch):
 		ss << "AllOnLaunch";
 		break;
-	case (nn::hac::nacp::AOC_OnDemand):
+	case (nn::hac::nacp::AddOnContentRegistrationType::OnDemand):
 		ss << "OnDemand";
 		break;
 	default:
@@ -62,13 +62,10 @@ std::string nn::hac::ApplicationControlPropertyUtil::getAttributeFlagAsString(nn
 
 	switch (val)
 	{
-	case (nn::hac::nacp::ATTR_None):
-		ss << "None";
-		break;
-	case (nn::hac::nacp::ATTR_Demo):
+	case (nn::hac::nacp::AttributeFlag::Demo):
 		ss << "Demo";
 		break;
-	case (nn::hac::nacp::ATTR_RetailInteractiveDisplay):
+	case (nn::hac::nacp::AttributeFlag::RetailInteractiveDisplay):
 		ss << "RetailInteractiveDisplay";
 		break;
 	default:
@@ -79,16 +76,16 @@ std::string nn::hac::ApplicationControlPropertyUtil::getAttributeFlagAsString(nn
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getCrashReportModeAsString(nn::hac::nacp::CrashReportMode val)
+std::string nn::hac::ApplicationControlPropertyUtil::getCrashReportAsString(nn::hac::nacp::CrashReport val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::CREP_Deny):
+	case (nn::hac::nacp::CrashReport::Deny):
 		ss << "Deny";
 		break;
-	case (nn::hac::nacp::CREP_Allow):
+	case (nn::hac::nacp::CrashReport::Allow):
 		ss << "Allow";
 		break;
 	default:
@@ -105,10 +102,10 @@ std::string nn::hac::ApplicationControlPropertyUtil::getDataLossConfirmationAsSt
 
 	switch (val)
 	{
-	case (nn::hac::nacp::DLOSS_None):
+	case (nn::hac::nacp::DataLossConfirmation::None):
 		ss << "None";
 		break;
-	case (nn::hac::nacp::DLOSS_Required):
+	case (nn::hac::nacp::DataLossConfirmation::Required):
 		ss << "Required";
 		break;
 	default:
@@ -125,14 +122,31 @@ std::string nn::hac::ApplicationControlPropertyUtil::getHdcpAsString(nn::hac::na
 
 	switch (val)
 	{
-	case (nn::hac::nacp::HDCP_None):
+	case (nn::hac::nacp::Hdcp::None):
 		ss << "None";
 		break;
-	case (nn::hac::nacp::HDCP_Required):
+	case (nn::hac::nacp::Hdcp::Required):
 		ss << "Required";
 		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		break;
+	}
+
+	return ss.str();
+}
+
+std::string nn::hac::ApplicationControlPropertyUtil::getJitConfigurationFlagAsString(nn::hac::nacp::JitConfigurationFlag val)
+{
+	std::stringstream ss;
+
+	switch (val)
+	{
+	case (nn::hac::nacp::JitConfigurationFlag::Enabled):
+		ss << "Enabled";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(8) << std::setfill('0') << (uint64_t)val;
 		break;
 	}
 
@@ -145,49 +159,49 @@ std::string nn::hac::ApplicationControlPropertyUtil::getLanguageAsString(nn::hac
 
 	switch (val)
 	{
-	case (nn::hac::nacp::LANG_AmericanEnglish):
+	case (nn::hac::nacp::Language::AmericanEnglish):
 		ss << "AmericanEnglish";
 		break;
-	case (nn::hac::nacp::LANG_BritishEnglish):
+	case (nn::hac::nacp::Language::BritishEnglish):
 		ss << "BritishEnglish";
 		break;
-	case (nn::hac::nacp::LANG_Japanese):
+	case (nn::hac::nacp::Language::Japanese):
 		ss << "Japanese";
 		break;
-	case (nn::hac::nacp::LANG_French):
+	case (nn::hac::nacp::Language::French):
 		ss << "French";
 		break;
-	case (nn::hac::nacp::LANG_German):
+	case (nn::hac::nacp::Language::German):
 		ss << "German";
 		break;
-	case (nn::hac::nacp::LANG_LatinAmericanSpanish):
+	case (nn::hac::nacp::Language::LatinAmericanSpanish):
 		ss << "LatinAmericanSpanish";
 		break;
-	case (nn::hac::nacp::LANG_Spanish):
+	case (nn::hac::nacp::Language::Spanish):
 		ss << "Spanish";
 		break;
-	case (nn::hac::nacp::LANG_Italian):
+	case (nn::hac::nacp::Language::Italian):
 		ss << "Italian";
 		break;
-	case (nn::hac::nacp::LANG_Dutch):
+	case (nn::hac::nacp::Language::Dutch):
 		ss << "Dutch";
 		break;
-	case (nn::hac::nacp::LANG_CanadianFrench):
+	case (nn::hac::nacp::Language::CanadianFrench):
 		ss << "CanadianFrench";
 		break;
-	case (nn::hac::nacp::LANG_Portuguese):
+	case (nn::hac::nacp::Language::Portuguese):
 		ss << "Portuguese";
 		break;
-	case (nn::hac::nacp::LANG_Russian):
+	case (nn::hac::nacp::Language::Russian):
 		ss << "Russian";
 		break;
-	case (nn::hac::nacp::LANG_Korean):
+	case (nn::hac::nacp::Language::Korean):
 		ss << "Korean";
 		break;
-	case (nn::hac::nacp::LANG_TraditionalChinese):
+	case (nn::hac::nacp::Language::TraditionalChinese):
 		ss << "TraditionalChinese";
 		break;
-	case (nn::hac::nacp::LANG_SimplifiedChinese):
+	case (nn::hac::nacp::Language::SimplifiedChinese):
 		ss << "SimplifiedChinese";
 		break;
 	default:
@@ -204,10 +218,10 @@ std::string nn::hac::ApplicationControlPropertyUtil::getLogoHandlingAsString(nn:
 
 	switch (val)
 	{
-	case (nn::hac::nacp::LHND_Auto):
+	case (nn::hac::nacp::LogoHandling::Auto):
 		ss << "Auto";
 		break;
-	case (nn::hac::nacp::LHND_None):
+	case (nn::hac::nacp::LogoHandling::None):
 		ss << "None";
 		break;
 	default:
@@ -224,13 +238,13 @@ std::string nn::hac::ApplicationControlPropertyUtil::getLogoTypeAsString(nn::hac
 
 	switch (val)
 	{
-	case (nn::hac::nacp::LOGO_LicensedByNintendo):
+	case (nn::hac::nacp::LogoType::LicensedByNintendo):
 		ss << "LicensedByNintendo";
 		break;
-	case (nn::hac::nacp::LOGO_DistributedByNintendo):
+	case (nn::hac::nacp::LogoType::DistributedByNintendo):
 		ss << "DistributedByNintendo";
 		break;
-	case (nn::hac::nacp::LOGO_Nintendo):
+	case (nn::hac::nacp::LogoType::Nintendo):
 		ss << "Nintendo";
 		break;
 	default:
@@ -247,43 +261,43 @@ std::string nn::hac::ApplicationControlPropertyUtil::getOrganisationAsString(nn:
 
 	switch (val)
 	{
-	case (nn::hac::nacp::ORGN_CERO):
+	case (nn::hac::nacp::Organisation::CERO):
 		ss << "CERO";
 		break;
-	case (nn::hac::nacp::ORGN_GRACGCRB):
+	case (nn::hac::nacp::Organisation::GRACGCRB):
 		ss << "GRACGCRB";
 		break;
-	case (nn::hac::nacp::ORGN_GSRMR):
+	case (nn::hac::nacp::Organisation::GSRMR):
 		ss << "GSRMR";
 		break;
-	case (nn::hac::nacp::ORGN_ESRB):
+	case (nn::hac::nacp::Organisation::ESRB):
 		ss << "ESRB";
 		break;
-	case (nn::hac::nacp::ORGN_ClassInd):
+	case (nn::hac::nacp::Organisation::ClassInd):
 		ss << "ClassInd";
 		break;
-	case (nn::hac::nacp::ORGN_USK):
+	case (nn::hac::nacp::Organisation::USK):
 		ss << "USK";
 		break;
-	case (nn::hac::nacp::ORGN_PEGI):
+	case (nn::hac::nacp::Organisation::PEGI):
 		ss << "PEGI";
 		break;
-	case (nn::hac::nacp::ORGN_PEGIPortugal):
+	case (nn::hac::nacp::Organisation::PEGIPortugal):
 		ss << "PEGIPortugal";
 		break;
-	case (nn::hac::nacp::ORGN_PEGIBBFC):
+	case (nn::hac::nacp::Organisation::PEGIBBFC):
 		ss << "PEGIBBFC";
 		break;
-	case (nn::hac::nacp::ORGN_Russian):
+	case (nn::hac::nacp::Organisation::Russian):
 		ss << "Russian";
 		break;
-	case (nn::hac::nacp::ORGN_ACB):
+	case (nn::hac::nacp::Organisation::ACB):
 		ss << "ACB";
 		break;
-	case (nn::hac::nacp::ORGN_OFLC):
+	case (nn::hac::nacp::Organisation::OFLC):
 		ss << "OFLC";
 		break;
-	case (nn::hac::nacp::ORGN_IARCGeneric):
+	case (nn::hac::nacp::Organisation::IARCGeneric):
 		ss << "IARCGeneric";
 		break;
 	default:
@@ -300,10 +314,7 @@ std::string nn::hac::ApplicationControlPropertyUtil::getParentalControlFlagAsStr
 
 	switch (val)
 	{
-	case (nn::hac::nacp::PC_None):
-		ss << "None";
-		break;
-	case (nn::hac::nacp::PC_FreeCommunication):
+	case (nn::hac::nacp::ParentalControlFlag::FreeCommunication):
 		ss << "FreeCommunication";
 		break;
 	default:
@@ -320,13 +331,13 @@ std::string nn::hac::ApplicationControlPropertyUtil::getPlayLogPolicyAsString(nn
 
 	switch (val)
 	{
-	case (nn::hac::nacp::PLP_All):
+	case (nn::hac::nacp::PlayLogPolicy::All):
 		ss << "All";
 		break;
-	case (nn::hac::nacp::PLP_LogOnly):
+	case (nn::hac::nacp::PlayLogPolicy::LogOnly):
 		ss << "LogOnly";
 		break;
-	case (nn::hac::nacp::PLP_None):
+	case (nn::hac::nacp::PlayLogPolicy::None):
 		ss << "None";
 		break;
 	default:
@@ -343,13 +354,13 @@ std::string nn::hac::ApplicationControlPropertyUtil::getPlayLogQueryCapabilityAs
 
 	switch (val)
 	{
-	case (nn::hac::nacp::PLQC_None):
+	case (nn::hac::nacp::PlayLogQueryCapability::None):
 		ss << "None";
 		break;
-	case (nn::hac::nacp::PLQC_Whitelist):
+	case (nn::hac::nacp::PlayLogQueryCapability::Whitelist):
 		ss << "Whitelist";
 		break;
-	case (nn::hac::nacp::PLQC_All):
+	case (nn::hac::nacp::PlayLogQueryCapability::All):
 		ss << "All";
 		break;
 	default:
@@ -366,10 +377,7 @@ std::string nn::hac::ApplicationControlPropertyUtil::getRepairFlagAsString(nn::h
 
 	switch (val)
 	{
-	case (nn::hac::nacp::REPF_None):
-		ss << "None";
-		break;
-	case (nn::hac::nacp::REPF_SuppressGameCardAccess):
+	case (nn::hac::nacp::RepairFlag::SuppressGameCardAccess):
 		ss << "SuppressGameCardAccess";
 		break;
 	default:
@@ -380,16 +388,13 @@ std::string nn::hac::ApplicationControlPropertyUtil::getRepairFlagAsString(nn::h
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getRequiredNetworkServiceLicenseOnLaunchValueAsString(nn::hac::nacp::RequiredNetworkServiceLicenseOnLaunchValue val)
+std::string nn::hac::ApplicationControlPropertyUtil::getRequiredNetworkServiceLicenseOnLaunchFlagAsString(nn::hac::nacp::RequiredNetworkServiceLicenseOnLaunchFlag val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::REQNETLIC_None):
-		ss << "None";
-		break;
-	case (nn::hac::nacp::REQNETLIC_Common):
+	case (nn::hac::nacp::RequiredNetworkServiceLicenseOnLaunchFlag::Common):
 		ss << "Common";
 		break;
 	default:
@@ -400,16 +405,16 @@ std::string nn::hac::ApplicationControlPropertyUtil::getRequiredNetworkServiceLi
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getRuntimeAocInstallModeAsString(nn::hac::nacp::RuntimeAocInstallMode val)
+std::string nn::hac::ApplicationControlPropertyUtil::getRuntimeAddOnContentInstallAsString(nn::hac::nacp::RuntimeAddOnContentInstall val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::RTAOC_Deny):
+	case (nn::hac::nacp::RuntimeAddOnContentInstall::Deny):
 		ss << "Deny";
 		break;
-	case (nn::hac::nacp::RTAOC_AllowAppend):
+	case (nn::hac::nacp::RuntimeAddOnContentInstall::AllowAppend):
 		ss << "AllowAppend";
 		break;
 	default:
@@ -420,17 +425,57 @@ std::string nn::hac::ApplicationControlPropertyUtil::getRuntimeAocInstallModeAsS
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getScreenshotModeAsString(nn::hac::nacp::ScreenshotMode val)
+std::string nn::hac::ApplicationControlPropertyUtil::getRuntimeParameterDeliveryAsString(nn::hac::nacp::RuntimeParameterDelivery val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::SCRN_Allow):
+	case (nn::hac::nacp::RuntimeParameterDelivery::Always):
+		ss << "Always";
+		break;
+	case (nn::hac::nacp::RuntimeParameterDelivery::AlwaysIfUserStateMatched):
+		ss << "AlwaysIfUserStateMatched";
+		break;
+	case (nn::hac::nacp::RuntimeParameterDelivery::OnRestart):
+		ss << "OnRestart";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		break;
+	}
+
+	return ss.str();
+}
+
+std::string nn::hac::ApplicationControlPropertyUtil::getScreenshotAsString(nn::hac::nacp::Screenshot val)
+{
+	std::stringstream ss;
+
+	switch (val)
+	{
+	case (nn::hac::nacp::Screenshot::Allow):
 		ss << "Allow";
 		break;
-	case (nn::hac::nacp::SCRN_Deny):
+	case (nn::hac::nacp::Screenshot::Deny):
 		ss << "Deny";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		break;
+	}
+
+	return ss.str();
+}
+
+std::string nn::hac::ApplicationControlPropertyUtil::getStartupUserAccountOptionFlagAsString(nn::hac::nacp::StartupUserAccountOptionFlag val)
+{
+	std::stringstream ss;
+
+	switch (val)
+	{
+	case (nn::hac::nacp::StartupUserAccountOptionFlag::IsOptional):
+		ss << "IsOptional";
 		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
@@ -446,13 +491,13 @@ std::string nn::hac::ApplicationControlPropertyUtil::getStartupUserAccountAsStri
 
 	switch (val)
 	{
-	case (nn::hac::nacp::USER_None):
+	case (nn::hac::nacp::StartupUserAccount::None):
 		ss << "None";
 		break;
-	case (nn::hac::nacp::USER_Required):
+	case (nn::hac::nacp::StartupUserAccount::Required):
 		ss << "Required";
 		break;
-	case (nn::hac::nacp::USER_RequiredWithNetworkServiceAccountAvailable):
+	case (nn::hac::nacp::StartupUserAccount::RequiredWithNetworkServiceAccountAvailable):
 		ss << "RequiredWithNetworkServiceAccountAvailable";
 		break;
 	default:
@@ -463,19 +508,19 @@ std::string nn::hac::ApplicationControlPropertyUtil::getStartupUserAccountAsStri
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getTouchScreenUsageModeAsString(nn::hac::nacp::TouchScreenUsageMode val)
+std::string nn::hac::ApplicationControlPropertyUtil::getTouchScreenUsageAsString(nn::hac::nacp::TouchScreenUsage val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::TOUCH_None):
+	case (nn::hac::nacp::TouchScreenUsage::None):
 		ss << "None";
 		break;
-	case (nn::hac::nacp::TOUCH_Supported):
+	case (nn::hac::nacp::TouchScreenUsage::Supported):
 		ss << "Supported";
 		break;
-	case (nn::hac::nacp::TOUCH_Required):
+	case (nn::hac::nacp::TouchScreenUsage::Required):
 		ss << "Required";
 		break;
 	default:
@@ -486,16 +531,16 @@ std::string nn::hac::ApplicationControlPropertyUtil::getTouchScreenUsageModeAsSt
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getUserAccountSwitchLockValueAsString(nn::hac::nacp::UserAccountSwitchLockValue val)
+std::string nn::hac::ApplicationControlPropertyUtil::getUserAccountSwitchLockAsString(nn::hac::nacp::UserAccountSwitchLock val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::UASL_Disable):
+	case (nn::hac::nacp::UserAccountSwitchLock::Disable):
 		ss << "Disable";
 		break;
-	case (nn::hac::nacp::UASL_Enable):
+	case (nn::hac::nacp::UserAccountSwitchLock::Enable):
 		ss << "Enable";
 		break;
 	default:
@@ -506,19 +551,19 @@ std::string nn::hac::ApplicationControlPropertyUtil::getUserAccountSwitchLockVal
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getVideoCaptureModeAsString(nn::hac::nacp::VideoCaptureMode val)
+std::string nn::hac::ApplicationControlPropertyUtil::getVideoCaptureAsString(nn::hac::nacp::VideoCapture val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::VCAP_Disable):
+	case (nn::hac::nacp::VideoCapture::Disable):
 		ss << "Disable";
 		break;
-	case (nn::hac::nacp::VCAP_Manual):
+	case (nn::hac::nacp::VideoCapture::Manual):
 		ss << "Manual";
 		break;
-	case (nn::hac::nacp::VCAP_Enable):
+	case (nn::hac::nacp::VideoCapture::Enable):
 		ss << "Enable";
 		break;
 	default:

@@ -85,6 +85,135 @@ namespace hac
 			}
 		};
 
+		struct sNeighborDetectionClientConfiguration
+		{
+			struct sGroupConfiguration
+			{
+				uint64_t group_id;
+				byte_t key[nacp::kNeighborDetectionGroupConfigurationKeyLength];
+
+				sGroupConfiguration() :
+					group_id(0)
+				{
+					memset(key, 0, nacp::kNeighborDetectionGroupConfigurationKeyLength);
+				}
+
+				sGroupConfiguration& operator=(const sGroupConfiguration& other)
+				{
+					group_id = other.group_id;
+					memcpy(key, other.key, nacp::kNeighborDetectionGroupConfigurationKeyLength);
+
+					return *this;
+				}
+
+				bool operator==(const sGroupConfiguration& other) const
+				{
+					return group_id == other.group_id \
+						&& memcmp(key, other.key, nacp::kNeighborDetectionGroupConfigurationKeyLength) == 0;
+				}
+
+				bool operator!=(const sGroupConfiguration& other) const
+				{
+					return !operator==(other);
+				}
+
+				bool isNull() const
+				{
+					auto null_data = sGroupConfiguration();
+
+					return *this == null_data;
+				}
+			};
+
+			sGroupConfiguration send_data_configuration;
+			sGroupConfiguration receivable_data_configuration[nacp::kReceivableGroupConfigurationCount];
+
+			size_t countSendGroupConfig() const
+			{
+				return send_data_configuration.isNull() ? 0 : 1;
+			}
+
+			size_t countReceivableGroupConfig() const
+			{
+				size_t not_null_count = 0;
+
+				for (size_t i = 0; i < nacp::kReceivableGroupConfigurationCount; i++)
+				{
+					if (receivable_data_configuration[i].isNull() == false)
+						not_null_count++;
+				}
+
+				return not_null_count;
+			}
+
+			sNeighborDetectionClientConfiguration() :
+				send_data_configuration(),
+				receivable_data_configuration()
+			{
+			}
+
+			sNeighborDetectionClientConfiguration& operator=(const sNeighborDetectionClientConfiguration& other)
+			{
+				send_data_configuration = other.send_data_configuration;
+				for (size_t i = 0; i < nacp::kReceivableGroupConfigurationCount; i++)
+				{
+					receivable_data_configuration[i] = other.receivable_data_configuration[i];
+				}
+
+				return *this;
+			}
+
+			bool operator==(const sNeighborDetectionClientConfiguration& other) const
+			{
+				size_t recv_data_match_count = 0;
+
+				for (size_t i = 0; i < nacp::kReceivableGroupConfigurationCount; i++)
+				{
+					if (receivable_data_configuration[i] == other.receivable_data_configuration[i])
+						recv_data_match_count++;
+				}
+
+				return send_data_configuration == other.send_data_configuration \
+					&& recv_data_match_count == nacp::kReceivableGroupConfigurationCount;
+			}
+
+			bool operator!=(const sNeighborDetectionClientConfiguration& other) const
+			{
+				return !operator==(other);
+			}
+		};
+
+		struct sJitConfiguration
+		{
+			bool is_enabled;
+			uint64_t memory_size;
+
+			sJitConfiguration() :
+				is_enabled(false),
+				memory_size(0)
+			{
+			}
+
+			sJitConfiguration& operator=(const sJitConfiguration& other)
+			{
+				is_enabled = other.is_enabled;
+				memory_size = other.memory_size;
+
+				return *this;
+			}
+
+			bool operator==(const sJitConfiguration& other) const
+			{
+				return is_enabled == other.is_enabled \
+					&& memory_size == other.memory_size;
+			}
+
+			bool operator!=(const sJitConfiguration& other) const
+			{
+				return !operator==(other);
+			}
+		};
+
 		ApplicationControlProperty();
 		ApplicationControlProperty(const ApplicationControlProperty& other);
 
@@ -109,26 +238,26 @@ namespace hac
 		nacp::StartupUserAccount getStartupUserAccount() const;
 		void setStartupUserAccount(nacp::StartupUserAccount var);
 
-		nacp::UserAccountSwitchLockValue getUserAccountSwitchLockValue() const;
-		void setUserAccountSwitchLockValue(nacp::UserAccountSwitchLockValue var);
+		nacp::UserAccountSwitchLock getUserAccountSwitchLock() const;
+		void setUserAccountSwitchLock(nacp::UserAccountSwitchLock var);
 
-		nacp::AocRegistrationType getAocRegistrationType() const;
-		void setAocRegistrationType(nacp::AocRegistrationType var);
+		nacp::AddOnContentRegistrationType getAddOnContentRegistrationType() const;
+		void setAddOnContentRegistrationType(nacp::AddOnContentRegistrationType var);
 
-		nacp::AttributeFlag getAttributeFlag() const;
-		void setAttributeFlag(nacp::AttributeFlag var);
+		const fnd::List<nacp::AttributeFlag>& getAttribute() const;
+		void setAttribute(const fnd::List<nacp::AttributeFlag>& var);
 
-		const fnd::List<nacp::Language>& getSupportedLanguages() const;
-		void setSupportedLanguages(const fnd::List<nacp::Language>& var);
+		const fnd::List<nacp::Language>& getSupportedLanguage() const;
+		void setSupportedLanguage(const fnd::List<nacp::Language>& var);
 
-		nacp::ParentalControlFlag getParentalControlFlag() const;
-		void setParentalControlFlag(nacp::ParentalControlFlag var);
+		const fnd::List<nacp::ParentalControlFlag>& getParentalControl() const;
+		void setParentalControl(const fnd::List<nacp::ParentalControlFlag>& var);
 
-		nacp::ScreenshotMode getScreenshotMode() const;
-		void setScreenshotMode(nacp::ScreenshotMode var);
+		nacp::Screenshot getScreenshot() const;
+		void setScreenshot(nacp::Screenshot var);
 
-		nacp::VideoCaptureMode getVideoCaptureMode() const;
-		void setVideoCaptureMode(nacp::VideoCaptureMode var);
+		nacp::VideoCapture getVideoCapture() const;
+		void setVideoCapture(nacp::VideoCapture var);
 
 		nacp::DataLossConfirmation getDataLossConfirmation() const;
 		void setDataLossConfirmation(nacp::DataLossConfirmation var);
@@ -145,8 +274,8 @@ namespace hac
 		const std::string& getDisplayVersion() const;
 		void setDisplayVersion(const std::string& var);
 
-		uint64_t getAocBaseId() const;
-		void setAocBaseId(uint64_t var);
+		uint64_t getAddOnContentBaseId() const;
+		void setAddOnContentBaseId(uint64_t var);
 
 		uint64_t getSaveDatawOwnerId() const;
 		void setSaveDatawOwnerId(uint64_t var);
@@ -172,11 +301,14 @@ namespace hac
 		nacp::LogoHandling getLogoHandling() const;
 		void setLogoHandling(nacp::LogoHandling var);
 
-		nacp::RuntimeAocInstallMode getRuntimeAocInstallMode() const;
-		void setRuntimeAocInstallMode(nacp::RuntimeAocInstallMode var);
+		nacp::RuntimeAddOnContentInstall getRuntimeAddOnContentInstall() const;
+		void setRuntimeAddOnContentInstall(nacp::RuntimeAddOnContentInstall var);
 
-		nacp::CrashReportMode getCrashReportMode() const;
-		void setCrashReportMode(nacp::CrashReportMode var);
+		nacp::RuntimeParameterDelivery getRuntimeParameterDelivery() const;
+		void setRuntimeParameterDelivery(nacp::RuntimeParameterDelivery var);
+
+		nacp::CrashReport getCrashReport() const;
+		void setCrashReport(nacp::CrashReport var);
 
 		nacp::Hdcp getHdcp() const;
 		void setHdcp(nacp::Hdcp var);
@@ -186,6 +318,9 @@ namespace hac
 
 		const std::string& getBcatPassphase() const;
 		void setBcatPassphase(const std::string& var);
+
+		const fnd::List<nacp::StartupUserAccountOptionFlag>& getStartupUserAccountOption() const;
+		void setStartupUserAccountOption(const fnd::List<nacp::StartupUserAccountOptionFlag>& var);
 
 		const sStorageSize& getUserAccountSaveDataMax() const;
 		void setUserAccountSaveDataMax(const sStorageSize& var);
@@ -211,14 +346,20 @@ namespace hac
 		nacp::PlayLogQueryCapability getPlayLogQueryCapability() const;
 		void setPlayLogQueryCapability(nacp::PlayLogQueryCapability var);
 
-		nacp::RepairFlag getRepairFlag() const;
-		void setRepairFlag(nacp::RepairFlag var);
+		const fnd::List<nacp::RepairFlag>& getRepair() const;
+		void setRepair(const fnd::List<nacp::RepairFlag>& var);
 
 		byte_t getProgramIndex() const;
 		void setProgramIndex(byte_t var);
 
-		nacp::RequiredNetworkServiceLicenseOnLaunchValue getRequiredNetworkServiceLicenseOnLaunchValue() const;
-		void setRequiredNetworkServiceLicenseOnLaunchValue(nacp::RequiredNetworkServiceLicenseOnLaunchValue var);
+		const fnd::List<nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& getRequiredNetworkServiceLicenseOnLaunch() const;
+		void setRequiredNetworkServiceLicenseOnLaunch(const fnd::List<nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& var);
+
+		const sNeighborDetectionClientConfiguration& getNeighborDetectionClientConfiguration() const;
+		void setNeighborDetectionClientConfiguration(const sNeighborDetectionClientConfiguration& var);
+
+		const sJitConfiguration& getJitConfiguration() const;
+		void setJitConfiguration(const sJitConfiguration& var);
 
 	private:
 		const std::string kModuleName = "APPLICATION_CONTROL_PROPERTY";
@@ -230,19 +371,19 @@ namespace hac
 		fnd::List<sTitle> mTitle;
 		std::string mIsbn;
 		nacp::StartupUserAccount mStartupUserAccount;
-		nacp::UserAccountSwitchLockValue mUserAccountSwitchLockValue;
-		nacp::AocRegistrationType mAocRegistrationType;
-		nacp::AttributeFlag mAttributeFlag;
-		fnd::List<nn::hac::nacp::Language> mSupportedLanguages;
-		nacp::ParentalControlFlag mParentalControlFlag;
-		nacp::ScreenshotMode mScreenshotMode;
-		nacp::VideoCaptureMode mVideoCaptureMode;
+		nacp::UserAccountSwitchLock mUserAccountSwitchLock;
+		nacp::AddOnContentRegistrationType mAddOnContentRegistrationType;
+		fnd::List<nacp::AttributeFlag> mAttribute;
+		fnd::List<nn::hac::nacp::Language> mSupportedLanguage;
+		fnd::List<nacp::ParentalControlFlag> mParentalControl;
+		nacp::Screenshot mScreenshot;
+		nacp::VideoCapture mVideoCapture;
 		nacp::DataLossConfirmation mDataLossConfirmation;
 		nacp::PlayLogPolicy mPlayLogPolicy;
 		uint64_t mPresenceGroupId;
 		fnd::List<sRating> mRatingAge;
 		std::string mDisplayVersion;
-		uint64_t mAocBaseId;
+		uint64_t mAddOnContentBaseId;
 		uint64_t mSaveDatawOwnerId;
 		sStorageSize mUserAccountSaveDataSize;
 		sStorageSize mDeviceSaveDataSize;
@@ -251,11 +392,13 @@ namespace hac
 		fnd::List<uint64_t> mLocalCommunicationId;
 		nacp::LogoType mLogoType;
 		nacp::LogoHandling mLogoHandling;
-		nacp::RuntimeAocInstallMode mRuntimeAocInstallMode;
-		nacp::CrashReportMode mCrashReportMode;
+		nacp::RuntimeAddOnContentInstall mRuntimeAddOnContentInstall;
+		nacp::RuntimeParameterDelivery mRuntimeParameterDelivery;
+		nacp::CrashReport mCrashReport;
 		nacp::Hdcp mHdcp;
 		uint64_t mSeedForPsuedoDeviceId;
 		std::string mBcatPassphase;
+		fnd::List<nacp::StartupUserAccountOptionFlag> mStartupUserAccountOption;
 		sStorageSize mUserAccountSaveDataMax;
 		sStorageSize mDeviceSaveDataMax;
 		int64_t mTemporaryStorageSize;
@@ -264,9 +407,14 @@ namespace hac
 		uint16_t mCacheStorageIndexMax;
 		fnd::List<uint64_t> mPlayLogQueryableApplicationId;
 		nacp::PlayLogQueryCapability mPlayLogQueryCapability;
-		nacp::RepairFlag mRepairFlag;
+		fnd::List<nacp::RepairFlag> mRepair;
 		byte_t mProgramIndex;
-		nacp::RequiredNetworkServiceLicenseOnLaunchValue mRequiredNetworkServiceLicenseOnLaunchValue;
+		fnd::List<nacp::RequiredNetworkServiceLicenseOnLaunchFlag> mRequiredNetworkServiceLicenseOnLaunch;
+		sNeighborDetectionClientConfiguration mNeighborDetectionClientConfiguration;
+		sJitConfiguration mJitConfiguration;
+
+		void serialiseGroupConfig(const sNeighborDetectionClientConfiguration::sGroupConfiguration& logical, sApplicationControlProperty::sNeighborDetectionClientConfiguration::sGroupConfiguration& serialised);
+		void parseGroupConfig(const sApplicationControlProperty::sNeighborDetectionClientConfiguration::sGroupConfiguration& serialised, sNeighborDetectionClientConfiguration::sGroupConfiguration& logical);
 	};
 }
 }
