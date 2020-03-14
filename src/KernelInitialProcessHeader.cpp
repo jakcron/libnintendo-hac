@@ -59,9 +59,6 @@ void nn::hac::KernelInitialProcessHeader::toBytes()
 
 	// set header identifers
 	hdr->st_magic = kip::kKipStructMagic;
-	
-	// variable to store flags before commiting to header
-	byte_t flags = 0;
 
 	// properties
 	strncpy(hdr->name, mName.c_str(), kip::kNameMaxLen);
