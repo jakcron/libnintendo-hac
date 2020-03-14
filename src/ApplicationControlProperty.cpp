@@ -30,7 +30,7 @@ void nn::hac::ApplicationControlProperty::operator=(const ApplicationControlProp
 	mRatingAge = other.mRatingAge;
 	mDisplayVersion = other.mDisplayVersion;
 	mAddOnContentBaseId = other.mAddOnContentBaseId;
-	mSaveDatawOwnerId = other.mSaveDatawOwnerId;
+	mSaveDataOwnerId = other.mSaveDataOwnerId;
 	mUserAccountSaveDataSize = other.mUserAccountSaveDataSize;
 	mDeviceSaveDataSize = other.mDeviceSaveDataSize;
 	mBcatDeliveryCacheStorageSize = other.mBcatDeliveryCacheStorageSize;
@@ -78,7 +78,7 @@ bool nn::hac::ApplicationControlProperty::operator==(const ApplicationControlPro
 		&& (mRatingAge == other.mRatingAge) \
 		&& (mDisplayVersion == other.mDisplayVersion) \
 		&& (mAddOnContentBaseId == other.mAddOnContentBaseId) \
-		&& (mSaveDatawOwnerId == other.mSaveDatawOwnerId) \
+		&& (mSaveDataOwnerId == other.mSaveDataOwnerId) \
 		&& (mUserAccountSaveDataSize == other.mUserAccountSaveDataSize) \
 		&& (mDeviceSaveDataSize == other.mDeviceSaveDataSize) \
 		&& (mBcatDeliveryCacheStorageSize == other.mBcatDeliveryCacheStorageSize) \
@@ -200,7 +200,7 @@ void nn::hac::ApplicationControlProperty::toBytes()
 		nacp->rating_age[(byte_t)mRatingAge[i].organisation] = mRatingAge[i].age;
 	}
 	nacp->add_on_content_base_id = mAddOnContentBaseId;
-	nacp->save_data_owner_id = mSaveDatawOwnerId;
+	nacp->save_data_owner_id = mSaveDataOwnerId;
 	for (size_t i = 0; i < mLocalCommunicationId.size() && i < nacp::kLocalCommunicationIdCount; i++)
 	{
 		nacp->local_communication_id[i] = mLocalCommunicationId[i];
@@ -262,11 +262,11 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	{
 		if (_HAS_BIT(nacp->supported_language_flag.get(), i))
 		{
-			mSupportedLanguage.addElement(nacp::Language(i));
+			mSupportedLanguage.push_back(nacp::Language(i));
 		}
 		if (nacp->title[i].name[0] != '\0' && nacp->title[i].publisher[0] != '\0')
 		{
-			mTitle.addElement({ nacp::Language(i), std::string(nacp->title[i].name, _MIN(strlen(nacp->title[i].name), nacp::kNameLength)), std::string(nacp->title[i].publisher, _MIN(strlen(nacp->title[i].publisher), nacp::kPublisherLength)) });
+			mTitle.push_back({ nacp::Language(i), std::string(nacp->title[i].name, _MIN(strlen(nacp->title[i].name), nacp::kNameLength)), std::string(nacp->title[i].publisher, _MIN(strlen(nacp->title[i].publisher), nacp::kPublisherLength)) });
 		}
 	}
 
@@ -284,28 +284,28 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	{
 		if (_HAS_BIT(nacp->attribute_flag.get(), i))
 		{
-			mAttribute.addElement(nacp::AttributeFlag(i));
+			mAttribute.push_back(nacp::AttributeFlag(i));
 		}
 	}
 	for (size_t i = 0; i < sizeof(uint32_t) * 8; i++)
 	{
 		if (_HAS_BIT(nacp->parental_control_flag.get(), i))
 		{
-			mParentalControl.addElement(nacp::ParentalControlFlag(i));
+			mParentalControl.push_back(nacp::ParentalControlFlag(i));
 		}
 	}
 	for (size_t i = 0; i < sizeof(byte_t) * 8; i++)
 	{
 		if (_HAS_BIT(nacp->startup_user_account_option, i))
 		{
-			mStartupUserAccountOption.addElement(nacp::StartupUserAccountOptionFlag(i));
+			mStartupUserAccountOption.push_back(nacp::StartupUserAccountOptionFlag(i));
 		}
 	}
 	for (size_t i = 0; i < sizeof(byte_t) * 8; i++)
 	{
 		if (_HAS_BIT(nacp->repair_flag, i))
 		{
-			mRepair.addElement(nacp::RepairFlag(i));
+			mRepair.push_back(nacp::RepairFlag(i));
 		}
 	}
 
@@ -313,7 +313,7 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	{
 		if (_HAS_BIT(nacp->required_network_service_license_on_launch_flag, i))
 		{
-			mRequiredNetworkServiceLicenseOnLaunch.addElement(nacp::RequiredNetworkServiceLicenseOnLaunchFlag(i));
+			mRequiredNetworkServiceLicenseOnLaunch.push_back(nacp::RequiredNetworkServiceLicenseOnLaunchFlag(i));
 		}
 	}
 	// enum type casts
@@ -337,20 +337,20 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	for (size_t i = 0; i < nacp::kRatingAgeCount; i++)
 	{
 		if (nacp->rating_age[i] != nacp::kUnusedAgeRating)
-			mRatingAge.addElement({nacp::Organisation(i), nacp->rating_age[i]});
+			mRatingAge.push_back({nacp::Organisation(i), nacp->rating_age[i]});
 	}
 	mAddOnContentBaseId = nacp->add_on_content_base_id.get();
-	mSaveDatawOwnerId = nacp->save_data_owner_id.get();
+	mSaveDataOwnerId = nacp->save_data_owner_id.get();
 	for (size_t i = 0; i < nacp::kLocalCommunicationIdCount; i++)
 	{
 		if (nacp->local_communication_id[i].get() != 0)
-			mLocalCommunicationId.addElement(nacp->local_communication_id[i].get());
+			mLocalCommunicationId.push_back(nacp->local_communication_id[i].get());
 	}
 	mSeedForPsuedoDeviceId = nacp->seed_for_pseudo_device_id.get();
 	for (size_t i = 0; i < nacp::kPlayLogQueryableApplicationIdCount; i++)
 	{
 		if (nacp->play_log_queryable_application_id[i].get() != 0)
-			mPlayLogQueryableApplicationId.addElement(nacp->play_log_queryable_application_id[i].get());
+			mPlayLogQueryableApplicationId.push_back(nacp->play_log_queryable_application_id[i].get());
 	}
 	mCacheStorageIndexMax = nacp->cache_storage_index_max.get();
 	mProgramIndex = nacp->program_index;
@@ -406,7 +406,7 @@ void nn::hac::ApplicationControlProperty::clear()
 	mRatingAge.clear();
 	mDisplayVersion.clear();
 	mAddOnContentBaseId = 0;
-	mSaveDatawOwnerId = 0;
+	mSaveDataOwnerId = 0;
 	mUserAccountSaveDataSize = {0, 0};
 	mDeviceSaveDataSize = {0, 0};
 	mBcatDeliveryCacheStorageSize = 0;
@@ -435,12 +435,12 @@ void nn::hac::ApplicationControlProperty::clear()
 	mJitConfiguration = sJitConfiguration();
 }
 
-const fnd::List<nn::hac::ApplicationControlProperty::sTitle>& nn::hac::ApplicationControlProperty::getTitle() const
+const std::vector<nn::hac::ApplicationControlProperty::sTitle>& nn::hac::ApplicationControlProperty::getTitle() const
 {
 	return mTitle;
 }
 
-void nn::hac::ApplicationControlProperty::setTitle(const fnd::List<sTitle>& title)
+void nn::hac::ApplicationControlProperty::setTitle(const std::vector<sTitle>& title)
 {
 	mTitle = title;
 }
@@ -485,32 +485,32 @@ void nn::hac::ApplicationControlProperty::setAddOnContentRegistrationType(nacp::
 	mAddOnContentRegistrationType = var;
 }
 
-const fnd::List<nn::hac::nacp::AttributeFlag>& nn::hac::ApplicationControlProperty::getAttribute() const
+const std::vector<nn::hac::nacp::AttributeFlag>& nn::hac::ApplicationControlProperty::getAttribute() const
 {
 	return mAttribute;
 }
 
-void nn::hac::ApplicationControlProperty::setAttribute(const fnd::List<nacp::AttributeFlag>& var)
+void nn::hac::ApplicationControlProperty::setAttribute(const std::vector<nacp::AttributeFlag>& var)
 {
 	mAttribute = var;
 }
 
-const fnd::List<nn::hac::nacp::Language>& nn::hac::ApplicationControlProperty::getSupportedLanguage() const
+const std::vector<nn::hac::nacp::Language>& nn::hac::ApplicationControlProperty::getSupportedLanguage() const
 {
 	return mSupportedLanguage;
 }
 
-void nn::hac::ApplicationControlProperty::setSupportedLanguage(const fnd::List<nacp::Language>& var)
+void nn::hac::ApplicationControlProperty::setSupportedLanguage(const std::vector<nacp::Language>& var)
 {
 	mSupportedLanguage = var;
 }
 
-const fnd::List<nn::hac::nacp::ParentalControlFlag>& nn::hac::ApplicationControlProperty::getParentalControl() const
+const std::vector<nn::hac::nacp::ParentalControlFlag>& nn::hac::ApplicationControlProperty::getParentalControl() const
 {
 	return mParentalControl;
 }
 
-void nn::hac::ApplicationControlProperty::setParentalControl(const fnd::List<nacp::ParentalControlFlag>& var)
+void nn::hac::ApplicationControlProperty::setParentalControl(const std::vector<nacp::ParentalControlFlag>& var)
 {
 	mParentalControl = var;
 }
@@ -565,12 +565,12 @@ void nn::hac::ApplicationControlProperty::setPresenceGroupId(uint64_t var)
 	mPresenceGroupId = var;
 }
 
-const fnd::List<nn::hac::ApplicationControlProperty::sRating>& nn::hac::ApplicationControlProperty::getRatingAge() const
+const std::vector<nn::hac::ApplicationControlProperty::sRating>& nn::hac::ApplicationControlProperty::getRatingAge() const
 {
 	return mRatingAge;
 }
 
-void nn::hac::ApplicationControlProperty::setRatingAge(const fnd::List<sRating>& var)
+void nn::hac::ApplicationControlProperty::setRatingAge(const std::vector<sRating>& var)
 {
 	mRatingAge = var;
 }
@@ -595,14 +595,14 @@ void nn::hac::ApplicationControlProperty::setAddOnContentBaseId(uint64_t var)
 	mAddOnContentBaseId = var;
 }
 
-uint64_t nn::hac::ApplicationControlProperty::getSaveDatawOwnerId() const
+uint64_t nn::hac::ApplicationControlProperty::getSaveDataOwnerId() const
 {
-	return mSaveDatawOwnerId;
+	return mSaveDataOwnerId;
 }
 
-void nn::hac::ApplicationControlProperty::setSaveDatawOwnerId(uint64_t var)
+void nn::hac::ApplicationControlProperty::setSaveDataOwnerId(uint64_t var)
 {
-	mSaveDatawOwnerId = var;
+	mSaveDataOwnerId = var;
 }
 
 const nn::hac::ApplicationControlProperty::sStorageSize& nn::hac::ApplicationControlProperty::getUserAccountSaveDataSize() const
@@ -645,12 +645,12 @@ void nn::hac::ApplicationControlProperty::setApplicationErrorCodeCategory(const 
 	mApplicationErrorCodeCategory = var;
 }
 
-const fnd::List<uint64_t>& nn::hac::ApplicationControlProperty::getLocalCommunicationId() const
+const std::vector<uint64_t>& nn::hac::ApplicationControlProperty::getLocalCommunicationId() const
 {
 	return mLocalCommunicationId;
 }
 
-void nn::hac::ApplicationControlProperty::setLocalCommunicationId(const fnd::List<uint64_t>& var)
+void nn::hac::ApplicationControlProperty::setLocalCommunicationId(const std::vector<uint64_t>& var)
 {
 	mLocalCommunicationId = var;
 }
@@ -735,12 +735,12 @@ void nn::hac::ApplicationControlProperty::setBcatPassphase(const std::string& va
 	mBcatPassphase = var;
 }
 
-const fnd::List<nn::hac::nacp::StartupUserAccountOptionFlag>& nn::hac::ApplicationControlProperty::getStartupUserAccountOption() const
+const std::vector<nn::hac::nacp::StartupUserAccountOptionFlag>& nn::hac::ApplicationControlProperty::getStartupUserAccountOption() const
 {
 	return mStartupUserAccountOption;
 }
 
-void nn::hac::ApplicationControlProperty::setStartupUserAccountOption(const fnd::List<nacp::StartupUserAccountOptionFlag>& var)
+void nn::hac::ApplicationControlProperty::setStartupUserAccountOption(const std::vector<nacp::StartupUserAccountOptionFlag>& var)
 {
 	mStartupUserAccountOption = var;
 }
@@ -806,12 +806,12 @@ void nn::hac::ApplicationControlProperty::setCacheStorageIndexMax(uint16_t var)
 	mCacheStorageIndexMax = var;
 }
 
-const fnd::List<uint64_t>& nn::hac::ApplicationControlProperty::getPlayLogQueryableApplicationId() const
+const std::vector<uint64_t>& nn::hac::ApplicationControlProperty::getPlayLogQueryableApplicationId() const
 {
 	return mPlayLogQueryableApplicationId;
 }
 
-void nn::hac::ApplicationControlProperty::setPlayLogQueryableApplicationId(const fnd::List<uint64_t>& var)
+void nn::hac::ApplicationControlProperty::setPlayLogQueryableApplicationId(const std::vector<uint64_t>& var)
 {
 	mPlayLogQueryableApplicationId = var;
 }
@@ -826,12 +826,12 @@ void nn::hac::ApplicationControlProperty::setPlayLogQueryCapability(nacp::PlayLo
 	mPlayLogQueryCapability = var;
 }
 
-const fnd::List<nn::hac::nacp::RepairFlag>& nn::hac::ApplicationControlProperty::getRepair() const
+const std::vector<nn::hac::nacp::RepairFlag>& nn::hac::ApplicationControlProperty::getRepair() const
 {
 	return mRepair;
 }
 
-void nn::hac::ApplicationControlProperty::setRepair(const fnd::List<nacp::RepairFlag>& var)
+void nn::hac::ApplicationControlProperty::setRepair(const std::vector<nacp::RepairFlag>& var)
 {
 	mRepair = var;
 }
@@ -846,12 +846,12 @@ void nn::hac::ApplicationControlProperty::setProgramIndex(byte_t var)
 	mProgramIndex = var;
 }
 
-const fnd::List<nn::hac::nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& nn::hac::ApplicationControlProperty::getRequiredNetworkServiceLicenseOnLaunch() const
+const std::vector<nn::hac::nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& nn::hac::ApplicationControlProperty::getRequiredNetworkServiceLicenseOnLaunch() const
 {
 	return mRequiredNetworkServiceLicenseOnLaunch;
 }
 
-void nn::hac::ApplicationControlProperty::setRequiredNetworkServiceLicenseOnLaunch(const fnd::List<nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& var)
+void nn::hac::ApplicationControlProperty::setRequiredNetworkServiceLicenseOnLaunch(const std::vector<nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& var)
 {
 	mRequiredNetworkServiceLicenseOnLaunch = var;
 }

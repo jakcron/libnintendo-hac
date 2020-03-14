@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <fnd/types.h>
 #include <fnd/IByteModel.h>
-#include <fnd/List.h>
 #include <nn/hac/define/nacp.h>
 
 namespace nn
@@ -229,8 +229,8 @@ namespace hac
 		// variables
 		void clear();
 
-		const fnd::List<sTitle>& getTitle() const;
-		void setTitle(const fnd::List<sTitle>& title);
+		const std::vector<sTitle>& getTitle() const;
+		void setTitle(const std::vector<sTitle>& title);
 
 		const std::string& getIsbn() const;
 		void setIsbn(const std::string& isbn);
@@ -244,14 +244,14 @@ namespace hac
 		nacp::AddOnContentRegistrationType getAddOnContentRegistrationType() const;
 		void setAddOnContentRegistrationType(nacp::AddOnContentRegistrationType var);
 
-		const fnd::List<nacp::AttributeFlag>& getAttribute() const;
-		void setAttribute(const fnd::List<nacp::AttributeFlag>& var);
+		const std::vector<nacp::AttributeFlag>& getAttribute() const;
+		void setAttribute(const std::vector<nacp::AttributeFlag>& var);
 
-		const fnd::List<nacp::Language>& getSupportedLanguage() const;
-		void setSupportedLanguage(const fnd::List<nacp::Language>& var);
+		const std::vector<nacp::Language>& getSupportedLanguage() const;
+		void setSupportedLanguage(const std::vector<nacp::Language>& var);
 
-		const fnd::List<nacp::ParentalControlFlag>& getParentalControl() const;
-		void setParentalControl(const fnd::List<nacp::ParentalControlFlag>& var);
+		const std::vector<nacp::ParentalControlFlag>& getParentalControl() const;
+		void setParentalControl(const std::vector<nacp::ParentalControlFlag>& var);
 
 		nacp::Screenshot getScreenshot() const;
 		void setScreenshot(nacp::Screenshot var);
@@ -268,8 +268,8 @@ namespace hac
 		uint64_t getPresenceGroupId() const;
 		void setPresenceGroupId(uint64_t var);
 
-		const fnd::List<sRating>& getRatingAge() const;
-		void setRatingAge(const fnd::List<sRating>& var);
+		const std::vector<sRating>& getRatingAge() const;
+		void setRatingAge(const std::vector<sRating>& var);
 
 		const std::string& getDisplayVersion() const;
 		void setDisplayVersion(const std::string& var);
@@ -277,8 +277,8 @@ namespace hac
 		uint64_t getAddOnContentBaseId() const;
 		void setAddOnContentBaseId(uint64_t var);
 
-		uint64_t getSaveDatawOwnerId() const;
-		void setSaveDatawOwnerId(uint64_t var);
+		uint64_t getSaveDataOwnerId() const;
+		void setSaveDataOwnerId(uint64_t var);
 
 		const sStorageSize& getUserAccountSaveDataSize() const;
 		void setUserAccountSaveDataSize(const sStorageSize& var);
@@ -292,8 +292,8 @@ namespace hac
 		const std::string& getApplicationErrorCodeCategory() const;
 		void setApplicationErrorCodeCategory(const std::string& var);
 
-		const fnd::List<uint64_t>& getLocalCommunicationId() const;
-		void setLocalCommunicationId(const fnd::List<uint64_t>& var);
+		const std::vector<uint64_t>& getLocalCommunicationId() const;
+		void setLocalCommunicationId(const std::vector<uint64_t>& var);
 
 		nacp::LogoType getLogoType() const;
 		void setLogoType(nacp::LogoType var);
@@ -319,8 +319,8 @@ namespace hac
 		const std::string& getBcatPassphase() const;
 		void setBcatPassphase(const std::string& var);
 
-		const fnd::List<nacp::StartupUserAccountOptionFlag>& getStartupUserAccountOption() const;
-		void setStartupUserAccountOption(const fnd::List<nacp::StartupUserAccountOptionFlag>& var);
+		const std::vector<nacp::StartupUserAccountOptionFlag>& getStartupUserAccountOption() const;
+		void setStartupUserAccountOption(const std::vector<nacp::StartupUserAccountOptionFlag>& var);
 
 		const sStorageSize& getUserAccountSaveDataMax() const;
 		void setUserAccountSaveDataMax(const sStorageSize& var);
@@ -340,20 +340,20 @@ namespace hac
 		uint16_t getCacheStorageIndexMax() const;
 		void setCacheStorageIndexMax(uint16_t var);
 
-		const fnd::List<uint64_t>& getPlayLogQueryableApplicationId() const;
-		void setPlayLogQueryableApplicationId(const fnd::List<uint64_t>& var);
+		const std::vector<uint64_t>& getPlayLogQueryableApplicationId() const;
+		void setPlayLogQueryableApplicationId(const std::vector<uint64_t>& var);
 
 		nacp::PlayLogQueryCapability getPlayLogQueryCapability() const;
 		void setPlayLogQueryCapability(nacp::PlayLogQueryCapability var);
 
-		const fnd::List<nacp::RepairFlag>& getRepair() const;
-		void setRepair(const fnd::List<nacp::RepairFlag>& var);
+		const std::vector<nacp::RepairFlag>& getRepair() const;
+		void setRepair(const std::vector<nacp::RepairFlag>& var);
 
 		byte_t getProgramIndex() const;
 		void setProgramIndex(byte_t var);
 
-		const fnd::List<nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& getRequiredNetworkServiceLicenseOnLaunch() const;
-		void setRequiredNetworkServiceLicenseOnLaunch(const fnd::List<nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& var);
+		const std::vector<nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& getRequiredNetworkServiceLicenseOnLaunch() const;
+		void setRequiredNetworkServiceLicenseOnLaunch(const std::vector<nacp::RequiredNetworkServiceLicenseOnLaunchFlag>& var);
 
 		const sNeighborDetectionClientConfiguration& getNeighborDetectionClientConfiguration() const;
 		void setNeighborDetectionClientConfiguration(const sNeighborDetectionClientConfiguration& var);
@@ -368,28 +368,28 @@ namespace hac
 		fnd::Vec<byte_t> mRawBinary;
 
 		// variables
-		fnd::List<sTitle> mTitle;
+		std::vector<sTitle> mTitle;
 		std::string mIsbn;
 		nacp::StartupUserAccount mStartupUserAccount;
 		nacp::UserAccountSwitchLock mUserAccountSwitchLock;
 		nacp::AddOnContentRegistrationType mAddOnContentRegistrationType;
-		fnd::List<nacp::AttributeFlag> mAttribute;
-		fnd::List<nn::hac::nacp::Language> mSupportedLanguage;
-		fnd::List<nacp::ParentalControlFlag> mParentalControl;
+		std::vector<nacp::AttributeFlag> mAttribute;
+		std::vector<nn::hac::nacp::Language> mSupportedLanguage;
+		std::vector<nacp::ParentalControlFlag> mParentalControl;
 		nacp::Screenshot mScreenshot;
 		nacp::VideoCapture mVideoCapture;
 		nacp::DataLossConfirmation mDataLossConfirmation;
 		nacp::PlayLogPolicy mPlayLogPolicy;
 		uint64_t mPresenceGroupId;
-		fnd::List<sRating> mRatingAge;
+		std::vector<sRating> mRatingAge;
 		std::string mDisplayVersion;
 		uint64_t mAddOnContentBaseId;
-		uint64_t mSaveDatawOwnerId;
+		uint64_t mSaveDataOwnerId;
 		sStorageSize mUserAccountSaveDataSize;
 		sStorageSize mDeviceSaveDataSize;
 		int64_t mBcatDeliveryCacheStorageSize;
 		std::string mApplicationErrorCodeCategory;
-		fnd::List<uint64_t> mLocalCommunicationId;
+		std::vector<uint64_t> mLocalCommunicationId;
 		nacp::LogoType mLogoType;
 		nacp::LogoHandling mLogoHandling;
 		nacp::RuntimeAddOnContentInstall mRuntimeAddOnContentInstall;
@@ -398,18 +398,18 @@ namespace hac
 		nacp::Hdcp mHdcp;
 		uint64_t mSeedForPsuedoDeviceId;
 		std::string mBcatPassphase;
-		fnd::List<nacp::StartupUserAccountOptionFlag> mStartupUserAccountOption;
+		std::vector<nacp::StartupUserAccountOptionFlag> mStartupUserAccountOption;
 		sStorageSize mUserAccountSaveDataMax;
 		sStorageSize mDeviceSaveDataMax;
 		int64_t mTemporaryStorageSize;
 		sStorageSize mCacheStorageSize;
 		int64_t mCacheStorageDataAndJournalSizeMax;
 		uint16_t mCacheStorageIndexMax;
-		fnd::List<uint64_t> mPlayLogQueryableApplicationId;
+		std::vector<uint64_t> mPlayLogQueryableApplicationId;
 		nacp::PlayLogQueryCapability mPlayLogQueryCapability;
-		fnd::List<nacp::RepairFlag> mRepair;
+		std::vector<nacp::RepairFlag> mRepair;
 		byte_t mProgramIndex;
-		fnd::List<nacp::RequiredNetworkServiceLicenseOnLaunchFlag> mRequiredNetworkServiceLicenseOnLaunch;
+		std::vector<nacp::RequiredNetworkServiceLicenseOnLaunchFlag> mRequiredNetworkServiceLicenseOnLaunch;
 		sNeighborDetectionClientConfiguration mNeighborDetectionClientConfiguration;
 		sJitConfiguration mJitConfiguration;
 
