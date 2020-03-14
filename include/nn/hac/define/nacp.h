@@ -26,6 +26,7 @@ namespace hac
 		static const uint64_t kBcatMiniumSize = 0x500000; // cannot have a size (non zero) that is smaller than 5MiB
 		static const uint64_t kSaveDataAlignmentMask = 0x3FFF; // cannot have a size that isn't a multiple of 16KiB
 
+		// Introduced as of SDK 3.4.0
 		enum class AddOnContentRegistrationType : byte_t
 		{
 			AllOnLaunch,
@@ -35,9 +36,10 @@ namespace hac
 		enum class AttributeFlag : byte_t
 		{
 			Demo,
-			RetailInteractiveDisplay
+			RetailInteractiveDisplay // Introduced as of SDK 3.4.0
 		};
 
+		// Introduced as of SDK 3.5.2
 		enum class CrashReport : byte_t
 		{
 			Deny,
@@ -56,6 +58,7 @@ namespace hac
 			Required
 		};
 
+		// Introduced SDK 7.6.0
 		enum class JitConfigurationFlag : uint64_t
 		{
 			Enabled
@@ -79,7 +82,7 @@ namespace hac
 			TraditionalChinese,
 			SimplifiedChinese,
 
-			// Deprecated names
+			// Deprecated names as of SDK 3.5.0
 			Taiwanese = TraditionalChinese,
 			Chinese = SimplifiedChinese
 		};
@@ -111,7 +114,7 @@ namespace hac
 			Russian,
 			ACB,
 			OFLC,
-			IARCGeneric
+			IARCGeneric // introduced as of SDK 9.3.1
 		};
 
 		enum class ParentalControlFlag : uint32_t
@@ -126,6 +129,7 @@ namespace hac
 			None
 		};
 
+		// Introduced as of SDK 5.3.0
 		enum class PlayLogQueryCapability : byte_t
 		{
 			None,
@@ -133,22 +137,26 @@ namespace hac
 			All
 		};
 
+		// Introduced as of SDK 5.3.0
 		enum class RepairFlag : byte_t
 		{
 			SuppressGameCardAccess
 		};
 
+		// Introduced as of SDK 6.4.0
 		enum class RequiredNetworkServiceLicenseOnLaunchFlag : byte_t
 		{
 			Common
 		};
 
+		// Introduced as of SDK 4.5.0
 		enum class RuntimeAddOnContentInstall : byte_t
 		{
 			Deny,
 			AllowAppend
 		};
 
+		// Introduced as of SDK 9.3.1
 		enum class RuntimeParameterDelivery : byte_t
 		{
 			Always,
@@ -162,11 +170,6 @@ namespace hac
 			Deny
 		};
 
-		enum class StartupUserAccountOptionFlag : byte_t
-		{
-			IsOptional
-		};
-
 		enum class StartupUserAccount : byte_t
 		{
 			None,
@@ -174,6 +177,13 @@ namespace hac
 			RequiredWithNetworkServiceAccountAvailable
 		};
 
+		// Introduced as of SDK 7.6.0
+		enum class StartupUserAccountOptionFlag : byte_t
+		{
+			IsOptional
+		};
+
+		// Removed as of SDK 3.4.0 (probably 1.0.0)
 		enum class TouchScreenUsage : byte_t
 		{
 			None,
@@ -181,6 +191,7 @@ namespace hac
 			Required,
 		};
 
+		// Introduced as of SDK 6.4.0
 		enum class UserAccountSwitchLock : byte_t
 		{
 			Disable,
@@ -193,7 +204,7 @@ namespace hac
 			Manual,
 			Enable,
 
-			// Deprecated names
+			// Deprecated names as of SDK 3.6.0
 			Deny = Disable,
 			Allow = Manual
 		};
@@ -268,7 +279,7 @@ namespace hac
 
 			sGroupConfiguration send_group_configuration;
 			sGroupConfiguration receivable_group_configuration[nacp::kReceivableGroupConfigurationCount];
-		} neighbour_detection_client_configuration;
+		} neighbour_detection_client_configuration; // introduced SDK 7.6.0
 		struct sJitConfiguration 
 		{
 			le_uint64_t jit_configuration_flag;
