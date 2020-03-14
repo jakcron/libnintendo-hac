@@ -85,19 +85,19 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	{
 		switch (mType)
 		{
-			case (cnmt::METATYPE_APPLICATION):
+			case (cnmt::ContentMetaType::Application):
 				mApplicationMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = 0;
 				break;
-			case (cnmt::METATYPE_PATCH):
+			case (cnmt::ContentMetaType::Patch):
 				mPatchMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = mPatchMetaExtendedHeader.getExtendedDataSize();
 				break;
-			case (cnmt::METATYPE_ADD_ON_CONTENT):
+			case (cnmt::ContentMetaType::AddOnContent):
 				mAddOnContentMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = 0;
 				break;
-			case (cnmt::METATYPE_DELTA):
+			case (cnmt::ContentMetaType::Delta):
 				mDeltaMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = mDeltaMetaExtendedHeader.getExtendedDataSize();
 				break;
@@ -153,7 +153,7 @@ void nn::hac::ContentMeta::clear()
 	mRawBinary.clear();
 	mTitleId = 0;
 	mTitleVersion = 0;
-	mType = cnmt::METATYPE_SYSTEM_PROGRAM;
+	mType = cnmt::ContentMetaType::SystemProgram;
 	mAttributes = 0;
 	mRequiredDownloadSystemVersion = 0;
 	mApplicationMetaExtendedHeader.clear();
@@ -302,16 +302,16 @@ bool nn::hac::ContentMeta::validateExtendedHeaderSize(cnmt::ContentMetaType type
 
 	switch (type)
 	{
-		case (cnmt::METATYPE_APPLICATION):
+		case (cnmt::ContentMetaType::Application):
 			validSize = (exhdrSize == sizeof(sApplicationMetaExtendedHeader));
 			break;
-		case (cnmt::METATYPE_PATCH):
+		case (cnmt::ContentMetaType::Patch):
 			validSize = (exhdrSize == sizeof(sPatchMetaExtendedHeader));
 			break;
-		case (cnmt::METATYPE_ADD_ON_CONTENT):
+		case (cnmt::ContentMetaType::AddOnContent):
 			validSize = (exhdrSize == sizeof(sAddOnContentMetaExtendedHeader));
 			break;
-		case (cnmt::METATYPE_DELTA):
+		case (cnmt::ContentMetaType::Delta):
 			validSize = (exhdrSize == sizeof(sDeltaMetaExtendedHeader));
 			break;
 		default:
@@ -324,12 +324,12 @@ bool nn::hac::ContentMeta::validateExtendedHeaderSize(cnmt::ContentMetaType type
 size_t nn::hac::ContentMeta::getExtendedDataSize(cnmt::ContentMetaType type, const byte_t * data) const
 {
 	size_t exdata_len = 0;
-	if (type == cnmt::METATYPE_PATCH)
+	if (type == cnmt::ContentMetaType::Patch)
 	{
 		const sPatchMetaExtendedHeader* exhdr = (const sPatchMetaExtendedHeader*)(data);
 		exdata_len = exhdr->extended_data_size.get();
 	}
-	else if (type == cnmt::METATYPE_DELTA)
+	else if (type == cnmt::ContentMetaType::Delta)
 	{
 		const sDeltaMetaExtendedHeader* exhdr = (const sDeltaMetaExtendedHeader*)(data);
 		exdata_len = exhdr->extended_data_size.get();

@@ -40,7 +40,7 @@ void nn::hac::ContentMetaInfo::toBytes()
 
 	info->id = mTitleId;
 	info->version = mTitleVersion;
-	info->type = mType;
+	info->type = (byte_t)mType;
 	info->attributes = mAttributes;
 }
 
@@ -69,7 +69,7 @@ void nn::hac::ContentMetaInfo::clear()
 	mRawBinary.clear();
 	mTitleId = 0;
 	mTitleVersion = 0;
-	mType = cnmt::ContentMetaType::METATYPE_APPLICATION;
+	mType = cnmt::ContentMetaType::Application;
 	mAttributes = 0;
 }
 
