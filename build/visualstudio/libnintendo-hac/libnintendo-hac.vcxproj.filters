@@ -114,9 +114,6 @@
     <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessUtil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -336,9 +333,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\KernelInitialProcessHeader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\KernelInitialProcessUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\KernelVersionEntry.cpp">

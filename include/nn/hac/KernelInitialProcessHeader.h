@@ -83,11 +83,17 @@ namespace hac
 		uint64_t getTitleId() const;
 		void setTitleId(uint64_t title_id);
 
-		kip::ProcessCategory getProcessCategory() const;
-		void setProcessCategory(kip::ProcessCategory cat);
+		uint32_t getVersion() const;
+		void setVersion(uint32_t version);
 
-		const fnd::List<kip::HeaderFlags>& getFlagList() const;
-		void setFlagList(const fnd::List<kip::HeaderFlags>& flags);
+		bool getIs64BitInstructionFlag() const;
+		void setIs64BitInstructionFlag(bool flag);
+
+		bool getIs64BitAddressSpaceFlag() const;
+		void setIs64BitAddressSpaceFlag(bool flag);
+
+		bool getUseSecureMemoryFlag() const;
+		void setUseSecureMemoryFlag(bool flag);
 
 		byte_t getMainThreadPriority() const;
 		void setMainThreadPriority(byte_t priority);
@@ -122,8 +128,10 @@ namespace hac
 		// variables
 		std::string mName;
 		uint64_t mTitleId;
-		kip::ProcessCategory mProcessCategory;
-		fnd::List<kip::HeaderFlags> mFlagList;
+		uint32_t mVersion;
+		bool mIs64BitInstructionFlag;
+		bool mIs64BitAddressSpaceFlag;
+		bool mUseSecureMemoryFlag;
 		byte_t mMainThreadPriority;
 		byte_t mMainThreadCpuId;
 		uint32_t mMainThreadStackSize;

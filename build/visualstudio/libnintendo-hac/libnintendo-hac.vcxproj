@@ -70,7 +70,6 @@
     <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessHeader.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\MemoryMappingHandler.h" />
@@ -127,7 +126,6 @@
     <ClCompile Include="..\..\..\src\KernelCapabilityEntry.cpp" />
     <ClCompile Include="..\..\..\src\KernelCapabilityUtil.cpp" />
     <ClCompile Include="..\..\..\src\KernelInitialProcessHeader.cpp" />
-    <ClCompile Include="..\..\..\src\KernelInitialProcessUtil.cpp" />
     <ClCompile Include="..\..\..\src\KernelVersionEntry.cpp" />
     <ClCompile Include="..\..\..\src\KernelVersionHandler.cpp" />
     <ClCompile Include="..\..\..\src\MemoryMappingHandler.cpp" />
