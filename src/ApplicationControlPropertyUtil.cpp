@@ -26,11 +26,11 @@ std::string nn::hac::ApplicationControlPropertyUtil::getSaveDataSizeAsString(int
 	}
 	else if (size < kMegaByte)
 	{
-		ss << (size/kKiloByte) << " KB";
+		ss << (size/kKiloByte) << " KiB";
 	}
 	else
 	{
-		ss << (size/kMegaByte) << " MB";
+		ss << (size/kMegaByte) << " MiB";
 	}
 
 	return ss.str();
