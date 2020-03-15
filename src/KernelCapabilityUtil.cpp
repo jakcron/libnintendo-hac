@@ -22,7 +22,7 @@ std::string nn::hac::KernelCapabilityUtil::getMiscFlagsBitAsString(nn::hac::kc::
 	return ss.str();
 }
 
-std::string nn::hac::KernelCapabilityUtil::getMemMapPermissionAsString(nn::hac::kc::MemoryPermission type)
+std::string nn::hac::KernelCapabilityUtil::getMemoryPermissionAsString(nn::hac::kc::MemoryPermission type)
 {
 	std::stringstream ss;
 
@@ -42,7 +42,7 @@ std::string nn::hac::KernelCapabilityUtil::getMemMapPermissionAsString(nn::hac::
 	return ss.str();
 }
 
-std::string nn::hac::KernelCapabilityUtil::getMemMapTypeAsString(nn::hac::kc::MappingType type)
+std::string nn::hac::KernelCapabilityUtil::getMappingTypeAsString(nn::hac::kc::MappingType type)
 {
 	std::stringstream ss;
 

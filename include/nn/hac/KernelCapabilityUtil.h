@@ -10,8 +10,8 @@ namespace hac
 	{
 	public:
 		static std::string getMiscFlagsBitAsString(nn::hac::kc::MiscFlagsBit flag);
-		static std::string getMemMapPermissionAsString(nn::hac::kc::MemoryPermission type);
-		static std::string getMemMapTypeAsString(nn::hac::kc::MappingType type);
+		static std::string getMemoryPermissionAsString(nn::hac::kc::MemoryPermission type);
+		static std::string getMappingTypeAsString(nn::hac::kc::MappingType type);
 		static std::string getSystemCallIdAsString(nn::hac::kc::SystemCallId svc);
 
 	private:
