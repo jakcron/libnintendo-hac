@@ -1,14 +1,14 @@
 #include <nn/hac/MemoryPageEntry.h>
 
 nn::hac::MemoryPageEntry::MemoryPageEntry() :
-	mCap(kc::KC_INVALID),
+	mCap(kc::KernelCapId::Invalid),
 	mPage(0),
 	mFlag(false),
 	mMapMultiplePages(false)
 {}
 
 nn::hac::MemoryPageEntry::MemoryPageEntry(const KernelCapabilityEntry & kernel_cap) :
-	mCap(kc::KC_INVALID),
+	mCap(kc::KernelCapId::Invalid),
 	mPage(0),
 	mFlag(false),
 	mMapMultiplePages(false)
@@ -17,7 +17,7 @@ nn::hac::MemoryPageEntry::MemoryPageEntry(const KernelCapabilityEntry & kernel_c
 }
 
 nn::hac::MemoryPageEntry::MemoryPageEntry(uint32_t page) :
-	mCap(kc::KC_INVALID),
+	mCap(kc::KernelCapId::Invalid),
 	mPage(0),
 	mFlag(false),
 	mMapMultiplePages(false)
@@ -26,7 +26,7 @@ nn::hac::MemoryPageEntry::MemoryPageEntry(uint32_t page) :
 }
 
 nn::hac::MemoryPageEntry::MemoryPageEntry(uint32_t page, bool flag) :
-	mCap(kc::KC_INVALID),
+	mCap(kc::KernelCapId::Invalid),
 	mPage(0),
 	mFlag(false),
 	mMapMultiplePages(true)
@@ -62,7 +62,7 @@ const nn::hac::KernelCapabilityEntry & nn::hac::MemoryPageEntry::getKernelCapabi
 
 void nn::hac::MemoryPageEntry::setKernelCapability(const KernelCapabilityEntry & kernel_cap)
 {
-	if (kernel_cap.getType() != kc::KC_MEMORY_MAP && kernel_cap.getType() != kc::KC_IO_MEMORY_MAP)
+	if (kernel_cap.getType() != kc::KernelCapId::MemoryMap && kernel_cap.getType() != kc::KernelCapId::IoMemoryMap)
 	{
 		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'MemoryMap' or 'IOMemoryMap");
 	}

@@ -62,7 +62,7 @@ void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const fnd::List<K
 			}
 
 			// add to list
-			mMemRange.addElement({ entries[i].getPage(), entries[i+1].getPage(), entries[i].getFlag() ? kc::MEM_RO : kc::MEM_RW, entries[i+1].getFlag() ? kc::MAP_STATIC : kc::MAP_IO });
+			mMemRange.addElement({ entries[i].getPage(), entries[i+1].getPage(), entries[i].getFlag() ? kc::MemoryPermission::Ro : kc::MemoryPermission::Rw, entries[i+1].getFlag() ? kc::MappingType::Static : kc::MappingType::Io });
 
 			// increment i by two
 			i += 2;
@@ -77,7 +77,7 @@ void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const fnd::List<K
 			}
 
 			// add to list
-			mMemPage.addElement({ entries[i].getPage(), 1, kc::MEM_RW, kc::MAP_IO });
+			mMemPage.addElement({ entries[i].getPage(), 1, kc::MemoryPermission::Rw, kc::MappingType::Io });
 
 			// increment i by one
 			i += 1;
@@ -99,11 +99,11 @@ void nn::hac::MemoryMappingHandler::exportKernelCapabilityList(fnd::List<KernelC
 	for (size_t i = 0; i < mMemRange.size(); i++)
 	{
 		cap.setPage(mMemRange[i].addr & kMaxPageAddr);
-		cap.setFlag(mMemRange[i].perm == kc::MEM_RO);
+		cap.setFlag(mMemRange[i].perm == kc::MemoryPermission::Ro);
 		caps.addElement(cap.getKernelCapability());
 
 		cap.setPage(mMemRange[i].size & kMaxPageNum);
-		cap.setFlag(mMemRange[i].type == kc::MAP_STATIC);
+		cap.setFlag(mMemRange[i].type == kc::MappingType::Static);
 		caps.addElement(cap.getKernelCapability());
 	}
 

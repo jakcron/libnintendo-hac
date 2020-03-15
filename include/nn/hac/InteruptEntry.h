@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
 namespace nn
@@ -11,7 +11,7 @@ namespace hac
 	{
 	public:
 		static const uint32_t kInteruptBits = 10;
-		static const uint32_t kInteruptMax = BIT(kInteruptBits) - 1;
+		static const uint32_t kInteruptMax = _BIT(kInteruptBits) - 1;
 		static const uint32_t kInteruptNum = 2;
 
 		InteruptEntry();
@@ -34,7 +34,7 @@ namespace hac
 
 	private:
 		const std::string kModuleName = "INTERUPT_ENTRY";
-		static const kc::KernelCapId kCapId = kc::KC_ENABLE_INTERUPTS;
+		static const kc::KernelCapId kCapId = kc::KernelCapId::EnableInterrupts;
 
 		KernelCapabilityEntry mCap;
 		uint32_t mInterupt[kInteruptNum];

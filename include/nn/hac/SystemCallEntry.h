@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
 namespace nn
@@ -30,11 +30,11 @@ namespace hac
 		
 	private:
 		const std::string kModuleName = "SYSTEM_CALL_ENTRY";
-		static const kc::KernelCapId kCapId = kc::KC_ENABLE_SYSTEM_CALLS;
+		static const kc::KernelCapId kCapId = kc::KernelCapId::EnableSystemCalls;
 		static const uint32_t kSysCallUpperBits = 3;
 		static const uint32_t kSysCallLowerBits = 24;
-		static const uint32_t kSysCallUpperMax = BIT(kSysCallUpperBits) - 1;
-		static const uint32_t kSysCallLowerMax = BIT(kSysCallLowerBits) - 1;
+		static const uint32_t kSysCallUpperMax = _BIT(kSysCallUpperBits) - 1;
+		static const uint32_t kSysCallLowerMax = _BIT(kSysCallLowerBits) - 1;
 
 		KernelCapabilityEntry mCap;
 		uint32_t mSystemCallUpper;

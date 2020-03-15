@@ -13,7 +13,7 @@ namespace hac
 		{
 			uint32_t addr; // page index
 			uint32_t size; // page num
-			kc::MemoryPerm perm;
+			kc::MemoryPermission perm;
 			kc::MappingType type;
 
 			bool operator==(const sMemoryMapping& other) const
@@ -57,8 +57,8 @@ namespace hac
 
 	private:
 		const std::string kModuleName = "MEMORY_MAPPING_HANDLER";
-		static const uint32_t kMaxPageAddr = BIT(24) - 1;
-		static const uint32_t kMaxPageNum = BIT(20) - 1;
+		static const uint32_t kMaxPageAddr = _BIT(24) - 1;
+		static const uint32_t kMaxPageNum = _BIT(20) - 1;
 
 		bool mIsSet;
 		fnd::List<sMemoryMapping> mMemRange;

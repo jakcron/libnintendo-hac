@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/define/kc.h>
 
 namespace nn
@@ -31,12 +31,12 @@ namespace hac
 		kc::KernelCapId mType;
 		uint32_t mField;
 
-		inline uint32_t getFieldShift() const { return mType + 1; }
-		inline uint32_t getFieldMask() const { return BIT(31 - mType) - 1; }
-		inline uint32_t getCapMask() const { return BIT(mType) - 1; }
+		inline uint32_t getFieldShift() const { return (uint32_t)mType + 1; }
+		inline uint32_t getFieldMask() const { return _BIT(31 - (uint32_t)mType) - 1; }
+		inline uint32_t getCapMask() const { return _BIT(mType) - 1; }
 		inline kc::KernelCapId getCapId(uint32_t cap) const
 		{
-			kc::KernelCapId id = kc::KC_INVALID;
+			kc::KernelCapId id = kc::KernelCapId::Invalid;
 			
 			for (byte_t tmp = 0; tmp < 31; tmp++)
 			{
@@ -47,8 +47,8 @@ namespace hac
 				}
 			}
 
-			if (id == kc::KC_INVALID && cap == (uint32_t)0xffffffff)
-				id = kc::KC_STUB;
+			if (id == kc::KernelCapId::Invalid && cap == (uint32_t)0xffffffff)
+				id = kc::KernelCapId::Stubbed;
 
 			return id;
 		}

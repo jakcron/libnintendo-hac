@@ -1,7 +1,7 @@
 #include <nn/hac/KernelCapabilityEntry.h>
 
 nn::hac::KernelCapabilityEntry::KernelCapabilityEntry() :
-	mType(kc::KC_INVALID)
+	mType(kc::KernelCapId::Invalid)
 {}
 
 nn::hac::KernelCapabilityEntry::KernelCapabilityEntry(kc::KernelCapId type) :
