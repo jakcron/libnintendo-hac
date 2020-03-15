@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iomanip>
 
-std::string nn::hac::FileSystemAccessUtil::getFsaRightAsString(nn::hac::fac::FsAccessFlag flag)
+std::string nn::hac::FileSystemAccessUtil::getFsAccessFlagAsString(nn::hac::fac::FsAccessFlag flag)
 {
 	std::stringstream ss;
 

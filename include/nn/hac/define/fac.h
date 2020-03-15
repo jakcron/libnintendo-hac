@@ -1,5 +1,6 @@
 #pragma once
 #include <fnd/types.h>
+#include <bitset>
 
 namespace nn
 {
@@ -51,6 +52,8 @@ namespace hac
 			Debug = 62,
 			FullPermission = 63,
 		};
+
+		using FsAccess = std::bitset<64>;
 
 		enum class SaveDataOwnerIdAccessType
 		{

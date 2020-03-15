@@ -9,7 +9,7 @@ namespace hac
 	class FileSystemAccessUtil
 	{
 	public:
-		static std::string getFsaRightAsString(nn::hac::fac::FsAccessFlag flag);
+		static std::string getFsAccessFlagAsString(nn::hac::fac::FsAccessFlag flag);
 		static std::string getSaveDataOwnerAccessModeAsString(nn::hac::fac::SaveDataOwnerIdAccessType type);
 
 	private:
