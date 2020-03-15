@@ -22,6 +22,7 @@ void nn::hac::Meta::operator=(const Meta & other)
 	mOptimizeMemoryAllocationFlag = other.mOptimizeMemoryAllocationFlag;
 	mMainThreadPriority = other.mMainThreadPriority;
 	mMainThreadCpuId = other.mMainThreadCpuId;
+	mSystemResourceSize = other.mSystemResourceSize;
 	mVersion = other.mVersion;
 	mMainThreadStackSize = other.mMainThreadStackSize;
 	mName = other.mName;
@@ -38,6 +39,7 @@ bool nn::hac::Meta::operator==(const Meta & other) const
 		&& (mOptimizeMemoryAllocationFlag == other.mOptimizeMemoryAllocationFlag) \
 		&& (mMainThreadPriority == other.mMainThreadPriority) \
 		&& (mMainThreadCpuId == other.mMainThreadCpuId) \
+		&& (mSystemResourceSize == other.mSystemResourceSize) \
 		&& (mVersion == other.mVersion) \
 		&& (mMainThreadStackSize == other.mMainThreadStackSize) \
 		&& (mName == other.mName) \
@@ -87,6 +89,7 @@ void nn::hac::Meta::toBytes()
 	hdr->flag.optimise_memory_allocation = mOptimizeMemoryAllocationFlag;
 	hdr->main_thread_priority = mMainThreadPriority;
 	hdr->main_thread_cpu_id = mMainThreadCpuId;
+	hdr->system_resource_size = mSystemResourceSize;
 	hdr->version = mVersion;
 	hdr->main_thread_stack_size = mMainThreadStackSize;
 	strncpy(hdr->name, mName.c_str(), meta::kNameMaxLen);
@@ -137,6 +140,7 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	mOptimizeMemoryAllocationFlag = hdr.flag.optimise_memory_allocation;
 	mMainThreadPriority = hdr.main_thread_priority;
 	mMainThreadCpuId = hdr.main_thread_cpu_id;
+	mSystemResourceSize = hdr.system_resource_size.get();
 	mVersion = hdr.version.get();
 	mMainThreadStackSize = hdr.main_thread_stack_size.get();
 	mName = std::string(hdr.name, _MIN(strlen(hdr.name), meta::kNameMaxLen));
@@ -180,6 +184,7 @@ void nn::hac::Meta::clear()
 	mOptimizeMemoryAllocationFlag = false;
 	mMainThreadPriority = 0;
 	mMainThreadCpuId = 0;
+	mSystemResourceSize = 0;
 	mVersion = 0;
 	mMainThreadStackSize = 0;
 	mName.clear();
@@ -251,6 +256,16 @@ byte_t nn::hac::Meta::getMainThreadCpuId() const
 void nn::hac::Meta::setMainThreadCpuId(byte_t core_num)
 {
 	mMainThreadCpuId = core_num;
+}
+
+uint32_t nn::hac::Meta::getSystemResourceSize() const
+{
+	return mSystemResourceSize;
+}
+
+void nn::hac::Meta::setSystemResourceSize(uint32_t size)
+{
+	mSystemResourceSize = size;
 }
 
 uint32_t nn::hac::Meta::getVersion() const

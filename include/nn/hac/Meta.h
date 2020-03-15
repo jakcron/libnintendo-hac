@@ -47,6 +47,9 @@ namespace hac
 		byte_t getMainThreadCpuId() const;
 		void setMainThreadCpuId(byte_t cpu_id);
 
+		uint32_t getSystemResourceSize() const;
+		void setSystemResourceSize(uint32_t size);
+
 		uint32_t getVersion() const;
 		void setVersion(uint32_t version);
 
@@ -77,6 +80,7 @@ namespace hac
 		bool mOptimizeMemoryAllocationFlag;
 		byte_t mMainThreadPriority;
 		byte_t mMainThreadCpuId;
+		uint32_t mSystemResourceSize;
 		uint32_t mVersion;
 		uint32_t mMainThreadStackSize;
 		std::string mName;
