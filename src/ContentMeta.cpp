@@ -22,7 +22,7 @@ void nn::hac::ContentMeta::operator=(const ContentMeta& other)
 		mTitleId = other.mTitleId;
 		mTitleVersion = other.mTitleVersion;
 		mType = other.mType;
-		mAttributes = other.mAttributes;
+		mAttribute = other.mAttribute;
 		mRequiredDownloadSystemVersion = other.mRequiredDownloadSystemVersion;
 		mApplicationMetaExtendedHeader = other.mApplicationMetaExtendedHeader;
 		mPatchMetaExtendedHeader = other.mPatchMetaExtendedHeader;
@@ -40,7 +40,7 @@ bool nn::hac::ContentMeta::operator==(const ContentMeta& other) const
 	return (mTitleId == other.mTitleId) \
 		&& (mTitleVersion == other.mTitleVersion) \
 		&& (mType == other.mType) \
-		&& (mAttributes == other.mAttributes) \
+		&& (mAttribute == other.mAttribute) \
 		&& (mRequiredDownloadSystemVersion == other.mRequiredDownloadSystemVersion) \
 		&& (mApplicationMetaExtendedHeader == other.mApplicationMetaExtendedHeader) \
 		&& (mPatchMetaExtendedHeader == other.mPatchMetaExtendedHeader) \
@@ -76,7 +76,7 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	mTitleId = hdr->id.get();
 	mTitleVersion = hdr->version.get();
 	mType = (cnmt::ContentMetaType)hdr->type;
-	mAttributes = hdr->attributes;
+	mAttribute = hdr->attributes;
 	mRequiredDownloadSystemVersion = hdr->required_download_system_version.get();
 	size_t exdata_size = 0;
 
@@ -154,7 +154,7 @@ void nn::hac::ContentMeta::clear()
 	mTitleId = 0;
 	mTitleVersion = 0;
 	mType = cnmt::ContentMetaType::SystemProgram;
-	mAttributes = 0;
+	mAttribute = 0;
 	mRequiredDownloadSystemVersion = 0;
 	mApplicationMetaExtendedHeader.clear();
 	mPatchMetaExtendedHeader.clear();
@@ -196,14 +196,14 @@ void nn::hac::ContentMeta::setContentMetaType(cnmt::ContentMetaType type)
 	mType = type;
 }
 
-byte_t nn::hac::ContentMeta::getAttributes() const
+const nn::hac::cnmt::ContentMetaAttribute& nn::hac::ContentMeta::getAttribute() const
 {
-	return mAttributes;
+	return mAttribute;
 }
 
-void nn::hac::ContentMeta::setAttributes(byte_t attributes)
+void nn::hac::ContentMeta::setAttribute(const nn::hac::cnmt::ContentMetaAttribute& attr)
 {
-	mAttributes = attributes;
+	mAttribute = attr;
 }
 
 uint32_t nn::hac::ContentMeta::getRequiredDownloadSystemVersion() const

@@ -4,6 +4,7 @@
 #include <fnd/IByteModel.h>
 #include <nn/hac/define/cnmt.h>
 
+
 namespace nn
 {
 namespace hac
@@ -36,8 +37,8 @@ namespace hac
 		cnmt::ContentMetaType getContentMetaType() const;
 		void setContentMetaType(cnmt::ContentMetaType type);
 		
-		byte_t getAttributes() const;
-		void setAttributes(byte_t attr);
+		const cnmt::ContentMetaAttribute& getAttribute() const;
+		void setAttribute(const cnmt::ContentMetaAttribute& attr);
 		
 	private:
 		const std::string kModuleName = "CONTENT_META_INFO";
@@ -49,7 +50,7 @@ namespace hac
 		uint64_t mTitleId;
 		uint32_t mTitleVersion;
 		cnmt::ContentMetaType mType;
-		byte_t mAttributes;
+		cnmt::ContentMetaAttribute mAttribute;
 	};
 }
 }

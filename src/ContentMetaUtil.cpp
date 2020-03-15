@@ -101,16 +101,16 @@ std::string nn::hac::ContentMetaUtil::getUpdateTypeAsString(nn::hac::cnmt::Updat
 	return ss.str();
 }
 
-std::string nn::hac::ContentMetaUtil::getContentMetaAttributeAsString(nn::hac::cnmt::ContentMetaAttribute val)
+std::string nn::hac::ContentMetaUtil::getContentMetaAttributeFlagAsString(nn::hac::cnmt::ContentMetaAttributeFlag val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::cnmt::ContentMetaAttribute::IncludesExFatDriver):
+	case (nn::hac::cnmt::ContentMetaAttributeFlag::IncludesExFatDriver):
 		ss << "IncludesExFatDriver";
 		break;
-	case (nn::hac::cnmt::ContentMetaAttribute::Rebootless):
+	case (nn::hac::cnmt::ContentMetaAttributeFlag::Rebootless):
 		ss << "Rebootless";
 		break;
 	default:

@@ -1,6 +1,8 @@
 #pragma once
 #include <fnd/types.h>
 #include <fnd/sha.h>
+#include <nn/hac/define/types.h>
+#include <bitset>
 
 namespace nn
 {
@@ -8,7 +10,7 @@ namespace hac
 {
 	namespace cnmt
 	{
-		enum class ContentType
+		enum class ContentType : byte_t
 		{
 			Meta = 0,
 			Program,
@@ -19,7 +21,7 @@ namespace hac
 			DeltaFragment
 		};
 
-		enum class ContentMetaType
+		enum class ContentMetaType : byte_t
 		{
 			SystemProgram = 1,
 			SystemData,
@@ -33,71 +35,26 @@ namespace hac
 			Delta // can have extended data
 		};
 
-		enum class UpdateType
+		enum class UpdateType : byte_t
 		{
 			ApplyAsDelta,
 			Overwrite,
 			Create
 		};
 
-		enum class ContentMetaAttribute
+		enum class ContentMetaAttributeFlag : size_t
 		{
 			IncludesExFatDriver,
 			Rebootless
 		};
+		
+		using ContentMetaAttribute = std::bitset<8>;
 
 		static const size_t kContentIdLen = 0x10;
+		using sContentId = sFixedSizeArray<kContentIdLen>;
+
 		static const size_t kDigestLen = 0x20;
-
-		struct sContentId
-		{
-			byte_t data[kContentIdLen];
-
-			void set(const byte_t content_id[kContentIdLen])
-			{
-				memcpy(this->data, content_id, kContentIdLen);
-			}
-
-			void operator=(const sContentId& other)
-			{
-				set(other.data);
-			}
-
-			bool operator==(const sContentId& other) const
-			{
-				return memcmp(this->data, other.data, kContentIdLen) == 0;
-			}
-
-			bool operator!=(const sContentId& other) const
-			{
-				return !(*this == other);
-			}
-		};
-
-		struct sDigest
-		{
-			byte_t data[kDigestLen];
-
-			void set(const byte_t digest[kDigestLen])
-			{
-				memcpy(this->data, digest, kDigestLen);
-			}
-
-			void operator=(const sDigest& other)
-			{
-				set(other.data);
-			}
-
-			bool operator==(const sDigest& other) const
-			{
-				return memcmp(this->data, other.data, kDigestLen) == 0;
-			}
-
-			bool operator!=(const sDigest& other) const
-			{
-				return !(*this == other);
-			}
-		};
+		using sDigest = sFixedSizeArray<kDigestLen>;
 	}
 
 

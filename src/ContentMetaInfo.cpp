@@ -17,7 +17,7 @@ void nn::hac::ContentMetaInfo::operator=(const ContentMetaInfo& other)
 	mTitleId = other.mTitleId;
 	mTitleVersion = other.mTitleVersion;
 	mType = other.mType;
-	mAttributes = other.mAttributes;
+	mAttribute = other.mAttribute;
 }
 
 bool nn::hac::ContentMetaInfo::operator==(const ContentMetaInfo& other) const
@@ -25,7 +25,7 @@ bool nn::hac::ContentMetaInfo::operator==(const ContentMetaInfo& other) const
 	return (mTitleId == other.mTitleId) \
 		&& (mTitleVersion == other.mTitleVersion) \
 		&& (mType == other.mType) \
-		&& (mAttributes == other.mAttributes);
+		&& (mAttribute == other.mAttribute);
 }
 
 bool nn::hac::ContentMetaInfo::operator!=(const ContentMetaInfo& other) const
@@ -41,7 +41,7 @@ void nn::hac::ContentMetaInfo::toBytes()
 	info->id = mTitleId;
 	info->version = mTitleVersion;
 	info->type = (byte_t)mType;
-	info->attributes = mAttributes;
+	info->attributes = mAttribute.to_ullong();
 }
 
 void nn::hac::ContentMetaInfo::fromBytes(const byte_t* bytes, size_t len)
@@ -56,7 +56,7 @@ void nn::hac::ContentMetaInfo::fromBytes(const byte_t* bytes, size_t len)
 	mTitleId = info->id.get();
 	mTitleVersion = info->version.get();
 	mType = (cnmt::ContentMetaType)info->type;
-	mAttributes = info->attributes;
+	mAttribute = info->attributes;
 }
 
 const fnd::Vec<byte_t>& nn::hac::ContentMetaInfo::getBytes() const
@@ -70,7 +70,7 @@ void nn::hac::ContentMetaInfo::clear()
 	mTitleId = 0;
 	mTitleVersion = 0;
 	mType = cnmt::ContentMetaType::Application;
-	mAttributes = 0;
+	mAttribute = 0;
 }
 
 uint64_t nn::hac::ContentMetaInfo::getTitleId() const
@@ -103,12 +103,12 @@ void nn::hac::ContentMetaInfo::setContentMetaType(cnmt::ContentMetaType type)
 	mType = type;
 }	
 
-byte_t nn::hac::ContentMetaInfo::getAttributes() const
+const nn::hac::cnmt::ContentMetaAttribute& nn::hac::ContentMetaInfo::getAttribute() const
 {
-	return mAttributes;
+	return mAttribute;
 }
 
-void nn::hac::ContentMetaInfo::setAttributes(byte_t attr)
+void nn::hac::ContentMetaInfo::setAttribute(const nn::hac::cnmt::ContentMetaAttribute& attr)
 {
-	mAttributes = attr;
+	mAttribute = attr;
 }
