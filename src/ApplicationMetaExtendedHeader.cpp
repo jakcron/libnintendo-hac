@@ -16,12 +16,14 @@ void nn::hac::ApplicationMetaExtendedHeader::operator=(const ApplicationMetaExte
 	mRawBinary = other.mRawBinary;
 	mPatchId = other.mPatchId;
 	mRequiredSystemVersion = other.mRequiredSystemVersion;
+	mRequiredApplicationVersion = other.mRequiredApplicationVersion;
 }
 
 bool nn::hac::ApplicationMetaExtendedHeader::operator==(const ApplicationMetaExtendedHeader& other) const
 {
 	return (mPatchId == other.mPatchId) \
-		&& (mRequiredSystemVersion == other.mRequiredSystemVersion);
+		&& (mRequiredSystemVersion == other.mRequiredSystemVersion) \
+		&& (mRequiredApplicationVersion == other.mRequiredApplicationVersion);
 }
 
 bool nn::hac::ApplicationMetaExtendedHeader::operator!=(const ApplicationMetaExtendedHeader& other) const
@@ -36,6 +38,7 @@ void nn::hac::ApplicationMetaExtendedHeader::toBytes()
 
 	info->patch_id = mPatchId;
 	info->required_system_version = mRequiredSystemVersion;
+	info->required_application_version = mRequiredApplicationVersion;
 }
 
 void nn::hac::ApplicationMetaExtendedHeader::fromBytes(const byte_t* bytes, size_t len)
@@ -49,6 +52,7 @@ void nn::hac::ApplicationMetaExtendedHeader::fromBytes(const byte_t* bytes, size
 
 	mPatchId = info->patch_id.get();
 	mRequiredSystemVersion = info->required_system_version.get();
+	mRequiredApplicationVersion = info->required_application_version.get();
 }
 
 const fnd::Vec<byte_t>& nn::hac::ApplicationMetaExtendedHeader::getBytes() const
@@ -61,6 +65,7 @@ void nn::hac::ApplicationMetaExtendedHeader::clear()
 	mRawBinary.clear();
 	mPatchId = 0;
 	mRequiredSystemVersion = 0;
+	mRequiredApplicationVersion = 0;
 }
 
 uint64_t nn::hac::ApplicationMetaExtendedHeader::getPatchId() const
@@ -81,4 +86,14 @@ uint32_t nn::hac::ApplicationMetaExtendedHeader::getRequiredSystemVersion() cons
 void nn::hac::ApplicationMetaExtendedHeader::setRequiredSystemVersion(uint32_t sys_ver)
 {
 	mRequiredSystemVersion = sys_ver;
+}
+
+uint32_t nn::hac::ApplicationMetaExtendedHeader::getRequiredApplicationVersion() const
+{
+	return mRequiredApplicationVersion;
+}
+
+void nn::hac::ApplicationMetaExtendedHeader::setRequiredApplicationVersion(uint32_t app_ver)
+{
+	mRequiredApplicationVersion = app_ver;
 }

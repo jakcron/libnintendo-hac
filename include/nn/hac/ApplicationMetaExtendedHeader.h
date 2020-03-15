@@ -32,6 +32,9 @@ namespace hac
 
 		uint32_t getRequiredSystemVersion() const;
 		void setRequiredSystemVersion(uint32_t sys_ver);
+
+		uint32_t getRequiredApplicationVersion() const;
+		void setRequiredApplicationVersion(uint32_t app_ver);
 	private:
 		const std::string kModuleName = "APPLICATION_META_EXTENDED_HEADER";
 
@@ -41,6 +44,7 @@ namespace hac
 		// variables
 		uint64_t mPatchId;
 		uint32_t mRequiredSystemVersion;
+		uint32_t mRequiredApplicationVersion;
 	};
 }
 }
