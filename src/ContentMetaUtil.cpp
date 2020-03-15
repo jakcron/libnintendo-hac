@@ -120,3 +120,18 @@ std::string nn::hac::ContentMetaUtil::getContentMetaAttributeFlagAsString(nn::ha
 
 	return ss.str();
 }
+
+std::string nn::hac::ContentMetaUtil::getVersionAsString(uint32_t version)
+{
+	std::stringstream ss;
+
+	ss << (uint32_t)((version>>26) & 0x3f);
+	ss << ".";
+	ss << (uint32_t)((version>>20) & 0x3f);
+	ss << ".";
+	ss << (uint32_t)((version>>16) & 0xf);
+	ss << ".";
+	ss << (uint32_t)(version & 0xffff);
+
+	return ss.str();
+}

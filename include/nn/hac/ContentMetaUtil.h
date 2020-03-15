@@ -13,6 +13,7 @@ namespace hac
 		static std::string getContentMetaTypeAsString(nn::hac::cnmt::ContentMetaType val);
 		static std::string getUpdateTypeAsString(nn::hac::cnmt::UpdateType val);
 		static std::string getContentMetaAttributeFlagAsString(nn::hac::cnmt::ContentMetaAttributeFlag val);
+		static std::string getVersionAsString(uint32_t version);
 
 	private:
 		const std::string kModuleName = "CONTENT_META_UTIL";
