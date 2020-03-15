@@ -2,7 +2,7 @@
 
 nn::hac::MiscParamsHandler::MiscParamsHandler() :
 	mIsSet(false),
-	mEntry(0)
+	mEntry()
 {}
 
 void nn::hac::MiscParamsHandler::operator=(const MiscParamsHandler & other)
@@ -48,7 +48,7 @@ void nn::hac::MiscParamsHandler::exportKernelCapabilityList(fnd::List<KernelCapa
 void nn::hac::MiscParamsHandler::clear()
 {
 	mIsSet = false;
-	mEntry.setProgramType(0);
+	mEntry = MiscParamsEntry();
 }
 
 bool nn::hac::MiscParamsHandler::isSet() const
@@ -56,12 +56,12 @@ bool nn::hac::MiscParamsHandler::isSet() const
 	return mIsSet;
 }
 
-uint8_t nn::hac::MiscParamsHandler::getProgramType() const
+nn::hac::kc::ProgramType nn::hac::MiscParamsHandler::getProgramType() const
 {
 	return mEntry.getProgramType();
 }
 
-void nn::hac::MiscParamsHandler::setProgramType(uint8_t type)
+void nn::hac::MiscParamsHandler::setProgramType(nn::hac::kc::ProgramType type)
 {
 	mEntry.setProgramType(type);
 	mIsSet = true;

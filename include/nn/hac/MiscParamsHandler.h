@@ -23,8 +23,8 @@ namespace hac
 		bool isSet() const;
 
 		// variables
-		byte_t getProgramType() const;
-		void setProgramType(byte_t type);
+		kc::ProgramType getProgramType() const;
+		void setProgramType(kc::ProgramType type);
 
 	private:
 		const std::string kModuleName = "MISC_PARAMS_HANDLER";

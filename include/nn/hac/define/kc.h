@@ -24,6 +24,13 @@ namespace hac
 			Stubbed = 32
 		};
 
+		enum class ProgramType
+		{
+			System,
+			Application,
+			Applet
+		};
+
 		enum class MiscFlagsBit
 		{
 			EnableDebug,

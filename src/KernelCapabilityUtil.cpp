@@ -22,6 +22,29 @@ std::string nn::hac::KernelCapabilityUtil::getMiscFlagsBitAsString(nn::hac::kc::
 	return ss.str();
 }
 
+std::string nn::hac::KernelCapabilityUtil::getProgramTypeAsString(nn::hac::kc::ProgramType type)
+{
+	std::stringstream ss;
+
+	switch(type)
+	{
+	case (nn::hac::kc::ProgramType::System):
+		ss << "System";
+		break;
+	case (nn::hac::kc::ProgramType::Application):
+		ss << "Application";
+		break;
+	case (nn::hac::kc::ProgramType::Applet):
+		ss << "Applet";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)type;
+		break;
+	}
+
+	return ss.str();
+}
+
 std::string nn::hac::KernelCapabilityUtil::getMemoryPermissionAsString(nn::hac::kc::MemoryPermission type)
 {
 	std::stringstream ss;
