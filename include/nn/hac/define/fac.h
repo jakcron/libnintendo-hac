@@ -1,6 +1,5 @@
 #pragma once
-#include <fnd/types.h>
-#include <bitset>
+#include <nn/hac/define/types.h>
 
 namespace nn
 {

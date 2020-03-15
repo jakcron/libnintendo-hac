@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <cstring>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/IByteModel.h>
 #include <nn/hac/define/nacp.h>
 

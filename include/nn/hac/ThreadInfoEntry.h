@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
 namespace nn
@@ -34,9 +34,9 @@ namespace hac
 
 	private:
 		const std::string kModuleName = "THREAD_INFO_ENTRY";
-		static const kc::KernelCapId kCapId = kc::KC_THREAD_INFO;
+		static const kc::KernelCapId kCapId = kc::KernelCapId::ThreadInfo;
 		static const uint8_t kValBits = 6;
-		static const uint8_t kMaxVal = BIT(kValBits)-1;
+		static const uint8_t kMaxVal = _BIT(kValBits)-1;
 		static const uint8_t kDefaultPriority = 6;
 		static const uint8_t kDefaultCpuId = 8;
 

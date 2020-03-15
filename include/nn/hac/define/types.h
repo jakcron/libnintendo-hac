@@ -1,6 +1,8 @@
 #pragma once
+#include <fnd/types.h>
 #include <cstdint>
 #include <cstring>
+#include <bitset>
 
 template <size_t N>
 struct sFixedSizeArray

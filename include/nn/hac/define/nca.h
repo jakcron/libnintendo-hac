@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/aes.h>
 #include <fnd/sha.h>
 #include <fnd/rsa.h>

@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/define/macro.h>
 
 namespace nn
@@ -11,11 +11,11 @@ namespace hac
 		static const uint32_t kMetaStructMagic = _MAKE_STRUCT_MAGIC_U32("META");
 		static const size_t kNameMaxLen = 0x10;
 		static const size_t kProductCodeMaxLen = 0x10;
-		static const uint32_t kMaxPriority = BIT(6) - 1;
+		static const uint32_t kMaxPriority = _BIT(6) - 1;
 		static const size_t kSectionAlignSize = 0x10;
 		static const uint32_t kDefaultMainThreadStackSize = 4096;
 
-		enum class ProcessAddressSpace
+		enum class ProcessAddressSpace : byte_t
 		{
 			AddressSpace32Bit,
 			AddressSpace64BitOld,

@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/List.h>
 #include <fnd/IByteModel.h>
 #include <nn/hac/define/aci.h>
