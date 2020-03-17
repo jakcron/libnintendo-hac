@@ -36,7 +36,7 @@ namespace hac
 		{
 			byte_t is_64bit_instruction : 1;
 			byte_t process_address_space : 3;
-			byte_t optimise_memory_allocation : 1; // if KernelCaps.MiscParams.ProgramType == Application && system_resource_size != 0 this will be set if MemoryAllocationCompatiblityMode is true
+			byte_t optimise_memory_allocation : 1; // if KernelCaps.MiscParams.ProgramType == Application && system_resource_size != 0 this will be set if MemoryAllocationCompatiblityMode is false
 			byte_t :0;
 		} flag;
 		byte_t reserved_1;
