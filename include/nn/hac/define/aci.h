@@ -47,7 +47,7 @@ namespace hac
 		{
 			uint32_t production : 1;
 			uint32_t unqualified_approval : 1;
-			uint32_t memory_region : 2;
+			uint32_t memory_region : 2; // added in FW 5.0.0 / kernel version 9.1.0??
 			uint32_t :0; 
 		};
 		uint32_t raw;
