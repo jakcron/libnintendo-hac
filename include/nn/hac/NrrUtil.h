@@ -12,7 +12,7 @@ namespace hac
 		static std::string getNrrKindAsString(nn::hac::nrr::NrrKind val);
 
 	private:
-		const std::string kModuleName = "META_UTIL";
+		const std::string kModuleName = "NRR_UTIL";
 	};
 }
 }

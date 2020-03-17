@@ -11,10 +11,10 @@ namespace hac
 	{
 		static const uint32_t kNrrStructMagic = _MAKE_STRUCT_MAGIC_U32("NRR0");
 
-		enum NrrKind
+		enum class NrrKind
 		{
-			NRRKIND_USER = 0,
-			NRRKIND_JIT_PLUGIN = 1
+			User = 0,
+			JitPlugin = 1
 		};
 	}
 
@@ -26,6 +26,7 @@ namespace hac
 		byte_t nrr_body_modulus[fnd::rsa::kRsa2048Size];
 		byte_t nrr_cert_signature[fnd::rsa::kRsa2048Size];
 	};
+	static_assert(sizeof(sNrrCertificate) == 0x210, "sNrrCertificate size.");
 
 	struct sNrrHeader
 	{
@@ -42,6 +43,7 @@ namespace hac
 		le_uint32_t hash_count;
 		byte_t reserved_2[8];
 	};
+	static_assert(sizeof(sNrrHeader) == 0x350, "sNrrHeader size.");
 
 #pragma pack(pop)
 }
