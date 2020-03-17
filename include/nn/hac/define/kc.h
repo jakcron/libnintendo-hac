@@ -16,6 +16,7 @@ namespace hac
 			EnableSystemCalls = 4,
 			MemoryMap = 6,
 			IoMemoryMap = 7,
+			MemoryRegionMap = 10,
 			EnableInterrupts = 11,
 			MiscParams = 13,
 			KernelVersion = 14,
@@ -49,6 +50,14 @@ namespace hac
 		{
 			Io,
 			Static
+		};
+
+		enum class RegionType : byte_t
+		{
+			NoMapping,
+			KernelTraceBuffer,
+			OnMemoryBootImage,
+			DTB
 		};
 
 		enum class SystemCallId : byte_t
