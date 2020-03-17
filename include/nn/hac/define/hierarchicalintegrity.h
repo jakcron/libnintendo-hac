@@ -12,6 +12,7 @@ namespace hac
 		static const size_t kDefaultLayerNumForRomFs = 6;
 		static const size_t kHeaderAlignLen = 0x20;
 		static const size_t kSaltSourceLen = 0x20;
+		static const size_t kHacRomfsMasterHashLen = 0x20;
 
 		enum class TypeId
 		{
@@ -28,21 +29,25 @@ namespace hac
 		le_uint32_t master_hash_size;
 		le_uint32_t layer_num;
 	};
+	static_assert(sizeof(sHierarchicalIntegrityHeader) == 0x10, "sHierarchicalIntegrityHeader size.");
 
-	struct sHierarchicalIntegrityLayerInfo // sizeof(0x18)
+	struct sHierarchicalIntegrityLayerInfo
 	{
 		le_uint64_t offset;
 		le_uint64_t size;
 		le_uint32_t block_size;
 		byte_t reserved[4];
 	};
+	static_assert(sizeof(sHierarchicalIntegrityLayerInfo) == 0x18, "sHierarchicalIntegrityLayerInfo size.");
 
-	struct sHierarchicalIntegrity
+	struct sHierarchicalIntegrityForHacRomfs
 	{
 		sHierarchicalIntegrityHeader header;
 		sHierarchicalIntegrityLayerInfo layer[hierarchicalintegrity::kDefaultLayerNumForRomFs];
 		byte_t salt_source[hierarchicalintegrity::kSaltSourceLen];
+		byte_t master_hash[hierarchicalintegrity::kHacRomfsMasterHashLen];
 	};
+	static_assert(sizeof(sHierarchicalIntegrityForHacRomfs) == 0xE0, "sHierarchicalIntegrityForHacRomfs size.");
 #pragma pack(pop)
 }
 }

@@ -31,6 +31,7 @@ namespace hac
 		} sections[romfs::SECTION_NUM];
 		le_uint64_t data_offset;
 	};
+	static_assert(sizeof(sRomfsHeader) == 0x50, "sRomfsHeader size.");
 
 	struct sRomfsDirEntry
 	{
@@ -43,6 +44,7 @@ namespace hac
 		char* name() { return ((char*)(this)) + sizeof(sRomfsDirEntry); }
 		const char* name() const { return ((char*)(this)) + sizeof(sRomfsDirEntry); }
 	};
+	static_assert(sizeof(sRomfsDirEntry) == 0x18, "sRomfsDirEntry size.");
 
 	struct sRomfsFileEntry
 	{
@@ -55,6 +57,7 @@ namespace hac
 		char* name() { return ((char*)(this)) + sizeof(sRomfsFileEntry); }
 		const char* name() const { return ((char*)(this)) + sizeof(sRomfsFileEntry); }
 	};
+	static_assert(sizeof(sRomfsFileEntry) == 0x20, "sRomfsFileEntry size.");
 #pragma pack(pop)
 }
 }

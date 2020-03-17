@@ -21,6 +21,7 @@ namespace hac
 		le_uint32_t kip_num;
 		byte_t reserved_01[0x4];
 	};
+	static_assert(sizeof(sIniHeader) == 0x10, "sIniHeader size.");
 #pragma pack(pop)
 }
 }

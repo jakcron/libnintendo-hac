@@ -73,6 +73,7 @@ namespace hac
 			le_uint32_t size;
 		} content_owner_ids, save_data_owner_ids; // the data for these follow later in binary. start/end relative to base of FacData instance
 	};
+	static_assert(sizeof(sFacHeader) == 0x1C, "sFacHeader size.");
 #pragma pack(pop)
 }
 }

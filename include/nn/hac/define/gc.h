@@ -82,6 +82,7 @@ namespace hac
 	{
 		byte_t data[gc::kPageSize];
 	};
+	static_assert(sizeof(sGcPage) == gc::kPageSize, "sGcPage size.");
 
 	struct sGcHeader
 	{
@@ -122,12 +123,14 @@ namespace hac
 			};
 		} extended_header;
 	};
+	static_assert(sizeof(sGcHeader) == 0x100, "sGcHeader size.");
 
 	struct sGcHeader_Rsa2048Signed
 	{
 		byte_t signature[fnd::rsa::kRsa2048Size];
 		sGcHeader header;
 	};
+	static_assert(sizeof(sGcHeader_Rsa2048Signed) == 0x200, "sGcHeader_Rsa2048Signed size.");
 
 	struct sGcInitialData
 	{
@@ -136,6 +139,7 @@ namespace hac
 		byte_t ccm_mac[16];
 		byte_t ccm_nonce[12];
 	};
+	static_assert(sizeof(sGcInitialData) == 0x3C, "sGcInitialData size.");
 
 	struct sGcKeyDataRegion
 	{
@@ -164,13 +168,15 @@ namespace hac
 				fnd::aes::sAesIvCtr title_key_encryption_ctr;
 			} dec;
 		} title_key_encryption_params_region;
-	}; // sizeof() = 512*8 (8 pages)
+	};
+	static_assert(sizeof(sGcKeyDataRegion) == gc::kPageSize * 8, "sGcKeyDataRegion size.");
 
 	struct sSdkGcHeader
 	{
 		sGcKeyDataRegion keydata;
 		sGcHeader_Rsa2048Signed signed_header;
 	};
+	static_assert(sizeof(sSdkGcHeader) == 0x1200, "sSdkGcHeader size.");
 
 #pragma pack(pop)
 }
