@@ -125,10 +125,10 @@ std::string nn::hac::ContentArchiveUtil::getDistributionTypeAsString(nn::hac::nc
 
 	switch (val)
 	{
-	case (nn::hac::nca::DIST_DOWNLOAD):
+	case (nn::hac::nca::DistributionType::Download):
 		ss << "Download";
 		break;
-	case (nn::hac::nca::DIST_GAME_CARD):
+	case (nn::hac::nca::DistributionType::GameCard):
 		ss << "Game Card";
 		break;
 	default:
@@ -145,22 +145,22 @@ std::string nn::hac::ContentArchiveUtil::getContentTypeAsString(nn::hac::nca::Co
 
 	switch (val)
 	{
-	case (nn::hac::nca::TYPE_PROGRAM):
+	case (nn::hac::nca::ContentType::Program):
 		ss << "Program";
 		break;
-	case (nn::hac::nca::TYPE_META):
+	case (nn::hac::nca::ContentType::Meta):
 		ss << "Meta";
 		break;
-	case (nn::hac::nca::TYPE_CONTROL):
+	case (nn::hac::nca::ContentType::Control):
 		ss << "Control";
 		break;
-	case (nn::hac::nca::TYPE_MANUAL):
+	case (nn::hac::nca::ContentType::Manual):
 		ss << "Manual";
 		break;
-	case (nn::hac::nca::TYPE_DATA):
+	case (nn::hac::nca::ContentType::Data):
 		ss << "Data";
 		break;
-	case (nn::hac::nca::TYPE_PUBLIC_DATA):
+	case (nn::hac::nca::ContentType::PublicData):
 		ss << "PublicData";
 		break;
 	default:
@@ -177,10 +177,10 @@ std::string nn::hac::ContentArchiveUtil::getFormatTypeAsString(nn::hac::nca::For
 
 	switch (val)
 	{
-	case (nn::hac::nca::FORMAT_ROMFS):
+	case (nn::hac::nca::FormatType::RomFs):
 		ss << "RomFs";
 		break;
-	case (nn::hac::nca::FORMAT_PFS0):
+	case (nn::hac::nca::FormatType::PartitionFs):
 		ss << "PartitionFs";
 		break;
 	default:
@@ -197,16 +197,16 @@ std::string nn::hac::ContentArchiveUtil::getHashTypeAsString(nn::hac::nca::HashT
 
 	switch (val)
 	{
-	case (nn::hac::nca::HASH_AUTO):
+	case (nn::hac::nca::HashType::Auto):
 		ss << "Auto";
 		break;
-	case (nn::hac::nca::HASH_NONE):
+	case (nn::hac::nca::HashType::None):
 		ss << "None";
 		break;
-	case (nn::hac::nca::HASH_HIERARCHICAL_SHA256):
+	case (nn::hac::nca::HashType::HierarchicalSha256):
 		ss << "HierarchicalSha256";
 		break;
-	case (nn::hac::nca::HASH_HIERARCHICAL_INTERGRITY):
+	case (nn::hac::nca::HashType::HierarchicalIntegrity):
 		ss << "HierarchicalIntegrity";
 		break;
 	default:
@@ -223,19 +223,19 @@ std::string nn::hac::ContentArchiveUtil::getEncryptionTypeAsString(nn::hac::nca:
 
 	switch (val)
 	{
-	case (nn::hac::nca::CRYPT_AUTO):
+	case (nn::hac::nca::EncryptionType::Auto):
 		ss << "Auto";
 		break;
-	case (nn::hac::nca::CRYPT_NONE):
+	case (nn::hac::nca::EncryptionType::None):
 		ss << "None";
 		break;
-	case (nn::hac::nca::CRYPT_AESXTS):
+	case (nn::hac::nca::EncryptionType::AesXts):
 		ss << "AesXts";
 		break;
-	case (nn::hac::nca::CRYPT_AESCTR):
+	case (nn::hac::nca::EncryptionType::AesCtr):
 		ss << "AesCtr";
 		break;
-	case (nn::hac::nca::CRYPT_AESCTREX):
+	case (nn::hac::nca::EncryptionType::AesCtrEx):
 		ss << "AesCtrEx";
 		break;
 	default:

@@ -71,8 +71,8 @@ void nn::hac::ContentArchiveHeader::toBytes()
 	}
 
 	// set variables
-	hdr->distribution_type = mDistributionType;
-	hdr->content_type = mContentType;
+	hdr->distribution_type = (byte_t)mDistributionType;
+	hdr->content_type = (byte_t)mContentType;
 	if (mKeyGeneration > 2)
 	{
 		hdr->key_generation = 2;
@@ -132,8 +132,8 @@ void nn::hac::ContentArchiveHeader::fromBytes(const byte_t * data, size_t len)
 	}
 
 	// variables
-	mDistributionType = (nca::DistributionType)hdr->distribution_type;
-	mContentType = (nca::ContentType)hdr->content_type;
+	mDistributionType = nca::DistributionType(hdr->distribution_type);
+	mContentType = nca::ContentType(hdr->content_type);
 	mKeyGeneration = _MAX(hdr->key_generation, hdr->key_generation_2);
 	mSignatureKeyGeneration = hdr->signature_key_generation;
 	mKaekIndex = hdr->key_area_encryption_key_index;
@@ -161,8 +161,8 @@ const fnd::Vec<byte_t>& nn::hac::ContentArchiveHeader::getBytes() const
 void nn::hac::ContentArchiveHeader::clear()
 {
 	mFormatVersion = nca::FORMAT_NCA3;
-	mDistributionType = nca::DIST_DOWNLOAD;
-	mContentType = nca::TYPE_PROGRAM;
+	mDistributionType = nca::DistributionType::Download;
+	mContentType = nca::ContentType::Program;
 	mKeyGeneration = 0;
 	mKaekIndex = 0;
 	mContentSize = 0;

@@ -37,20 +37,20 @@ namespace hac
 			PARTITION_LOGO = 2,
 		};
 
-		enum DistributionType
+		enum class DistributionType : byte_t
 		{
-			DIST_DOWNLOAD,
-			DIST_GAME_CARD
+			Download,
+			GameCard
 		};
 
-		enum ContentType
+		enum class ContentType : byte_t
 		{
-			TYPE_PROGRAM,
-			TYPE_META,
-			TYPE_CONTROL,
-			TYPE_MANUAL,
-			TYPE_DATA,
-			TYPE_PUBLIC_DATA
+			Program,
+			Meta,
+			Control,
+			Manual,
+			Data,
+			PublicData
 		};
 
 		enum KeyBankIndex
@@ -69,27 +69,27 @@ namespace hac
 			KAEK_IDX_SYSTEM
 		};
 
-		enum FormatType	
+		enum class FormatType : byte_t
 		{
-			FORMAT_ROMFS,
-			FORMAT_PFS0
+			RomFs,
+			PartitionFs
 		};
 
-		enum HashType
+		enum class HashType : byte_t
 		{
-			HASH_AUTO,
-			HASH_NONE,
-			HASH_HIERARCHICAL_SHA256,
-			HASH_HIERARCHICAL_INTERGRITY // IVFC
+			Auto,
+			None,
+			HierarchicalSha256,
+			HierarchicalIntegrity // IVFC
 		};
 
-		enum EncryptionType
+		enum class EncryptionType : byte_t 
 		{
-			CRYPT_AUTO,
-			CRYPT_NONE,
-			CRYPT_AESXTS,
-			CRYPT_AESCTR,
-			CRYPT_AESCTREX
+			Auto,
+			None,
+			AesXts,
+			AesCtr,
+			AesCtrEx
 		};
 	}
 	
@@ -119,6 +119,7 @@ namespace hac
 		fnd::sha::sSha256Hash fs_header_hash[nca::kPartitionNum];
 		byte_t key_area[nca::kKeyAreaSize];
 	};
+	static_assert(sizeof(sContentArchiveHeader) == 0x200, "sContentArchiveHeader size.");
 
 	struct sNcaFsHeader
 	{
@@ -132,6 +133,7 @@ namespace hac
 		le_uint32_t secure_value;
 		byte_t reserved_1[0xB8];
 	};
+	static_assert(sizeof(sNcaFsHeader) == 0x200, "sNcaFsHeader size.");
 
 	struct sContentArchiveHeaderBlock
 	{
@@ -140,6 +142,7 @@ namespace hac
 		sContentArchiveHeader header;
 		sNcaFsHeader fs_header[nn::hac::nca::kPartitionNum];
 	};
+	static_assert(sizeof(sContentArchiveHeaderBlock) == 0xC00, "sContentArchiveHeaderBlock size.");
 
 #pragma pack(pop)
 }
