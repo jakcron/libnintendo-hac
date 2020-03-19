@@ -46,6 +46,12 @@ namespace hac
 		const cnmt::ContentMetaAttribute& getAttribute() const;
 		void setAttribute(const cnmt::ContentMetaAttribute& attr);
 
+		cnmt::StorageId getStorageId() const;
+		void setStorageId(cnmt::StorageId storage_id);
+
+		cnmt::ContentInstallType getContentInstallType() const;
+		void setContentInstallType(cnmt::ContentInstallType install_type);
+
 		uint32_t getRequiredDownloadSystemVersion() const;
 		void setRequiredDownloadSystemVersion(uint32_t version);
 
@@ -85,6 +91,8 @@ namespace hac
 		uint32_t mTitleVersion;
 		cnmt::ContentMetaType mType;
 		cnmt::ContentMetaAttribute mAttribute;
+		cnmt::StorageId mStorageId;
+		cnmt::ContentInstallType mContentInstallType;
 		uint32_t mRequiredDownloadSystemVersion;
 		fnd::Vec<byte_t> mExtendedHeader;
 

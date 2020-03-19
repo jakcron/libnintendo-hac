@@ -23,6 +23,8 @@ void nn::hac::ContentMeta::operator=(const ContentMeta& other)
 		mTitleVersion = other.mTitleVersion;
 		mType = other.mType;
 		mAttribute = other.mAttribute;
+		mStorageId = other.mStorageId;
+		mContentInstallType = other.mContentInstallType;
 		mRequiredDownloadSystemVersion = other.mRequiredDownloadSystemVersion;
 		mApplicationMetaExtendedHeader = other.mApplicationMetaExtendedHeader;
 		mPatchMetaExtendedHeader = other.mPatchMetaExtendedHeader;
@@ -41,6 +43,8 @@ bool nn::hac::ContentMeta::operator==(const ContentMeta& other) const
 		&& (mTitleVersion == other.mTitleVersion) \
 		&& (mType == other.mType) \
 		&& (mAttribute == other.mAttribute) \
+		&& (mStorageId == other.mStorageId) \
+		&& (mContentInstallType == other.mContentInstallType) \
 		&& (mRequiredDownloadSystemVersion == other.mRequiredDownloadSystemVersion) \
 		&& (mApplicationMetaExtendedHeader == other.mApplicationMetaExtendedHeader) \
 		&& (mPatchMetaExtendedHeader == other.mPatchMetaExtendedHeader) \
@@ -77,6 +81,8 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	mTitleVersion = hdr->version.get();
 	mType = (cnmt::ContentMetaType)hdr->type;
 	mAttribute = hdr->attributes;
+	mStorageId = cnmt::StorageId(hdr->storage_id);
+	mContentInstallType = cnmt::ContentInstallType(hdr->install_type);
 	mRequiredDownloadSystemVersion = hdr->required_download_system_version.get();
 	size_t exdata_size = 0;
 
@@ -155,6 +161,8 @@ void nn::hac::ContentMeta::clear()
 	mTitleVersion = 0;
 	mType = cnmt::ContentMetaType::SystemProgram;
 	mAttribute = 0;
+	mStorageId = cnmt::StorageId::None;
+	mContentInstallType = cnmt::ContentInstallType::Full;
 	mRequiredDownloadSystemVersion = 0;
 	mApplicationMetaExtendedHeader.clear();
 	mPatchMetaExtendedHeader.clear();
@@ -204,6 +212,26 @@ const nn::hac::cnmt::ContentMetaAttribute& nn::hac::ContentMeta::getAttribute() 
 void nn::hac::ContentMeta::setAttribute(const nn::hac::cnmt::ContentMetaAttribute& attr)
 {
 	mAttribute = attr;
+}
+
+nn::hac::cnmt::StorageId nn::hac::ContentMeta::getStorageId() const
+{
+	return mStorageId;
+}
+
+void nn::hac::ContentMeta::setStorageId(nn::hac::cnmt::StorageId storage_id)
+{
+	mStorageId = storage_id;
+}
+
+nn::hac::cnmt::ContentInstallType nn::hac::ContentMeta::getContentInstallType() const
+{
+	return mContentInstallType;
+}
+
+void nn::hac::ContentMeta::setContentInstallType(nn::hac::cnmt::ContentInstallType install_type)
+{
+	mContentInstallType = install_type;
 }
 
 uint32_t nn::hac::ContentMeta::getRequiredDownloadSystemVersion() const
