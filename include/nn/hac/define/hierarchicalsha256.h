@@ -24,7 +24,7 @@ namespace hac
 			le_uint64_t size;
 		} layer[hierarchicalsha256::kMaxLayerNum];
 	};
-	static_assert(sizeof(sHierarchicalSha256Header) == 0x48);
+	static_assert(sizeof(sHierarchicalSha256Header) == 0x48, "sHierarchicalSha256Header size.");
 #pragma pack(pop)
 }
 }
