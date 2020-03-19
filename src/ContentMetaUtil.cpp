@@ -101,6 +101,61 @@ std::string nn::hac::ContentMetaUtil::getUpdateTypeAsString(nn::hac::cnmt::Updat
 	return ss.str();
 }
 
+std::string nn::hac::ContentMetaUtil::getContentInstallTypeAsString(nn::hac::cnmt::ContentInstallType val)
+{
+	std::stringstream ss;
+
+	switch (val)
+	{
+	case (nn::hac::cnmt::ContentInstallType::Full):
+		ss << "Full";
+		break;
+	case (nn::hac::cnmt::ContentInstallType::FragmentOnly):
+		ss << "FragmentOnly";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		break;
+	}
+
+	return ss.str();
+}
+
+std::string nn::hac::ContentMetaUtil::getStorageIdAsString(nn::hac::cnmt::StorageId val)
+{
+	std::stringstream ss;
+
+	switch (val)
+	{
+	case (nn::hac::cnmt::StorageId::None):
+		ss << "None";
+		break;
+	case (nn::hac::cnmt::StorageId::Host):
+		ss << "Host";
+		break;
+	case (nn::hac::cnmt::StorageId::GameCard):
+		ss << "GameCard";
+		break;
+	case (nn::hac::cnmt::StorageId::BuiltInSystem):
+		ss << "BuiltInSystem";
+		break;
+	case (nn::hac::cnmt::StorageId::BuiltInUser):
+		ss << "BuiltInUser";
+		break;
+	case (nn::hac::cnmt::StorageId::SdCard):
+		ss << "SdCard";
+		break;
+	case (nn::hac::cnmt::StorageId::Any):
+		ss << "Any";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		break;
+	}
+
+	return ss.str();
+}
+
 std::string nn::hac::ContentMetaUtil::getContentMetaAttributeFlagAsString(nn::hac::cnmt::ContentMetaAttributeFlag val)
 {
 	std::stringstream ss;

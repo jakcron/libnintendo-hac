@@ -41,6 +41,23 @@ namespace hac
 			Create
 		};
 
+		enum class ContentInstallType : byte_t 
+		{
+			Full,
+			FragmentOnly
+		};
+
+		enum class StorageId : byte_t
+		{
+			None,
+			Host,
+			GameCard,
+			BuiltInSystem,
+			BuiltInUser,
+			SdCard,
+			Any
+		};
+
 		enum class ContentMetaAttributeFlag : size_t
 		{
 			IncludesExFatDriver,
@@ -80,7 +97,9 @@ namespace hac
 		le_uint16_t content_count;
 		le_uint16_t content_meta_count;
 		byte_t attributes;
-		byte_t reserved_1[3];
+		byte_t storage_id;
+		byte_t install_type;
+		byte_t reserved_1;
 		le_uint32_t required_download_system_version;
 		byte_t reserved_2[4];
 	};
