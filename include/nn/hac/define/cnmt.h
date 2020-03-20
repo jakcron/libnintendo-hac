@@ -58,13 +58,20 @@ namespace hac
 			Any
 		};
 
-		enum class ContentMetaAttributeFlag : size_t
+		enum class ContentMetaAttributeFlag
 		{
 			IncludesExFatDriver,
 			Rebootless
 		};
 		
 		using ContentMetaAttribute = std::bitset<8>;
+
+		enum class InstallStateFlag
+		{
+			Committed
+		};
+
+		using InstallState = std::bitset<8>;
 
 		static const size_t kContentIdLen = 0x10;
 		using sContentId = sFixedSizeArray<kContentIdLen>;
@@ -99,9 +106,9 @@ namespace hac
 		byte_t attributes;
 		byte_t storage_id;
 		byte_t install_type;
-		byte_t reserved_1;
+		byte_t install_state;
 		le_uint32_t required_download_system_version;
-		byte_t reserved_2[4];
+		byte_t reserved_1[4];
 	};
 	static_assert(sizeof(sContentMetaHeader) == 0x20, "sContentMetaHeader size.");
 

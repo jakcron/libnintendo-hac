@@ -25,6 +25,7 @@ void nn::hac::ContentMeta::operator=(const ContentMeta& other)
 		mAttribute = other.mAttribute;
 		mStorageId = other.mStorageId;
 		mContentInstallType = other.mContentInstallType;
+		mInstallState = other.mInstallState;
 		mRequiredDownloadSystemVersion = other.mRequiredDownloadSystemVersion;
 		mApplicationMetaExtendedHeader = other.mApplicationMetaExtendedHeader;
 		mPatchMetaExtendedHeader = other.mPatchMetaExtendedHeader;
@@ -45,6 +46,7 @@ bool nn::hac::ContentMeta::operator==(const ContentMeta& other) const
 		&& (mAttribute == other.mAttribute) \
 		&& (mStorageId == other.mStorageId) \
 		&& (mContentInstallType == other.mContentInstallType) \
+		&& (mInstallState == other.mInstallState) \
 		&& (mRequiredDownloadSystemVersion == other.mRequiredDownloadSystemVersion) \
 		&& (mApplicationMetaExtendedHeader == other.mApplicationMetaExtendedHeader) \
 		&& (mPatchMetaExtendedHeader == other.mPatchMetaExtendedHeader) \
@@ -83,6 +85,7 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	mAttribute = hdr->attributes;
 	mStorageId = cnmt::StorageId(hdr->storage_id);
 	mContentInstallType = cnmt::ContentInstallType(hdr->install_type);
+	mInstallState = hdr->install_state;
 	mRequiredDownloadSystemVersion = hdr->required_download_system_version.get();
 	size_t exdata_size = 0;
 
@@ -163,6 +166,7 @@ void nn::hac::ContentMeta::clear()
 	mAttribute = 0;
 	mStorageId = cnmt::StorageId::None;
 	mContentInstallType = cnmt::ContentInstallType::Full;
+	mInstallState = 0;
 	mRequiredDownloadSystemVersion = 0;
 	mApplicationMetaExtendedHeader.clear();
 	mPatchMetaExtendedHeader.clear();
@@ -232,6 +236,16 @@ nn::hac::cnmt::ContentInstallType nn::hac::ContentMeta::getContentInstallType() 
 void nn::hac::ContentMeta::setContentInstallType(nn::hac::cnmt::ContentInstallType install_type)
 {
 	mContentInstallType = install_type;
+}
+
+nn::hac::cnmt::InstallState nn::hac::ContentMeta::getInstallState() const
+{
+	return mInstallState;
+}
+
+void nn::hac::ContentMeta::setInstallState(nn::hac::cnmt::InstallState install_state)
+{
+	mInstallState = install_state;
 }
 
 uint32_t nn::hac::ContentMeta::getRequiredDownloadSystemVersion() const

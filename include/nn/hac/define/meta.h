@@ -18,6 +18,12 @@ namespace hac
 		static const uint32_t kAlignSystemResourceMask = kAlignSystemResourceSize - 1;
 		static const uint32_t kMaxSystemResourceSize = 0x1FE00000;
 
+		enum class InstructionType : bool
+		{
+			InstructionType32Bit,
+			InstructionType64Bit
+		};
+
 		enum class ProcessAddressSpace : byte_t
 		{
 			AddressSpace32Bit,
