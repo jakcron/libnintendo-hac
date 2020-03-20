@@ -21,9 +21,9 @@ namespace hac
 #pragma pack(push,1)
 	struct sNrrCertificate
 	{
-		byte_t reserved_00[0x10];
 		le_uint64_t application_id_mask;
 		le_uint64_t application_id_pattern;
+		byte_t reserved_00[0x10];
 		byte_t nrr_body_modulus[fnd::rsa::kRsa2048Size];
 		byte_t nrr_cert_signature[fnd::rsa::kRsa2048Size];
 	};
