@@ -74,10 +74,10 @@ namespace hac
 		using InstallState = std::bitset<8>;
 
 		static const size_t kContentIdLen = 0x10;
-		using sContentId = sFixedSizeArray<kContentIdLen>;
+		using sContentId = std::array<byte_t, kContentIdLen>;
 
 		static const size_t kDigestLen = 0x20;
-		using sDigest = sFixedSizeArray<kDigestLen>;
+		using sDigest = std::array<byte_t, kDigestLen>;
 	}
 
 

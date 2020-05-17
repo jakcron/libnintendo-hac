@@ -34,7 +34,7 @@ void nn::hac::ContentMeta::operator=(const ContentMeta& other)
 		mContentInfo = other.mContentInfo;
 		mContentMetaInfo = other.mContentMetaInfo;
 		mExtendedData = other.mExtendedData;
-		memcpy(mDigest.data, other.mDigest.data, cnmt::kDigestLen);
+		memcpy(mDigest.data(), other.mDigest.data(), cnmt::kDigestLen);
 	}
 }
 
@@ -55,7 +55,7 @@ bool nn::hac::ContentMeta::operator==(const ContentMeta& other) const
 		&& (mContentInfo == other.mContentInfo) \
 		&& (mContentMetaInfo == other.mContentMetaInfo) \
 		&& (mExtendedData == other.mExtendedData) \
-		&& (memcmp(mDigest.data, other.mDigest.data, cnmt::kDigestLen) == 0);
+		&& (memcmp(mDigest.data(), other.mDigest.data(), cnmt::kDigestLen) == 0);
 }
 
 bool nn::hac::ContentMeta::operator!=(const ContentMeta& other) const
@@ -110,6 +110,10 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 				mDeltaMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = mDeltaMetaExtendedHeader.getExtendedDataSize();
 				break;
+			case (cnmt::ContentMetaType::SystemUpdate):
+				mSystemUpdateMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
+				exdata_size = mSystemUpdateMetaExtendedHeader.getExtendedDataSize();
+				break;
 			default:
 				throw fnd::Exception(kModuleName, "Unhandled extended header for ContentMeta");
 				//exdata_size = 0;
@@ -149,7 +153,7 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	}
 
 	// save digest
-	memcpy(mDigest.data, data + getDigestOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), exdata_size), cnmt::kDigestLen);
+	memcpy(mDigest.data(), data + getDigestOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), exdata_size), cnmt::kDigestLen);
 }
 
 const fnd::Vec<byte_t>& nn::hac::ContentMeta::getBytes() const
@@ -172,10 +176,11 @@ void nn::hac::ContentMeta::clear()
 	mPatchMetaExtendedHeader.clear();
 	mAddOnContentMetaExtendedHeader.clear();
 	mDeltaMetaExtendedHeader.clear();
+	mSystemUpdateMetaExtendedHeader.clear();
 	mContentInfo.clear();
 	mContentMetaInfo.clear();
 	mExtendedData.clear();
-	memset(mDigest.data, 0, cnmt::kDigestLen);
+	memset(mDigest.data(), 0, cnmt::kDigestLen);
 }
 
 uint64_t nn::hac::ContentMeta::getTitleId() const
@@ -298,6 +303,16 @@ void nn::hac::ContentMeta::setDeltaMetaExtendedHeader(const DeltaMetaExtendedHea
 	mDeltaMetaExtendedHeader = exhdr;
 }
 
+const nn::hac::SystemUpdateMetaExtendedHeader& nn::hac::ContentMeta::getSystemUpdateMetaExtendedHeader() const
+{
+	return mSystemUpdateMetaExtendedHeader;
+}
+
+void nn::hac::ContentMeta::setSystemUpdateMetaExtendedHeader(const SystemUpdateMetaExtendedHeader& exhdr)
+{
+	mSystemUpdateMetaExtendedHeader = exhdr;
+}
+
 const fnd::List<nn::hac::ContentInfo>& nn::hac::ContentMeta::getContentInfo() const
 {
 	return mContentInfo;
@@ -356,6 +371,9 @@ bool nn::hac::ContentMeta::validateExtendedHeaderSize(cnmt::ContentMetaType type
 		case (cnmt::ContentMetaType::Delta):
 			validSize = (exhdrSize == sizeof(sDeltaMetaExtendedHeader));
 			break;
+		case (cnmt::ContentMetaType::SystemUpdate):
+			validSize = (exhdrSize == sizeof(sSystemUpdateMetaExtendedHeader));
+			break;
 		default:
 			validSize = (exhdrSize == 0);
 	}
@@ -374,6 +392,11 @@ size_t nn::hac::ContentMeta::getExtendedDataSize(cnmt::ContentMetaType type, con
 	else if (type == cnmt::ContentMetaType::Delta)
 	{
 		const sDeltaMetaExtendedHeader* exhdr = (const sDeltaMetaExtendedHeader*)(data);
+		exdata_len = exhdr->extended_data_size.get();
+	}
+	else if (type == cnmt::ContentMetaType::SystemUpdate)
+	{
+		const sSystemUpdateMetaExtendedHeader* exhdr = (const sSystemUpdateMetaExtendedHeader*)(data);
 		exdata_len = exhdr->extended_data_size.get();
 	}
 	return exdata_len;

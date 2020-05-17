@@ -10,6 +10,7 @@
 #include <nn/hac/PatchMetaExtendedHeader.h>
 #include <nn/hac/AddOnContentMetaExtendedHeader.h>
 #include <nn/hac/DeltaMetaExtendedHeader.h>
+#include <nn/hac/SystemUpdateMetaExtendedHeader.h>
 
 namespace nn
 {
@@ -70,6 +71,9 @@ namespace hac
 		const DeltaMetaExtendedHeader& getDeltaMetaExtendedHeader() const;
 		void setDeltaMetaExtendedHeader(const DeltaMetaExtendedHeader& exhdr);
 
+		const SystemUpdateMetaExtendedHeader& getSystemUpdateMetaExtendedHeader() const;
+		void setSystemUpdateMetaExtendedHeader(const SystemUpdateMetaExtendedHeader& exhdr);
+
 		const fnd::List<ContentInfo>& getContentInfo() const;
 		void setContentInfo(const fnd::List<ContentInfo>& info);
 
@@ -81,7 +85,6 @@ namespace hac
 
 		const cnmt::sDigest& getDigest() const;
 		void setDigest(const cnmt::sDigest& digest);
-
 
 	private:
 		const std::string kModuleName = "CONTENT_META";
@@ -104,6 +107,7 @@ namespace hac
 		PatchMetaExtendedHeader mPatchMetaExtendedHeader;
 		AddOnContentMetaExtendedHeader mAddOnContentMetaExtendedHeader;
 		DeltaMetaExtendedHeader mDeltaMetaExtendedHeader;
+		SystemUpdateMetaExtendedHeader mSystemUpdateMetaExtendedHeader;
 
 		fnd::List<ContentInfo> mContentInfo;
 		fnd::List<ContentMetaInfo> mContentMetaInfo;
