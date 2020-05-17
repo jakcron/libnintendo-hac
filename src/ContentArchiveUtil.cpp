@@ -75,7 +75,7 @@ void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(uint32_t generation, uin
 }
 
 
-std::string nn::hac::ContentArchiveUtil::getFormatVersionAsString(nn::hac::nca::HeaderFormatVersion val)
+std::string nn::hac::ContentArchiveUtil::getFormatHeaderVersionAsString(nn::hac::nca::HeaderFormatVersion val)
 {
 	std::stringstream ss;
 
@@ -265,5 +265,23 @@ std::string nn::hac::ContentArchiveUtil::getKeyAreaEncryptionKeyIndexAsString(nn
 		break;
 	}
 
+	return ss.str();
+}
+
+std::string nn::hac::ContentArchiveUtil::getSdkAddonVersionAsString(uint32_t version)
+{
+	std::stringstream ss;
+
+	ss << (uint32_t)((version>>24) & 0xff);
+	ss << ".";
+	ss << (uint32_t)((version>>16) & 0xff);
+	ss << ".";
+	ss << (uint32_t)((version>>8) & 0xff);
+	if (((version>>0) & 0xff) > 0)
+	{
+		ss << "-";
+		ss << (uint32_t)((version>>0) & 0xff);
+	}
+	
 	return ss.str();
 }
