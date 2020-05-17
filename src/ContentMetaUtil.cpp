@@ -185,8 +185,10 @@ std::string nn::hac::ContentMetaUtil::getVersionAsString(uint32_t version)
 	ss << (uint32_t)((version>>20) & 0x3f);
 	ss << ".";
 	ss << (uint32_t)((version>>16) & 0xf);
+	ss << "-";
+	ss << (uint32_t)((version>>8) & 0xff);
 	ss << ".";
-	ss << (uint32_t)(version & 0xffff);
+	ss << (uint32_t)((version>>0) & 0xff);
 
 	return ss.str();
 }
