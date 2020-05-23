@@ -47,7 +47,7 @@ void nn::hac::MiscFlagsHandler::exportKernelCapabilityList(fnd::List<KernelCapab
 
 	// create MiscFlag entry
 	MiscFlagsEntry entry;
-	entry.setFlags(mFlags.to_ullong());
+	entry.setFlags((uint32_t)mFlags.to_ulong());
 
 	// add to list
 	caps.addElement(entry.getKernelCapability());
