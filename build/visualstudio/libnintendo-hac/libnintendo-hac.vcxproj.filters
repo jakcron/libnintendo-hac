@@ -177,6 +177,12 @@
     <ClInclude Include="..\..\..\include\nn\hac\SystemCallHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\SystemUpdateMetaExtendedData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\SystemUpdateMetaExtendedHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\ThreadInfoEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -396,6 +402,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\SystemCallHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ThreadInfoEntry.cpp">

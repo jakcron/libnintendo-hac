@@ -91,6 +91,8 @@
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControlEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\SystemCallEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\SystemCallHandler.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\SystemUpdateMetaExtendedData.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\SystemUpdateMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ThreadInfoEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ThreadInfoHandler.h" />
   </ItemGroup>
@@ -147,6 +149,8 @@
     <ClCompile Include="..\..\..\src\ServiceAccessControlEntry.cpp" />
     <ClCompile Include="..\..\..\src\SystemCallEntry.cpp" />
     <ClCompile Include="..\..\..\src\SystemCallHandler.cpp" />
+    <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedData.cpp" />
+    <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\ThreadInfoEntry.cpp" />
     <ClCompile Include="..\..\..\src\ThreadInfoHandler.cpp" />
   </ItemGroup>
