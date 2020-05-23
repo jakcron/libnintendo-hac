@@ -109,7 +109,6 @@ namespace hac
 		cnmt::InstallState mInstallState;
 		uint32_t mRequiredDownloadSystemVersion;
 
-		fnd::Vec<byte_t> mExtendedHeader;
 		ApplicationMetaExtendedHeader mApplicationMetaExtendedHeader;
 		PatchMetaExtendedHeader mPatchMetaExtendedHeader;
 		AddOnContentMetaExtendedHeader mAddOnContentMetaExtendedHeader;
