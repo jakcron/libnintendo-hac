@@ -41,7 +41,7 @@ void nn::hac::ContentMetaInfo::toBytes()
 	info->id = mTitleId;
 	info->version = mTitleVersion;
 	info->type = (byte_t)mType;
-	info->attributes = mAttribute.to_ullong();
+	info->attributes = (byte_t)mAttribute.to_ulong();
 }
 
 void nn::hac::ContentMetaInfo::fromBytes(const byte_t* bytes, size_t len)

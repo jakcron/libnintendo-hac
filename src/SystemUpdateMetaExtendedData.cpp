@@ -40,7 +40,7 @@ void nn::hac::SystemUpdateMetaExtendedData::toBytes()
 
 		// write header
 		hdr->version = 1;
-		hdr->variation_count = mFirmwareVariationInfo.size();
+		hdr->variation_count = (uint32_t)mFirmwareVariationInfo.size();
 
 		// write variations
 		for (auto info = mFirmwareVariationInfo.begin(); info != mFirmwareVariationInfo.end(); info++, variation_info++)
@@ -85,7 +85,7 @@ void nn::hac::SystemUpdateMetaExtendedData::toBytes()
 
 		// write header
 		hdr_ptr->version = 2;
-		hdr_ptr->variation_count = mFirmwareVariationInfo.size();
+		hdr_ptr->variation_count = (uint32_t)mFirmwareVariationInfo.size();
 
 		// write variation
 		for (auto variation_info_itr = mFirmwareVariationInfo.begin(); \
@@ -94,7 +94,7 @@ void nn::hac::SystemUpdateMetaExtendedData::toBytes()
 		{
 			*firmware_variation_ids_ptr = variation_info_itr->variation_id;
 			variation_info_ptr->refer_to_base = variation_info_itr->meta.size() == 0;
-			variation_info_ptr->meta_count = variation_info_itr->meta.size();
+			variation_info_ptr->meta_count = (uint32_t)variation_info_itr->meta.size();
 
 			for (auto meta_itr = variation_info_itr->meta.begin(); meta_itr != variation_info_itr->meta.end(); meta_itr++, meta_info_ptr++)
 			{
