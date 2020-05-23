@@ -33,7 +33,9 @@ void nn::hac::ContentMeta::operator=(const ContentMeta& other)
 		mDeltaMetaExtendedHeader = other.mDeltaMetaExtendedHeader;
 		mContentInfo = other.mContentInfo;
 		mContentMetaInfo = other.mContentMetaInfo;
-		mExtendedData = other.mExtendedData;
+		mPatchMetaExtendedData = other.mPatchMetaExtendedData;
+		mDeltaMetaExtendedData = other.mDeltaMetaExtendedData;
+		mSystemUpdateMetaExtendedData = other.mSystemUpdateMetaExtendedData;
 		memcpy(mDigest.data(), other.mDigest.data(), cnmt::kDigestLen);
 	}
 }
@@ -54,7 +56,9 @@ bool nn::hac::ContentMeta::operator==(const ContentMeta& other) const
 		&& (mDeltaMetaExtendedHeader == other.mDeltaMetaExtendedHeader) \
 		&& (mContentInfo == other.mContentInfo) \
 		&& (mContentMetaInfo == other.mContentMetaInfo) \
-		&& (mExtendedData == other.mExtendedData) \
+		&& (mPatchMetaExtendedData == other.mPatchMetaExtendedData) \
+		&& (mDeltaMetaExtendedData == other.mDeltaMetaExtendedData) \
+		&& (mSystemUpdateMetaExtendedData == other.mSystemUpdateMetaExtendedData) \
 		&& (memcmp(mDigest.data(), other.mDigest.data(), cnmt::kDigestLen) == 0);
 }
 
@@ -129,7 +133,7 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 		for (size_t i = 0; i < hdr->content_count.get(); i++)
 		{
 			cinfo.fromBytes((const byte_t*)&info[i], sizeof(sContentInfo));
-			mContentInfo.addElement(cinfo);
+			mContentInfo.push_back(cinfo);
 		}
 	}
 
@@ -141,15 +145,31 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 		for (size_t i = 0; i < hdr->content_meta_count.get(); i++)
 		{	
 			cmeta.fromBytes((const byte_t*)&info[i], sizeof(sContentMetaInfo));
-			mContentMetaInfo.addElement(cmeta);
+			mContentMetaInfo.push_back(cmeta);
 		}
 	}
 
 	// save exdata
 	if (exdata_size > 0)
 	{
-		mExtendedData.alloc(exdata_size);
-		memcpy(mExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+		switch (mType)
+		{
+			case (cnmt::ContentMetaType::Patch):
+				mPatchMetaExtendedData.alloc(exdata_size);
+				memcpy(mPatchMetaExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				break;
+			case (cnmt::ContentMetaType::Delta):
+				mDeltaMetaExtendedData.alloc(exdata_size);
+				memcpy(mDeltaMetaExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				break;
+			case (cnmt::ContentMetaType::SystemUpdate):
+				mSystemUpdateMetaExtendedData.fromBytes(data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				break;
+			default:
+				throw fnd::Exception(kModuleName, "Unhandled extended data for ContentMeta");
+				//exdata_size = 0;
+				//break;
+		}
 	}
 
 	// save digest
@@ -179,7 +199,9 @@ void nn::hac::ContentMeta::clear()
 	mSystemUpdateMetaExtendedHeader.clear();
 	mContentInfo.clear();
 	mContentMetaInfo.clear();
-	mExtendedData.clear();
+	mPatchMetaExtendedData.clear();
+	mDeltaMetaExtendedData.clear();
+	mSystemUpdateMetaExtendedData.clear();
 	memset(mDigest.data(), 0, cnmt::kDigestLen);
 }
 
@@ -313,34 +335,54 @@ void nn::hac::ContentMeta::setSystemUpdateMetaExtendedHeader(const SystemUpdateM
 	mSystemUpdateMetaExtendedHeader = exhdr;
 }
 
-const fnd::List<nn::hac::ContentInfo>& nn::hac::ContentMeta::getContentInfo() const
+const std::vector<nn::hac::ContentInfo>& nn::hac::ContentMeta::getContentInfo() const
 {
 	return mContentInfo;
 }
 
-void nn::hac::ContentMeta::setContentInfo(const fnd::List<nn::hac::ContentInfo>& info)
+void nn::hac::ContentMeta::setContentInfo(const std::vector<nn::hac::ContentInfo>& info)
 {
 	mContentInfo = info;
 }
 
-const fnd::List<nn::hac::ContentMetaInfo>& nn::hac::ContentMeta::getContentMetaInfo() const
+const std::vector<nn::hac::ContentMetaInfo>& nn::hac::ContentMeta::getContentMetaInfo() const
 {
 	return mContentMetaInfo;
 }
 
-void nn::hac::ContentMeta::setContentMetaInfo(const fnd::List<nn::hac::ContentMetaInfo>& info)
+void nn::hac::ContentMeta::setContentMetaInfo(const std::vector<nn::hac::ContentMetaInfo>& info)
 {
 	mContentMetaInfo = info;
 }
 
-const fnd::Vec<byte_t> & nn::hac::ContentMeta::getExtendedData() const
+const fnd::Vec<byte_t> & nn::hac::ContentMeta::getPatchMetaExtendedData() const
 {
-	return mExtendedData;
+	return mPatchMetaExtendedData;
 }
 
-void nn::hac::ContentMeta::setExtendedData(const fnd::Vec<byte_t>& data)
+void nn::hac::ContentMeta::setPatchMetaExtendedData(const fnd::Vec<byte_t>& exdata)
 {
-	mExtendedData = data;
+	mPatchMetaExtendedData = exdata;
+}
+
+const fnd::Vec<byte_t> & nn::hac::ContentMeta::getDeltaMetaExtendedData() const
+{
+	return mDeltaMetaExtendedData;
+}
+
+void nn::hac::ContentMeta::setDeltaMetaExtendedData(const fnd::Vec<byte_t>& exdata)
+{
+	mDeltaMetaExtendedData = exdata;
+}
+
+const nn::hac::SystemUpdateMetaExtendedData& nn::hac::ContentMeta::getSystemUpdateMetaExtendedData() const
+{
+	return mSystemUpdateMetaExtendedData;
+}
+
+void nn::hac::ContentMeta::setSystemUpdateMetaExtendedData(const SystemUpdateMetaExtendedData& exdata)
+{
+	mSystemUpdateMetaExtendedData = exdata;
 }
 
 const nn::hac::cnmt::sDigest & nn::hac::ContentMeta::getDigest() const

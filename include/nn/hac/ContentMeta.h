@@ -11,6 +11,7 @@
 #include <nn/hac/AddOnContentMetaExtendedHeader.h>
 #include <nn/hac/DeltaMetaExtendedHeader.h>
 #include <nn/hac/SystemUpdateMetaExtendedHeader.h>
+#include <nn/hac/SystemUpdateMetaExtendedData.h>
 
 namespace nn
 {
@@ -74,14 +75,20 @@ namespace hac
 		const SystemUpdateMetaExtendedHeader& getSystemUpdateMetaExtendedHeader() const;
 		void setSystemUpdateMetaExtendedHeader(const SystemUpdateMetaExtendedHeader& exhdr);
 
-		const fnd::List<ContentInfo>& getContentInfo() const;
-		void setContentInfo(const fnd::List<ContentInfo>& info);
+		const std::vector<ContentInfo>& getContentInfo() const;
+		void setContentInfo(const std::vector<ContentInfo>& info);
 
-		const fnd::List<ContentMetaInfo>& getContentMetaInfo() const;
-		void setContentMetaInfo(const fnd::List<ContentMetaInfo>& info);
+		const std::vector<ContentMetaInfo>& getContentMetaInfo() const;
+		void setContentMetaInfo(const std::vector<ContentMetaInfo>& info);
 
-		const fnd::Vec<byte_t>& getExtendedData() const;
-		void setExtendedData(const fnd::Vec<byte_t>& data);
+		const fnd::Vec<byte_t>& getPatchMetaExtendedData() const;
+		void setPatchMetaExtendedData(const fnd::Vec<byte_t>& exdata);
+
+		const fnd::Vec<byte_t>& getDeltaMetaExtendedData() const;
+		void setDeltaMetaExtendedData(const fnd::Vec<byte_t>& exdata);
+
+		const SystemUpdateMetaExtendedData& getSystemUpdateMetaExtendedData() const;
+		void setSystemUpdateMetaExtendedData(const SystemUpdateMetaExtendedData& exdata);
 
 		const cnmt::sDigest& getDigest() const;
 		void setDigest(const cnmt::sDigest& digest);
@@ -101,17 +108,21 @@ namespace hac
 		cnmt::ContentInstallType mContentInstallType;
 		cnmt::InstallState mInstallState;
 		uint32_t mRequiredDownloadSystemVersion;
-		fnd::Vec<byte_t> mExtendedHeader;
 
+		fnd::Vec<byte_t> mExtendedHeader;
 		ApplicationMetaExtendedHeader mApplicationMetaExtendedHeader;
 		PatchMetaExtendedHeader mPatchMetaExtendedHeader;
 		AddOnContentMetaExtendedHeader mAddOnContentMetaExtendedHeader;
 		DeltaMetaExtendedHeader mDeltaMetaExtendedHeader;
 		SystemUpdateMetaExtendedHeader mSystemUpdateMetaExtendedHeader;
 
-		fnd::List<ContentInfo> mContentInfo;
-		fnd::List<ContentMetaInfo> mContentMetaInfo;
-		fnd::Vec<byte_t> mExtendedData;
+		std::vector<ContentInfo> mContentInfo;
+		std::vector<ContentMetaInfo> mContentMetaInfo;
+
+		fnd::Vec<byte_t> mPatchMetaExtendedData;
+		fnd::Vec<byte_t> mDeltaMetaExtendedData;
+		SystemUpdateMetaExtendedData mSystemUpdateMetaExtendedData;		
+		
 		cnmt::sDigest mDigest;
 
 		inline size_t getExtendedHeaderOffset() const { return sizeof(sContentMetaHeader); }
