@@ -10,7 +10,7 @@ on:
 
 jobs:
   build_makefile:
-    name: Compile ${{ matrix.prog }} for ${{ matrix.dist }}
+    name: ${{ matrix.dist }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -32,7 +32,7 @@ jobs:
         name: ${{ matrix.prog }}-${{ matrix.dist }}
         path: ./bin/${{ matrix.prog }}.a
   build_visualstudio:
-    name: Compile ${{ matrix.prog }} for ${{ matrix.dist }}
+    name: ${{ matrix.dist }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
