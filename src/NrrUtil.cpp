@@ -8,10 +8,10 @@ std::string nn::hac::NrrUtil::getNrrKindAsString(nn::hac::nrr::NrrKind val)
 
 	switch (val)
 	{
-	case (nn::hac::nrr::NRRKIND_USER):
+	case (nn::hac::nrr::NrrKind::User):
 		ss << "User";
 		break;
-	case (nn::hac::nrr::NRRKIND_JIT_PLUGIN):
+	case (nn::hac::nrr::NrrKind::JitPlugin):
 		ss << "JitPlugin";
 		break;
 	default:

@@ -2,19 +2,19 @@
 
 nn::hac::MiscParamsEntry::MiscParamsEntry() :
 	mCap(kCapId),
-	mProgramType(0)
+	mProgramType(kc::ProgramType(0))
 {}
 
 nn::hac::MiscParamsEntry::MiscParamsEntry(const KernelCapabilityEntry & kernel_cap) :
 	mCap(kCapId),
-	mProgramType(0)
+	mProgramType(kc::ProgramType(0))
 {
 	setKernelCapability(kernel_cap);
 }
 
-nn::hac::MiscParamsEntry::MiscParamsEntry(uint8_t program_type) :
+nn::hac::MiscParamsEntry::MiscParamsEntry(kc::ProgramType program_type) :
 	mCap(kCapId),
-	mProgramType(0)
+	mProgramType(kc::ProgramType(0))
 {
 	setProgramType(program_type);
 }
@@ -51,14 +51,14 @@ void nn::hac::MiscParamsEntry::setKernelCapability(const KernelCapabilityEntry &
 	processCapField();
 }
 
-uint8_t nn::hac::MiscParamsEntry::getProgramType() const
+nn::hac::kc::ProgramType nn::hac::MiscParamsEntry::getProgramType() const
 {
 	return mProgramType;
 }
 
-void nn::hac::MiscParamsEntry::setProgramType(uint8_t type)
+void nn::hac::MiscParamsEntry::setProgramType(nn::hac::kc::ProgramType type)
 {
-	if (type > kMaxProgramType)
+	if ((byte_t)type > kMaxProgramType)
 	{
 		throw fnd::Exception(kModuleName, "Illegal ProgramType. (range: 0-7 inclusive)");
 	}

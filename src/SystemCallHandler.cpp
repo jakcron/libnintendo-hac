@@ -3,19 +3,19 @@
 
 nn::hac::SystemCallHandler::SystemCallHandler() :
 	mIsSet(false),
-	mSystemCalls()
+	mSystemCallIds()
 {}
 
 void nn::hac::SystemCallHandler::operator=(const SystemCallHandler & other)
 {
 	mIsSet = other.mIsSet;
-	mSystemCalls = other.mSystemCalls;
+	mSystemCallIds = other.mSystemCallIds;
 }
 
 bool nn::hac::SystemCallHandler::operator==(const SystemCallHandler & other) const
 {
 	return (mIsSet == other.mIsSet) \
-		&& (mSystemCalls == other.mSystemCalls);
+		&& (mSystemCallIds == other.mSystemCallIds);
 }
 
 bool nn::hac::SystemCallHandler::operator!=(const SystemCallHandler & other) const
@@ -30,17 +30,17 @@ void nn::hac::SystemCallHandler::importKernelCapabilityList(const fnd::List<Kern
 
 	SystemCallEntry entry;
 
-	uint8_t syscallUpper, syscall;
+	uint8_t syscallUpper, syscall_id;
 	for (size_t i = 0; i < caps.size(); i++)
 	{
 		entry.setKernelCapability(caps[i]);
-		syscallUpper = 24 * entry.getSystemCallUpperBits();
-		for (uint8_t j = 0; j < 24; j++)
+		syscallUpper = byte_t(kEntrySyscallCount * entry.getSystemCallUpperBits());
+		for (uint8_t j = 0; j < kEntrySyscallCount; j++)
 		{
-			syscall = syscallUpper + j;
+			syscall_id = syscallUpper + j;
 			if (((entry.getSystemCallLowerBits() >> j) & 1) == 1)
 			{
-				mSystemCalls.hasElement(syscall) == false ? mSystemCalls.addElement((kc::SystemCall)syscall) : throw fnd::Exception(kModuleName, "SystemCall already added");
+				mSystemCallIds.set(syscall_id);
 			}
 		}
 	}
@@ -61,14 +61,12 @@ void nn::hac::SystemCallHandler::exportKernelCapabilityList(fnd::List<KernelCapa
 		entries[i].setSystemCallLowerBits(0);
 	}
 
-	for (size_t i = 0; i < mSystemCalls.size(); i++)
+	for (size_t syscall_id = 0; syscall_id < mSystemCallIds.size(); syscall_id++)
 	{
-		if ((byte_t)mSystemCalls[i] > kMaxSystemCall)
-		{
-			throw fnd::Exception(kModuleName, "Illegal SystemCall. (range: 0x00-0xBF inclusive)");
-		}
+		if (mSystemCallIds.test(syscall_id) == false)
+			continue;
 
-		entries[mSystemCalls[i] / 24].setSystemCallLowerBits(entries[mSystemCalls[i] / 24].getSystemCallLowerBits() | BIT(mSystemCalls[i] % 24));
+		entries[syscall_id / kEntrySyscallCount].setSystemCallLowerBits(entries[syscall_id / kEntrySyscallCount].getSystemCallLowerBits() | _BIT(syscall_id % kEntrySyscallCount));
 	}
 
 	for (size_t i = 0; i < kSyscallTotalEntryNum; i++)
@@ -83,7 +81,7 @@ void nn::hac::SystemCallHandler::exportKernelCapabilityList(fnd::List<KernelCapa
 void nn::hac::SystemCallHandler::clear()
 {
 	mIsSet = false;
-	mSystemCalls.clear();
+	mSystemCallIds.reset();
 }
 
 bool nn::hac::SystemCallHandler::isSet() const
@@ -91,23 +89,13 @@ bool nn::hac::SystemCallHandler::isSet() const
 	return mIsSet;
 }
 
-const fnd::List<nn::hac::kc::SystemCall>& nn::hac::SystemCallHandler::getSystemCalls() const
+const nn::hac::kc::SystemCallIds& nn::hac::SystemCallHandler::getSystemCallIds() const
 {
-	return mSystemCalls;
+	return mSystemCallIds;
 }
 
-void nn::hac::SystemCallHandler::setSystemCallList(const fnd::List<nn::hac::kc::SystemCall>& calls)
+void nn::hac::SystemCallHandler::setSystemCallIds(const nn::hac::kc::SystemCallIds& syscall_ids)
 {
-	mSystemCalls.clear();
-	for (size_t i = 0; i < calls.size(); i++)
-	{
-		if ((byte_t)mSystemCalls[i] > kMaxSystemCall)
-		{
-			throw fnd::Exception(kModuleName, "Illegal SystemCall. (range: 0x00-0xBF inclusive)");
-		}
-
-		mSystemCalls.hasElement(calls[i]) == false ? mSystemCalls.addElement(calls[i]) : throw fnd::Exception(kModuleName, "SystemCall already added");
-	}
-
+	mSystemCallIds = syscall_ids;
 	mIsSet = true;
 }

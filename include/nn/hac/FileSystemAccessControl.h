@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/IByteModel.h>
 #include <fnd/List.h>
 #include <nn/hac/define/fac.h>
@@ -54,8 +54,8 @@ namespace hac
 		uint32_t getFormatVersion() const;
 		void setFormatVersion(uint32_t version);
 
-		const fnd::List<fac::FsAccessFlag>& getFsaRightsList() const;
-		void setFsaRightsList(const fnd::List<fac::FsAccessFlag>& list);
+		const fac::FsAccess& getFsAccess() const;
+		void setFsAccess(const fac::FsAccess& access);
 
 		const fnd::List<uint64_t>& getContentOwnerIdList() const;
 		void setContentOwnerIdList(const fnd::List<uint64_t>& list);
@@ -70,7 +70,7 @@ namespace hac
 
 		// variables
 		uint32_t mVersion;
-		fnd::List<fac::FsAccessFlag> mFsaRights;
+		fac::FsAccess mFsAccess;
 		fnd::List<uint64_t> mContentOwnerIdList;
 		fnd::List<sSaveDataOwnerId> mSaveDataOwnerIdList;
 	};

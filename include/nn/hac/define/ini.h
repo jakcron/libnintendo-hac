@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/sha.h>
 #include <nn/hac/define/macro.h>
 
@@ -21,6 +21,7 @@ namespace hac
 		le_uint32_t kip_num;
 		byte_t reserved_01[0x4];
 	};
+	static_assert(sizeof(sIniHeader) == 0x10, "sIniHeader size.");
 #pragma pack(pop)
 }
 }

@@ -92,32 +92,32 @@ void nn::hac::KernelCapabilityControl::fromBytes(const byte_t * data, size_t len
 		cap.setCap(raw_caps[i].get());
 		switch (cap.getType())
 		{
-			case (kc::KC_THREAD_INFO) :
+			case (kc::KernelCapId::ThreadInfo) :
 				threadInfoCaps.addElement(cap);
 				break;
-			case (kc::KC_ENABLE_SYSTEM_CALLS):
+			case (kc::KernelCapId::EnableSystemCalls):
 				systemCallCaps.addElement(cap);
 				break;
-			case (kc::KC_MEMORY_MAP):
-			case (kc::KC_IO_MEMORY_MAP):
+			case (kc::KernelCapId::MemoryMap):
+			case (kc::KernelCapId::IoMemoryMap):
 				memoryMapCaps.addElement(cap);
 				break;
-			case (kc::KC_ENABLE_INTERUPTS):
+			case (kc::KernelCapId::EnableInterrupts):
 				interuptCaps.addElement(cap);
 				break;
-			case (kc::KC_MISC_PARAMS):
+			case (kc::KernelCapId::MiscParams):
 				miscParamCaps.addElement(cap);
 				break;
-			case (kc::KC_KERNEL_VERSION):
+			case (kc::KernelCapId::KernelVersion):
 				kernelVersionCaps.addElement(cap);
 				break;
-			case (kc::KC_HANDLE_TABLE_SIZE):
+			case (kc::KernelCapId::HandleTableSize):
 				handleTableSizeCaps.addElement(cap);
 				break;
-			case (kc::KC_MISC_FLAGS):
+			case (kc::KernelCapId::MiscFlags):
 				miscFlagsCaps.addElement(cap);
 				break;
-			case (kc::KC_STUB):
+			case (kc::KernelCapId::Stubbed):
 				// ignore stubbed
 				break;
 			default:

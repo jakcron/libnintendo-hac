@@ -16,32 +16,36 @@ nn::hac::Meta::Meta(const Meta & other) :
 void nn::hac::Meta::operator=(const Meta & other)
 {
 	mRawBinary = other.mRawBinary;
-	mAcidKeyGeneration = other.mAcidKeyGeneration;
-	mInstructionType = other.mInstructionType;
-	mProcAddressSpaceType = other.mProcAddressSpaceType;
+	mAccessControlInfoDescKeyGeneration = other.mAccessControlInfoDescKeyGeneration;
+	mIs64BitInstructionFlag = other.mIs64BitInstructionFlag;
+	mProcessAddressSpace = other.mProcessAddressSpace;
+	mOptimizeMemoryAllocationFlag = other.mOptimizeMemoryAllocationFlag;
 	mMainThreadPriority = other.mMainThreadPriority;
 	mMainThreadCpuId = other.mMainThreadCpuId;
+	mSystemResourceSize = other.mSystemResourceSize;
 	mVersion = other.mVersion;
 	mMainThreadStackSize = other.mMainThreadStackSize;
 	mName = other.mName;
 	mProductCode = other.mProductCode;
-	mAci = other.mAci;
-	mAcid = other.mAcid;
+	mAccessControlInfo = other.mAccessControlInfo;
+	mAccessControlInfoDesc = other.mAccessControlInfoDesc;
 }
 
 bool nn::hac::Meta::operator==(const Meta & other) const
 {
-	return (mAcidKeyGeneration == other.mAcidKeyGeneration) \
-		&& (mInstructionType == other.mInstructionType) \
-		&& (mProcAddressSpaceType == other.mProcAddressSpaceType) \
+	return (mAccessControlInfoDescKeyGeneration == other.mAccessControlInfoDescKeyGeneration) \
+		&& (mIs64BitInstructionFlag == other.mIs64BitInstructionFlag) \
+		&& (mProcessAddressSpace == other.mProcessAddressSpace) \
+		&& (mOptimizeMemoryAllocationFlag == other.mOptimizeMemoryAllocationFlag) \
 		&& (mMainThreadPriority == other.mMainThreadPriority) \
 		&& (mMainThreadCpuId == other.mMainThreadCpuId) \
+		&& (mSystemResourceSize == other.mSystemResourceSize) \
 		&& (mVersion == other.mVersion) \
 		&& (mMainThreadStackSize == other.mMainThreadStackSize) \
 		&& (mName == other.mName) \
 		&& (mProductCode == other.mProductCode) \
-		&& (mAci == other.mAci) \
-		&& (mAcid == other.mAcid);
+		&& (mAccessControlInfo == other.mAccessControlInfo) \
+		&& (mAccessControlInfoDesc == other.mAccessControlInfoDesc);
 }
 
 bool nn::hac::Meta::operator!=(const Meta & other) const
@@ -51,11 +55,11 @@ bool nn::hac::Meta::operator!=(const Meta & other) const
 
 void nn::hac::Meta::toBytes()
 {
-	if (mAcid.getBytes().size() == 0)
-		mAcid.toBytes();
+	if (mAccessControlInfoDesc.getBytes().size() == 0)
+		mAccessControlInfoDesc.toBytes();
 
-	if (mAci.getBytes().size() == 0)
-		mAci.toBytes();
+	if (mAccessControlInfo.getBytes().size() == 0)
+		mAccessControlInfo.toBytes();
 
 
 	// determine section layout
@@ -64,9 +68,9 @@ void nn::hac::Meta::toBytes()
 	} acid, aci;
 
 	acid.offset = (uint32_t)align(sizeof(sMetaHeader), meta::kSectionAlignSize);
-	acid.size = (uint32_t)mAcid.getBytes().size();
+	acid.size = (uint32_t)mAccessControlInfoDesc.getBytes().size();
 	aci.offset = (uint32_t)(acid.offset + align(acid.size, meta::kSectionAlignSize));
-	aci.size = (uint32_t)mAci.getBytes().size();
+	aci.size = (uint32_t)mAccessControlInfo.getBytes().size();
 	
 
 	// get total size
@@ -79,11 +83,13 @@ void nn::hac::Meta::toBytes()
 	hdr->st_magic = meta::kMetaStructMagic;
 
 	// set variables
-	hdr->acid_key_generation = mAcidKeyGeneration;
-	byte_t flag = ((byte_t)(mInstructionType & 1) | (byte_t)((mProcAddressSpaceType & 3) << 1)) & 0xf;
-	hdr->flags = flag;
+	hdr->aci_desc_key_generation = mAccessControlInfoDescKeyGeneration;
+	hdr->flag.is_64bit_instruction = mIs64BitInstructionFlag;
+	hdr->flag.process_address_space = (byte_t)mProcessAddressSpace;
+	hdr->flag.optimise_memory_allocation = mOptimizeMemoryAllocationFlag;
 	hdr->main_thread_priority = mMainThreadPriority;
 	hdr->main_thread_cpu_id = mMainThreadCpuId;
+	hdr->system_resource_size = mSystemResourceSize;
 	hdr->version = mVersion;
 	hdr->main_thread_stack_size = mMainThreadStackSize;
 	strncpy(hdr->name, mName.c_str(), meta::kNameMaxLen);
@@ -92,17 +98,17 @@ void nn::hac::Meta::toBytes()
 	// set offset/size
 	hdr->aci.offset = aci.offset;
 	hdr->aci.size = aci.size;
-	hdr->acid.offset = acid.offset;
-	hdr->acid.size = acid.size;
+	hdr->aci_desc.offset = acid.offset;
+	hdr->aci_desc.size = acid.size;
 
 	// write aci & acid
-	if (mAci.getBytes().size() > 0)
+	if (mAccessControlInfo.getBytes().size() > 0)
 	{
-		memcpy(mRawBinary.data() + aci.offset, mAci.getBytes().data(), mAci.getBytes().size());
+		memcpy(mRawBinary.data() + aci.offset, mAccessControlInfo.getBytes().data(), mAccessControlInfo.getBytes().size());
 	}
-	if (mAcid.getBytes().size() > 0)
+	if (mAccessControlInfoDesc.getBytes().size() > 0)
 	{
-		memcpy(mRawBinary.data() + acid.offset, mAcid.getBytes().data(), mAcid.getBytes().size());
+		memcpy(mRawBinary.data() + acid.offset, mAccessControlInfoDesc.getBytes().data(), mAccessControlInfoDesc.getBytes().size());
 	}
 }
 
@@ -128,19 +134,20 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	}
 
 	// save variables
-	mAcidKeyGeneration = hdr.acid_key_generation.get();
-	byte_t flag = hdr.flags & 0xf;
-	mInstructionType = (meta::InstructionType)(flag & 1);
-	mProcAddressSpaceType = (meta::ProcAddrSpaceType)((flag >> 1) & 3);
+	mAccessControlInfoDescKeyGeneration = hdr.aci_desc_key_generation;
+	mIs64BitInstructionFlag = hdr.flag.is_64bit_instruction;
+	mProcessAddressSpace = meta::ProcessAddressSpace(hdr.flag.process_address_space);
+	mOptimizeMemoryAllocationFlag = hdr.flag.optimise_memory_allocation;
 	mMainThreadPriority = hdr.main_thread_priority;
 	mMainThreadCpuId = hdr.main_thread_cpu_id;
+	mSystemResourceSize = hdr.system_resource_size.get();
 	mVersion = hdr.version.get();
 	mMainThreadStackSize = hdr.main_thread_stack_size.get();
 	mName = std::string(hdr.name, _MIN(strlen(hdr.name), meta::kNameMaxLen));
 	mProductCode = std::string(hdr.product_code, _MIN(strlen(hdr.product_code), meta::kProductCodeMaxLen));
 
 	// total size
-	size_t total_size = _MAX(_MAX(hdr.acid.offset.get() + hdr.acid.size.get(), hdr.aci.offset.get() + hdr.aci.size.get()), sizeof(sMetaHeader));
+	size_t total_size = _MAX(_MAX(hdr.aci_desc.offset.get() + hdr.aci_desc.size.get(), hdr.aci.offset.get() + hdr.aci.size.get()), sizeof(sMetaHeader));
 
 	// check size
 	if (total_size > len)
@@ -152,14 +159,14 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	mRawBinary.alloc(total_size);
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
-	// import Aci/Acid
+	// import AccessControlInfo/AccessControlInfoDesc
 	if (hdr.aci.size.get())
 	{
-		mAci.fromBytes(mRawBinary.data() + hdr.aci.offset.get(), hdr.aci.size.get());
+		mAccessControlInfo.fromBytes(mRawBinary.data() + hdr.aci.offset.get(), hdr.aci.size.get());
 	}
-	if (hdr.acid.size.get())
+	if (hdr.aci_desc.size.get())
 	{
-		mAcid.fromBytes(mRawBinary.data() + hdr.acid.offset.get(), hdr.acid.size.get());
+		mAccessControlInfoDesc.fromBytes(mRawBinary.data() + hdr.aci_desc.offset.get(), hdr.aci_desc.size.get());
 	}	
 }
 
@@ -171,46 +178,59 @@ const fnd::Vec<byte_t>& nn::hac::Meta::getBytes() const
 void nn::hac::Meta::clear()
 {
 	mRawBinary.clear();
-	mInstructionType = meta::INSTR_64BIT;
-	mProcAddressSpaceType = meta::ADDR_SPACE_64BIT;
+	mAccessControlInfoDescKeyGeneration = 0;
+	mIs64BitInstructionFlag = false;
+	mProcessAddressSpace = meta::ProcessAddressSpace(0);
+	mOptimizeMemoryAllocationFlag = false;
 	mMainThreadPriority = 0;
 	mMainThreadCpuId = 0;
+	mSystemResourceSize = 0;
 	mVersion = 0;
 	mMainThreadStackSize = 0;
 	mName.clear();
 	mProductCode.clear();
-	mAci.clear();
-	mAcid.clear();
+	mAccessControlInfo.clear();
+	mAccessControlInfoDesc.clear();
 }
 
-uint32_t nn::hac::Meta::getAcidKeyGeneration() const
+byte_t nn::hac::Meta::getAccessControlInfoDescKeyGeneration() const
 {
-	return mAcidKeyGeneration;
+	return mAccessControlInfoDescKeyGeneration;
 }
 
-void nn::hac::Meta::setAcidKeyGeneration(uint32_t key_generation)
+void nn::hac::Meta::setAccessControlInfoDescKeyGeneration(byte_t key_generation)
 {
-	mAcidKeyGeneration = key_generation;
+	mAccessControlInfoDescKeyGeneration = key_generation;
 }
 
-nn::hac::meta::InstructionType nn::hac::Meta::getInstructionType() const
+bool nn::hac::Meta::getIs64BitInstructionFlag() const
 {
-	return mInstructionType;
+	return mIs64BitInstructionFlag;
 }
 
-void nn::hac::Meta::setInstructionType(meta::InstructionType type)
+void nn::hac::Meta::setIs64BitInstructionFlag(bool flag)
 {
-	mInstructionType = type;
+	mIs64BitInstructionFlag = flag;
 }
 
-nn::hac::meta::ProcAddrSpaceType nn::hac::Meta::getProcAddressSpaceType() const
+nn::hac::meta::ProcessAddressSpace nn::hac::Meta::getProcessAddressSpace() const
 {
-	return mProcAddressSpaceType;
+	return mProcessAddressSpace;
 }
 
-void nn::hac::Meta::setProcAddressSpaceType(meta::ProcAddrSpaceType type)
+void nn::hac::Meta::setProcessAddressSpace(meta::ProcessAddressSpace type)
 {
-	mProcAddressSpaceType = type;
+	mProcessAddressSpace = type;
+}
+
+bool nn::hac::Meta::getOptimizeMemoryAllocationFlag() const
+{
+	return mOptimizeMemoryAllocationFlag;
+}
+
+void nn::hac::Meta::setOptimizeMemoryAllocationFlag(bool flag)
+{
+	mOptimizeMemoryAllocationFlag = flag;
 }
 
 byte_t nn::hac::Meta::getMainThreadPriority() const
@@ -236,6 +256,16 @@ byte_t nn::hac::Meta::getMainThreadCpuId() const
 void nn::hac::Meta::setMainThreadCpuId(byte_t core_num)
 {
 	mMainThreadCpuId = core_num;
+}
+
+uint32_t nn::hac::Meta::getSystemResourceSize() const
+{
+	return mSystemResourceSize;
+}
+
+void nn::hac::Meta::setSystemResourceSize(uint32_t size)
+{
+	mSystemResourceSize = size;
 }
 
 uint32_t nn::hac::Meta::getVersion() const
@@ -288,22 +318,22 @@ void nn::hac::Meta::setProductCode(const std::string & product_code)
 	mProductCode = product_code;
 }
 
-const nn::hac::AccessControlInfo & nn::hac::Meta::getAci() const
+const nn::hac::AccessControlInfo & nn::hac::Meta::getAccessControlInfo() const
 {
-	return mAci;
+	return mAccessControlInfo;
 }
 
-void nn::hac::Meta::setAci(const AccessControlInfo & aci)
+void nn::hac::Meta::setAccessControlInfo(const AccessControlInfo & aci)
 {
-	mAci = aci;
+	mAccessControlInfo = aci;
 }
 
-const nn::hac::AccessControlInfoDesc & nn::hac::Meta::getAcid() const
+const nn::hac::AccessControlInfoDesc & nn::hac::Meta::getAccessControlInfoDesc() const
 {
-	return mAcid;
+	return mAccessControlInfoDesc;
 }
 
-void nn::hac::Meta::setAcid(const AccessControlInfoDesc & acid)
+void nn::hac::Meta::setAccessControlInfoDesc(const AccessControlInfoDesc & aci_desc)
 {
-	mAcid = acid;
+	mAccessControlInfoDesc = aci_desc;
 }

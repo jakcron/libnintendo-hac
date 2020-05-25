@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/sha.h>
 #include <nn/hac/define/macro.h>
 
@@ -22,6 +22,7 @@ namespace hac
 		le_uint32_t name_table_size;
 		byte_t padding[4];
 	};
+	static_assert(sizeof(sPfsHeader) == 0x10, "sPfsHeader size.");
 
 	struct sPfsFile
 	{
@@ -29,7 +30,8 @@ namespace hac
 		le_uint64_t size;
 		le_uint32_t name_offset;
 		byte_t padding[4];
-	}; // sizeof(0x18)
+	};
+	static_assert(sizeof(sPfsFile) == 0x18, "sPfsFile size.");
 
 	struct sHashedPfsFile
 	{
@@ -39,7 +41,8 @@ namespace hac
 		le_uint32_t hash_protected_size;
 		byte_t padding[8];
 		fnd::sha::sSha256Hash hash;
-	}; // sizeof(0x40)
+	};
+	static_assert(sizeof(sHashedPfsFile) == 0x40, "sHashedPfsFile size.");
 #pragma pack(pop)
 }
 }

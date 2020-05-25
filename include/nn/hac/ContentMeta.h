@@ -10,6 +10,8 @@
 #include <nn/hac/PatchMetaExtendedHeader.h>
 #include <nn/hac/AddOnContentMetaExtendedHeader.h>
 #include <nn/hac/DeltaMetaExtendedHeader.h>
+#include <nn/hac/SystemUpdateMetaExtendedHeader.h>
+#include <nn/hac/SystemUpdateMetaExtendedData.h>
 
 namespace nn
 {
@@ -43,8 +45,17 @@ namespace hac
 		cnmt::ContentMetaType getContentMetaType() const;
 		void setContentMetaType(cnmt::ContentMetaType type);
 
-		byte_t getAttributes() const;
-		void setAttributes(byte_t attributes);
+		const cnmt::ContentMetaAttribute& getAttribute() const;
+		void setAttribute(const cnmt::ContentMetaAttribute& attr);
+
+		cnmt::StorageId getStorageId() const;
+		void setStorageId(cnmt::StorageId storage_id);
+
+		cnmt::ContentInstallType getContentInstallType() const;
+		void setContentInstallType(cnmt::ContentInstallType install_type);
+
+		cnmt::InstallState getInstallState() const;
+		void setInstallState(cnmt::InstallState install_state);
 
 		uint32_t getRequiredDownloadSystemVersion() const;
 		void setRequiredDownloadSystemVersion(uint32_t version);
@@ -61,18 +72,26 @@ namespace hac
 		const DeltaMetaExtendedHeader& getDeltaMetaExtendedHeader() const;
 		void setDeltaMetaExtendedHeader(const DeltaMetaExtendedHeader& exhdr);
 
-		const fnd::List<ContentInfo>& getContentInfo() const;
-		void setContentInfo(const fnd::List<ContentInfo>& info);
+		const SystemUpdateMetaExtendedHeader& getSystemUpdateMetaExtendedHeader() const;
+		void setSystemUpdateMetaExtendedHeader(const SystemUpdateMetaExtendedHeader& exhdr);
 
-		const fnd::List<ContentMetaInfo>& getContentMetaInfo() const;
-		void setContentMetaInfo(const fnd::List<ContentMetaInfo>& info);
+		const std::vector<ContentInfo>& getContentInfo() const;
+		void setContentInfo(const std::vector<ContentInfo>& info);
 
-		const fnd::Vec<byte_t>& getExtendedData() const;
-		void setExtendedData(const fnd::Vec<byte_t>& data);
+		const std::vector<ContentMetaInfo>& getContentMetaInfo() const;
+		void setContentMetaInfo(const std::vector<ContentMetaInfo>& info);
+
+		const fnd::Vec<byte_t>& getPatchMetaExtendedData() const;
+		void setPatchMetaExtendedData(const fnd::Vec<byte_t>& exdata);
+
+		const fnd::Vec<byte_t>& getDeltaMetaExtendedData() const;
+		void setDeltaMetaExtendedData(const fnd::Vec<byte_t>& exdata);
+
+		const SystemUpdateMetaExtendedData& getSystemUpdateMetaExtendedData() const;
+		void setSystemUpdateMetaExtendedData(const SystemUpdateMetaExtendedData& exdata);
 
 		const cnmt::sDigest& getDigest() const;
 		void setDigest(const cnmt::sDigest& digest);
-
 
 	private:
 		const std::string kModuleName = "CONTENT_META";
@@ -84,18 +103,25 @@ namespace hac
 		uint64_t mTitleId;
 		uint32_t mTitleVersion;
 		cnmt::ContentMetaType mType;
-		byte_t mAttributes;
+		cnmt::ContentMetaAttribute mAttribute;
+		cnmt::StorageId mStorageId;
+		cnmt::ContentInstallType mContentInstallType;
+		cnmt::InstallState mInstallState;
 		uint32_t mRequiredDownloadSystemVersion;
-		fnd::Vec<byte_t> mExtendedHeader;
 
 		ApplicationMetaExtendedHeader mApplicationMetaExtendedHeader;
 		PatchMetaExtendedHeader mPatchMetaExtendedHeader;
 		AddOnContentMetaExtendedHeader mAddOnContentMetaExtendedHeader;
 		DeltaMetaExtendedHeader mDeltaMetaExtendedHeader;
+		SystemUpdateMetaExtendedHeader mSystemUpdateMetaExtendedHeader;
 
-		fnd::List<ContentInfo> mContentInfo;
-		fnd::List<ContentMetaInfo> mContentMetaInfo;
-		fnd::Vec<byte_t> mExtendedData;
+		std::vector<ContentInfo> mContentInfo;
+		std::vector<ContentMetaInfo> mContentMetaInfo;
+
+		fnd::Vec<byte_t> mPatchMetaExtendedData;
+		fnd::Vec<byte_t> mDeltaMetaExtendedData;
+		SystemUpdateMetaExtendedData mSystemUpdateMetaExtendedData;		
+		
 		cnmt::sDigest mDigest;
 
 		inline size_t getExtendedHeaderOffset() const { return sizeof(sContentMetaHeader); }

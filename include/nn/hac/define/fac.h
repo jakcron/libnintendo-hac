@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 
 namespace nn
 {
@@ -10,53 +10,55 @@ namespace hac
 		static const uint32_t kFacFormatVersion = 1;
 		static const size_t kSectionAlignSize = 4;
 		
-		enum FsAccessFlag
+		enum class FsAccessFlag
 		{
-			FSA_APPLICATION_INFO,
-			FSA_BOOT_MODE_CONTROL,
-			FSA_CALIBRATION,
-			FSA_SYSTEM_SAVE_DATA,
-			FSA_GAME_CARD,
-			FSA_SAVE_DATA_BACKUP,
-			FSA_SAVE_DATA_MANAGEMENT,
-			FSA_BIS_ALL_RAW,
-			FSA_GAME_CARD_RAW,
-			FSA_GAME_CARD_PRIVATE,
-			FSA_SET_TIME,
-			FSA_CONTENT_MANAGER,
-			FSA_IMAGE_MANAGER,
-			FSA_CREATE_SAVE_DATA,
-			FSA_SYSTEM_SAVE_DATA_MANAGEMENT,
-			FSA_BIS_FILE_SYSTEM,
-			FSA_SYSTEM_UPDATE,
-			FSA_SAVE_DATA_META,
-			FSA_DEVICE_SAVE_CONTROL,
-			FSA_SETTINGS_CONTROL,
-			FSA_SYSTEM_DATA,
-			FSA_SD_CARD,
-			FSA_HOST,
-			FSA_FILL_BIS,
-			FSA_CORRUPT_SAVE_DATA,
-			FSA_SAVE_DATA_FOR_DEBUG,
-			FSA_FORMAT_SD_CARD,
-			FSA_GET_RIGHTS_ID,
-			FSA_REGISTER_EXTERNAL_KEY,
-			FSA_REGISTER_UPDATE_PARTITION,
-			FSA_SAVE_DATA_TRANSFER,
-			FSA_DEVICE_DETECTION,
-			FSA_ACCESS_FAILURE_RESOLUTION,
-			FSA_SAVE_DATA_TRANSFER_VERSION_2,
-			FSA_REGISTER_PROGRAM_INDEX_MAP_INFO,
-			FSA_CREATE_OWN_SAVE_DATA,
-			FSA_DEBUG = 62,
-			FSA_FULL_PERMISSION = 63,
+			ApplicationInfo,
+			BootModeControl,
+			Calibration,
+			SystemSaveData,
+			GameCard,
+			SaveDataBackUp,
+			SaveDataManagement,
+			BisAllRaw,
+			GameCardRaw,
+			GameCardPrivate,
+			SetTime,
+			ContentManager,
+			ImageManager,
+			CreateSaveData,
+			SystemSaveDataManagement,
+			BisFileSystem,
+			SystemUpdate,
+			SaveDataMeta,
+			DeviceSaveData,
+			SettingsControl,
+			SystemData,
+			SdCard,
+			Host,
+			FillBis,
+			CorruptSaveData,
+			SaveDataForDebug,
+			FormatSdCard,
+			GetRightsId,
+			RegisterExternalKey,
+			RegisterUpdatePartition,
+			SaveDataTransfer,
+			DeviceDetection,
+			AccessFailureResolution,
+			SaveDataTransferVersion2,
+			RegisterProgramIndexMapInfo,
+			CreateOwnSaveData,
+			Debug = 62,
+			FullPermission = 63,
 		};
 
-		enum SaveDataOwnerIdAccessType
+		using FsAccess = std::bitset<64>;
+
+		enum class SaveDataOwnerIdAccessType
 		{
-			SDO_READ = 1,
-			SDO_WRITE,
-			SDO_READWRITE
+			Read = 1,
+			Write,
+			ReadWrite
 		};
 	}
 
@@ -71,6 +73,7 @@ namespace hac
 			le_uint32_t size;
 		} content_owner_ids, save_data_owner_ids; // the data for these follow later in binary. start/end relative to base of FacData instance
 	};
+	static_assert(sizeof(sFacHeader) == 0x1C, "sFacHeader size.");
 #pragma pack(pop)
 }
 }

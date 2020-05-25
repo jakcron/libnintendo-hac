@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
 namespace nn
@@ -12,7 +12,7 @@ namespace hac
 	public:
 		MiscParamsEntry();
 		MiscParamsEntry(const KernelCapabilityEntry& kernel_cap);
-		MiscParamsEntry(byte_t program_type);
+		MiscParamsEntry(kc::ProgramType program_type);
 
 		void operator=(const MiscParamsEntry& other);
 		bool operator==(const MiscParamsEntry& other) const;
@@ -23,27 +23,27 @@ namespace hac
 		void setKernelCapability(const KernelCapabilityEntry& kernel_cap);
 
 		// variables
-		byte_t getProgramType() const;
-		void setProgramType(byte_t type);
+		kc::ProgramType getProgramType() const;
+		void setProgramType(kc::ProgramType type);
 	private:
 		const std::string kModuleName = "MISC_PARAMS_ENTRY";
-		static const kc::KernelCapId kCapId = kc::KC_MISC_PARAMS;
+		static const kc::KernelCapId kCapId = kc::KernelCapId::MiscParams;
 		static const byte_t kValBits = 3;
-		static const byte_t kMaxProgramType = BIT(kValBits)-1;
+		static const byte_t kMaxProgramType = _BIT(kValBits)-1;
 
 		KernelCapabilityEntry mCap;
-		byte_t mProgramType;
+		kc::ProgramType mProgramType;
 
 		inline void updateCapField()
 		{
-			uint32_t field = mProgramType & kMaxProgramType;
+			uint32_t field = (byte_t)mProgramType & kMaxProgramType;
 			mCap.setField(field);
 		}
 
 		inline void processCapField()
 		{
 			uint32_t field = mCap.getField();
-			mProgramType = field & kMaxProgramType;
+			mProgramType = kc::ProgramType(field & kMaxProgramType);
 		}
 	};
 }

@@ -114,9 +114,6 @@
     <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessUtil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -178,6 +175,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\SystemCallHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\SystemUpdateMetaExtendedData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\SystemUpdateMetaExtendedHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\ThreadInfoEntry.h">
@@ -338,9 +341,6 @@
     <ClCompile Include="..\..\..\src\KernelInitialProcessHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\KernelInitialProcessUtil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\KernelVersionEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -402,6 +402,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\SystemCallHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ThreadInfoEntry.cpp">

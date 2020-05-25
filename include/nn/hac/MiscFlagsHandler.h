@@ -23,15 +23,15 @@ namespace hac
 		bool isSet() const;
 
 		// variables
-		const fnd::List<nn::hac::kc::MiscFlags>& getFlagList() const;
-		void setFlagList(fnd::List<nn::hac::kc::MiscFlags> flags);
+		const kc::MiscFlags& getMiscFlags() const;
+		void setMiscFlags(const kc::MiscFlags& flag);
 
 	private:
 		const std::string kModuleName = "MISC_FLAGS_HANDLER";
 		static const size_t kMaxKernelCapNum = 1;
 
 		bool mIsSet;
-		fnd::List<nn::hac::kc::MiscFlags> mFlags;
+		kc::MiscFlags mFlags;
 	};
 }
 }

@@ -1,35 +1,35 @@
 #include <nn/hac/MemoryPageEntry.h>
 
 nn::hac::MemoryPageEntry::MemoryPageEntry() :
-	mCap(kc::KC_INVALID),
+	mCap(kc::KernelCapId::Invalid),
 	mPage(0),
 	mFlag(false),
-	mUseFlag(false)
+	mMapMultiplePages(false)
 {}
 
 nn::hac::MemoryPageEntry::MemoryPageEntry(const KernelCapabilityEntry & kernel_cap) :
-	mCap(kc::KC_INVALID),
+	mCap(kc::KernelCapId::Invalid),
 	mPage(0),
 	mFlag(false),
-	mUseFlag(false)
+	mMapMultiplePages(false)
 {
 	setKernelCapability(kernel_cap);
 }
 
 nn::hac::MemoryPageEntry::MemoryPageEntry(uint32_t page) :
-	mCap(kc::KC_INVALID),
+	mCap(kc::KernelCapId::Invalid),
 	mPage(0),
 	mFlag(false),
-	mUseFlag(false)
+	mMapMultiplePages(false)
 {
 	setPage(page);
 }
 
 nn::hac::MemoryPageEntry::MemoryPageEntry(uint32_t page, bool flag) :
-	mCap(kc::KC_INVALID),
+	mCap(kc::KernelCapId::Invalid),
 	mPage(0),
 	mFlag(false),
-	mUseFlag(true)
+	mMapMultiplePages(true)
 {
 	setPage(page);
 	setFlag(flag);
@@ -39,7 +39,7 @@ void nn::hac::MemoryPageEntry::operator=(const MemoryPageEntry& other)
 {
 	mPage = other.mPage;
 	mFlag = other.mFlag;
-	mUseFlag = other.mUseFlag;
+	mMapMultiplePages = other.mMapMultiplePages;
 	updateCapField();
 }
 
@@ -47,7 +47,7 @@ bool nn::hac::MemoryPageEntry::operator==(const MemoryPageEntry& other) const
 {
 	return (mPage == other.mPage) \
 		&& (mFlag == other.mFlag) \
-		&& (mUseFlag == other.mUseFlag);
+		&& (mMapMultiplePages == other.mMapMultiplePages);
 }
 
 bool nn::hac::MemoryPageEntry::operator!=(const MemoryPageEntry& other) const
@@ -62,7 +62,7 @@ const nn::hac::KernelCapabilityEntry & nn::hac::MemoryPageEntry::getKernelCapabi
 
 void nn::hac::MemoryPageEntry::setKernelCapability(const KernelCapabilityEntry & kernel_cap)
 {
-	if (kernel_cap.getType() != kc::KC_MEMORY_MAP && kernel_cap.getType() != kc::KC_IO_MEMORY_MAP)
+	if (kernel_cap.getType() != kc::KernelCapId::MemoryMap && kernel_cap.getType() != kc::KernelCapId::IoMemoryMap)
 	{
 		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'MemoryMap' or 'IOMemoryMap");
 	}
@@ -100,10 +100,10 @@ void nn::hac::MemoryPageEntry::setFlag(bool flag)
 
 bool nn::hac::MemoryPageEntry::isMultiplePages() const
 {
-	return mUseFlag;
+	return mMapMultiplePages;
 }
 
 void nn::hac::MemoryPageEntry::setMapMultiplePages(bool useFlag)
 {
-	mUseFlag = useFlag;
+	mMapMultiplePages = useFlag;
 }

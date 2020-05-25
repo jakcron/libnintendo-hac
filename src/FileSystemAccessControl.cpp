@@ -15,7 +15,7 @@ void nn::hac::FileSystemAccessControl::operator=(const FileSystemAccessControl &
 {
 	mRawBinary = other.mRawBinary;
 	mVersion = other.mVersion;
-	mFsaRights = other.mFsaRights;
+	mFsAccess = other.mFsAccess;
 	mContentOwnerIdList = other.mContentOwnerIdList;
 	mSaveDataOwnerIdList = other.mSaveDataOwnerIdList;
 }
@@ -23,7 +23,7 @@ void nn::hac::FileSystemAccessControl::operator=(const FileSystemAccessControl &
 bool nn::hac::FileSystemAccessControl::operator==(const FileSystemAccessControl & other) const
 {
 	return (mVersion == other.mVersion) \
-		&& (mFsaRights == other.mFsaRights) \
+		&& (mFsAccess == other.mFsAccess) \
 		&& (mContentOwnerIdList == other.mContentOwnerIdList) \
 		&& (mSaveDataOwnerIdList == other.mSaveDataOwnerIdList);
 }
@@ -63,12 +63,7 @@ void nn::hac::FileSystemAccessControl::toBytes()
 	hdr->version = mVersion;
 
 	// flags
-	uint64_t flag = 0;
-	for (size_t i = 0; i < mFsaRights.size(); i++)
-	{
-		flag |= _BIT((uint64_t)mFsaRights[i]);
-	}
-	hdr->fac_flags = flag;
+	hdr->fac_flags = mFsAccess.to_ullong();
 
 	// set offset/size
 	hdr->content_owner_ids.offset = content.offset;
@@ -93,7 +88,7 @@ void nn::hac::FileSystemAccessControl::toBytes()
 	save_data_owner_id_num->set((uint32_t)mSaveDataOwnerIdList.size());
 	for (size_t i = 0; i < mSaveDataOwnerIdList.size(); i++)
 	{
-		save_data_owner_id_accessibility_array[i] = mSaveDataOwnerIdList[i].access_type;
+		save_data_owner_id_accessibility_array[i] = (byte_t)mSaveDataOwnerIdList[i].access_type;
 		save_data_owner_ids[i] = mSaveDataOwnerIdList[i].id;
 	}
 }
@@ -134,13 +129,7 @@ void nn::hac::FileSystemAccessControl::fromBytes(const byte_t* data, size_t len)
 
 	// save variables
 	mVersion = hdr.version.get();
-	for (size_t i = 0; i < 64; i++)
-	{
-		if (_HAS_BIT(hdr.fac_flags.get(), i))
-		{
-			mFsaRights.addElement((fac::FsAccessFlag)i);
-		}
-	}
+	mFsAccess = hdr.fac_flags.get();
 
 	// save ids
 	if (hdr.content_owner_ids.size.get() > 0)
@@ -173,7 +162,7 @@ void nn::hac::FileSystemAccessControl::clear()
 {
 	mRawBinary.clear();
 	mVersion = 0;
-	mFsaRights.clear();
+	mFsAccess.reset();
 	mContentOwnerIdList.clear();
 	mSaveDataOwnerIdList.clear();
 }
@@ -188,14 +177,14 @@ void nn::hac::FileSystemAccessControl::setFormatVersion(uint32_t format_version)
 	mVersion = format_version;
 }
 
-const fnd::List<nn::hac::fac::FsAccessFlag>& nn::hac::FileSystemAccessControl::getFsaRightsList() const
+const nn::hac::fac::FsAccess& nn::hac::FileSystemAccessControl::getFsAccess() const
 {
-	return mFsaRights;
+	return mFsAccess;
 }
 
-void nn::hac::FileSystemAccessControl::setFsaRightsList(const fnd::List<fac::FsAccessFlag>& list)
+void nn::hac::FileSystemAccessControl::setFsAccess(const nn::hac::fac::FsAccess& access)
 {
-	mFsaRights = list;
+	mFsAccess = access;
 }
 
 const fnd::List<uint64_t>& nn::hac::FileSystemAccessControl::getContentOwnerIdList() const

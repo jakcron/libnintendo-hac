@@ -42,7 +42,7 @@ void nn::hac::ContentInfo::toBytes()
 	info->content_id = mContentId;
 	info->size_lower = mSize & (uint32_t)(-1);
 	info->size_higher = (mSize >> 32) & (uint16_t)(-1);
-	info->content_type = mType;
+	info->content_type = (byte_t)mType;
 	info->id_offset = mIdOffset;
 }
 

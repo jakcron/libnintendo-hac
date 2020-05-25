@@ -68,6 +68,9 @@ namespace hac
 		
 		byte_t getKeyGeneration() const;
 		void setKeyGeneration(byte_t gen);
+
+		byte_t getSignatureKeyGeneration() const;
+		void setSignatureKeyGeneration(byte_t gen);
 		
 		byte_t getKeyAreaEncryptionKeyIndex() const;
 		void setKeyAreaEncryptionKeyIndex(byte_t index);
@@ -105,6 +108,7 @@ namespace hac
 		nca::DistributionType mDistributionType;
 		nca::ContentType mContentType;
 		byte_t mKeyGeneration;
+		byte_t mSignatureKeyGeneration;
 		byte_t mKaekIndex;
 		uint64_t mContentSize;
 		uint64_t mProgramId;

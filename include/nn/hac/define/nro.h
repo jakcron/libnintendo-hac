@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/define/macro.h>
 
 namespace nn
@@ -15,37 +15,40 @@ namespace hac
 	}
 
 #pragma pack(push,1)
-	struct sNroSection
-	{
-		le_uint32_t memory_offset;
-		le_uint32_t size;
-	};
-
-	struct sNroRoCrt
-	{
-		le_uint32_t entry_point_insn;
-		le_uint32_t mod_offset;
-	};
 
 	struct sNroHeader
 	{
-		sNroRoCrt ro_crt;
+		struct sRoCrt
+		{
+			le_uint32_t entry_point_insn;
+			le_uint32_t mod_offset;
+		};
+
+		struct sSection
+		{
+			le_uint32_t memory_offset;
+			le_uint32_t size;
+		};
+
+		sRoCrt ro_crt;
 		byte_t reserved_0[8];
 		le_uint32_t st_magic;
 		le_uint32_t format_version;
 		le_uint32_t size;
 		le_uint32_t flags;
-		sNroSection text;
-		sNroSection ro;
-		sNroSection data;
+		sSection text;
+		sSection ro;
+		sSection data;
 		le_uint32_t bss_size;
 		byte_t reserved_1[4];
 		byte_t module_id[nro::kModuleIdSize];
 		byte_t reserved_2[8];
-		sNroSection embedded;
-		sNroSection dyn_str;
-		sNroSection dyn_sym;
+		sSection embedded;
+		sSection dyn_str;
+		sSection dyn_sym;
 	};
+	static_assert(sizeof(sNroHeader) == 0x80, "sNroHeader size.");
+
 #pragma pack(pop)
 }
 }

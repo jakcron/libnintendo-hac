@@ -9,10 +9,11 @@ namespace hac
 	class KernelCapabilityUtil
 	{
 	public:
-		static std::string getMiscFlagAsString(nn::hac::kc::MiscFlags flag);
-		static std::string getMemMapPermAsString(nn::hac::kc::MemoryPerm type);
-		static std::string getMemMapTypeAsString(nn::hac::kc::MappingType type);
-		static std::string getSystemCallAsString(nn::hac::kc::SystemCall svc);
+		static std::string getMiscFlagsBitAsString(nn::hac::kc::MiscFlagsBit flag);
+		static std::string getProgramTypeAsString(nn::hac::kc::ProgramType type);
+		static std::string getMemoryPermissionAsString(nn::hac::kc::MemoryPermission type);
+		static std::string getMappingTypeAsString(nn::hac::kc::MappingType type);
+		static std::string getSystemCallIdAsString(nn::hac::kc::SystemCallId svc);
 
 	private:
 		const std::string kModuleName = "KERNEL_CAPABILITY_UTIL";

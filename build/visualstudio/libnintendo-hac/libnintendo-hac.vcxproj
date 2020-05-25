@@ -70,7 +70,6 @@
     <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelCapabilityUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessHeader.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\KernelInitialProcessUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\KernelVersionHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\MemoryMappingHandler.h" />
@@ -92,6 +91,8 @@
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControlEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\SystemCallEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\SystemCallHandler.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\SystemUpdateMetaExtendedData.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\SystemUpdateMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ThreadInfoEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ThreadInfoHandler.h" />
   </ItemGroup>
@@ -127,7 +128,6 @@
     <ClCompile Include="..\..\..\src\KernelCapabilityEntry.cpp" />
     <ClCompile Include="..\..\..\src\KernelCapabilityUtil.cpp" />
     <ClCompile Include="..\..\..\src\KernelInitialProcessHeader.cpp" />
-    <ClCompile Include="..\..\..\src\KernelInitialProcessUtil.cpp" />
     <ClCompile Include="..\..\..\src\KernelVersionEntry.cpp" />
     <ClCompile Include="..\..\..\src\KernelVersionHandler.cpp" />
     <ClCompile Include="..\..\..\src\MemoryMappingHandler.cpp" />
@@ -149,6 +149,8 @@
     <ClCompile Include="..\..\..\src\ServiceAccessControlEntry.cpp" />
     <ClCompile Include="..\..\..\src\SystemCallEntry.cpp" />
     <ClCompile Include="..\..\..\src\SystemCallHandler.cpp" />
+    <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedData.cpp" />
+    <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\ThreadInfoEntry.cpp" />
     <ClCompile Include="..\..\..\src\ThreadInfoHandler.cpp" />
   </ItemGroup>
@@ -210,7 +212,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libpolarssl\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -220,7 +222,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libpolarssl\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -232,7 +234,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libpolarssl\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -248,7 +250,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libpolarssl\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

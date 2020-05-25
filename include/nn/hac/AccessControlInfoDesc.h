@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/List.h>
 #include <fnd/IByteModel.h>
 #include <nn/hac/define/aci.h>
@@ -60,8 +60,11 @@ namespace hac
 		const fnd::rsa::sRsa2048Key& getContentArchiveHeaderSignature2Key() const;
 		void setContentArchiveHeaderSignature2Key(const fnd::rsa::sRsa2048Key& key);
 
-		const fnd::List<aci::AcidFlag>& getFlagList() const;
-		void setFlagList(const fnd::List<aci::AcidFlag>& flags);
+		bool getProductionFlag() const;
+		void setProductionFlag(bool flag);
+
+		bool getUnqualifiedApprovalFlag() const;
+		void setUnqualifiedApprovalFlag(bool flag);
 
 		nn::hac::aci::MemoryRegion getMemoryRegion() const;
 		void setMemoryRegion(nn::hac::aci::MemoryRegion memory_region);
@@ -85,7 +88,8 @@ namespace hac
 
 		// variables
 		fnd::rsa::sRsa2048Key mContentArchiveHeaderSignature2Key;
-		fnd::List<aci::AcidFlag> mFlags;
+		bool mProductionFlag;
+		bool mUnqualifiedApprovalFlag;
 		nn::hac::aci::MemoryRegion mMemoryRegion;
 		sProgramIdRestrict mProgramIdRestrict;
 		nn::hac::FileSystemAccessControl mFileSystemAccessControl;

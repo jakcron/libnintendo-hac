@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/List.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 

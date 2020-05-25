@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
 namespace nn
@@ -29,11 +29,11 @@ namespace hac
 		void setVerMinor(uint8_t minor);
 	private:
 		const std::string kModuleName = "KERNEL_VERSION_ENTRY";
-		static const kc::KernelCapId kCapId = kc::KC_KERNEL_VERSION;
+		static const kc::KernelCapId kCapId = kc::KernelCapId::KernelVersion;
 		static const uint32_t kVerMajorBits = 13;
-		static const uint32_t kVerMajorMax = BIT(kVerMajorBits) - 1;
+		static const uint32_t kVerMajorMax = _BIT(kVerMajorBits) - 1;
 		static const uint32_t kVerMinorBits = 4;
-		static const uint32_t kVerMinorMax = BIT(kVerMinorBits) - 1;
+		static const uint32_t kVerMinorMax = _BIT(kVerMinorBits) - 1;
 
 		KernelCapabilityEntry mCap;
 		uint16_t mVerMajor;

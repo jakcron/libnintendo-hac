@@ -60,7 +60,7 @@ void nn::hac::HierarchicalIntegrityHeader::fromBytes(const byte_t* data, size_t 
 	}
 
 	// Validate TypeId
-	if (hdr->type_id.get() != nn::hac::hierarchicalintegrity::kRomfsTypeId)
+	if (hdr->type_id.get() != (uint32_t)nn::hac::hierarchicalintegrity::TypeId::HAC_RomFs)
 	{
 		error_str.clear();
 		error_str << "Unsupported type id (" << std::hex << hdr->type_id.get() << ")";
@@ -68,11 +68,11 @@ void nn::hac::HierarchicalIntegrityHeader::fromBytes(const byte_t* data, size_t 
 	}
 
 	// Validate Layer Num
-	if (hdr->layer_num.get() != hierarchicalintegrity::kDefaultLayerNum+1)
+	if (hdr->layer_num.get() != hierarchicalintegrity::kDefaultLayerNumForRomFs+1)
 	{
 		error_str.clear();
 		error_str << "Invalid layer count. ";
-		error_str << "(actual=" << std::dec << hdr->layer_num.get() << ", expected=" << nn::hac::hierarchicalintegrity::kDefaultLayerNum+1 << ")";
+		error_str << "(actual=" << std::dec << hdr->layer_num.get() << ", expected=" << nn::hac::hierarchicalintegrity::kDefaultLayerNumForRomFs+1 << ")";
 		throw fnd::Exception(kModuleName, error_str.str());
 	}
 	
@@ -92,7 +92,7 @@ void nn::hac::HierarchicalIntegrityHeader::fromBytes(const byte_t* data, size_t 
 
 	// save layer info
 	const nn::hac::sHierarchicalIntegrityLayerInfo* layer_info = (const nn::hac::sHierarchicalIntegrityLayerInfo*)(mRawBinary.data() + sizeof(nn::hac::sHierarchicalIntegrityHeader));
-	for (size_t i = 0; i < hierarchicalintegrity::kDefaultLayerNum; i++)
+	for (size_t i = 0; i < hierarchicalintegrity::kDefaultLayerNumForRomFs; i++)
 	{
 		mLayerInfo.addElement({layer_info[i].offset.get(), layer_info[i].size.get(), layer_info[i].block_size.get()});
 	}

@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 
 namespace nn
 {
@@ -18,178 +18,207 @@ namespace hac
 		static const size_t kBcatPassphraseLength = 65;
 		static const size_t kPlayLogQueryableApplicationIdCount = 16;
 		static const int8_t kUnusedAgeRating = -1;
-		static const size_t kDataConfigurationKeyLength = 16;
-		static const size_t kReceivableDataConfigurationCount = 16;
+		static const size_t kNeighborDetectionGroupConfigurationKeyLength = 16;
+		static const size_t kReceivableGroupConfigurationCount = 16;
+		static const uint64_t kDefaultJitMemorySize = 0x400000;
+		static const uint64_t kJitMemoryMultipleSize = 0x200000;
+		static const uint64_t kBcatAlignmentMask = 0xFFFFF; // cannot have size that isn't a multiple of 1MiB
+		static const uint64_t kBcatMiniumSize = 0x500000; // cannot have a size (non zero) that is smaller than 5MiB
+		static const uint64_t kSaveDataAlignmentMask = 0x3FFF; // cannot have a size that isn't a multiple of 16KiB
 
-		enum AocRegistrationType
+		// Introduced as of SDK 3.4.0
+		enum class AddOnContentRegistrationType : byte_t
 		{
-			AOC_AllOnLaunch,
-			AOC_OnDemand
+			AllOnLaunch,
+			OnDemand
 		};
 
-		enum AttributeFlag
+		enum class AttributeFlag : byte_t
 		{
-			ATTR_None,
-			ATTR_Demo,
-			ATTR_RetailInteractiveDisplay
+			Demo,
+			RetailInteractiveDisplay // Introduced as of SDK 3.4.0
 		};
 
-		enum CrashReportMode
+		// Introduced as of SDK 3.5.2
+		enum class CrashReport : byte_t
 		{
-			CREP_Deny,
-			CREP_Allow
+			Deny,
+			Allow
 		};
 
-		enum DataLossConfirmation
+		enum class DataLossConfirmation : byte_t
 		{
-			DLOSS_None,
-			DLOSS_Required
+			None,
+			Required
 		};
 
-		enum Hdcp
+		enum class Hdcp : byte_t
 		{
-			HDCP_None,
-			HDCP_Required
+			None,
+			Required
 		};
 
-		enum Language
+		// Introduced SDK 7.6.0
+		enum class JitConfigurationFlag : uint64_t
 		{
-			LANG_AmericanEnglish,
-			LANG_BritishEnglish,
-			LANG_Japanese,
-			LANG_French,
-			LANG_German,
-			LANG_LatinAmericanSpanish,
-			LANG_Spanish,
-			LANG_Italian,
-			LANG_Dutch,
-			LANG_CanadianFrench,
-			LANG_Portuguese,
-			LANG_Russian,
-			LANG_Korean,
-			LANG_TraditionalChinese,
-			LANG_SimplifiedChinese
+			Enabled
 		};
 
-		enum LogoHandling
+		enum class Language : byte_t
 		{
-			LHND_Auto,
-			LHND_None
+			AmericanEnglish,
+			BritishEnglish,
+			Japanese,
+			French,
+			German,
+			LatinAmericanSpanish,
+			Spanish,
+			Italian,
+			Dutch,
+			CanadianFrench,
+			Portuguese,
+			Russian,
+			Korean,
+			TraditionalChinese,
+			SimplifiedChinese,
+
+			// Deprecated names as of SDK 3.5.0
+			Taiwanese = TraditionalChinese,
+			Chinese = SimplifiedChinese
 		};
 
-		enum LogoType
+		enum class LogoHandling : byte_t
 		{
-			LOGO_LicensedByNintendo,
-			LOGO_DistributedByNintendo,
-			LOGO_Nintendo
+			Auto,
+			None
 		};
 
-		enum Organisation
+		enum class LogoType : byte_t
 		{
-			ORGN_CERO,
-			ORGN_GRACGCRB,
-			ORGN_GSRMR,
-			ORGN_ESRB,
-			ORGN_ClassInd,
-			ORGN_USK,
-			ORGN_PEGI,
-			ORGN_PEGIPortugal,
-			ORGN_PEGIBBFC,
-			ORGN_Russian,
-			ORGN_ACB,
-			ORGN_OFLC,
-			ORGN_IARCGeneric
+			LicensedByNintendo = 0,
+			DistributedByNintendo = 1, // Removed in SDK 3.5.2
+			Nintendo = 2
 		};
 
-		enum ParentalControlFlag
+		enum class Organisation : byte_t
 		{
-			PC_None,
-			PC_FreeCommunication
+			CERO,
+			GRACGCRB,
+			GSRMR,
+			ESRB,
+			ClassInd,
+			USK,
+			PEGI,
+			PEGIPortugal,
+			PEGIBBFC,
+			Russian,
+			ACB,
+			OFLC,
+			IARCGeneric // introduced as of SDK 9.3.1
 		};
 
-		enum PlayLogPolicy
+		enum class ParentalControlFlag : uint32_t
 		{
-			PLP_All,
-			PLP_LogOnly,
-			PLP_None
+			FreeCommunication
 		};
 
-		enum PlayLogQueryCapability
+		enum class PlayLogPolicy : byte_t
 		{
-			PLQC_None,
-			PLQC_Whitelist,
-			PLQC_All
+			All,
+			LogOnly,
+			None
 		};
 
-		enum RepairFlag
+		// Introduced as of SDK 5.3.0
+		enum class PlayLogQueryCapability : byte_t
 		{
-			REPF_None,
-			REPF_SuppressGameCardAccess
+			None,
+			Whitelist,
+			All
 		};
 
-		enum RequiredNetworkServiceLicenseOnLaunchValue
+		// Introduced as of SDK 5.3.0
+		enum class RepairFlag : byte_t
 		{
-			REQNETLIC_None,
-			REQNETLIC_Common
+			SuppressGameCardAccess
 		};
 
-		enum RuntimeAocInstallMode
+		// Introduced as of SDK 6.4.0
+		enum class RequiredNetworkServiceLicenseOnLaunchFlag : byte_t
 		{
-			RTAOC_Deny,
-			RTAOC_AllowAppend
+			Common
 		};
 
-		enum ScreenshotMode
+		// Introduced as of SDK 4.5.0
+		enum class RuntimeAddOnContentInstall : byte_t
 		{
-			SCRN_Allow,
-			SCRN_Deny
+			Deny,
+			AllowAppend
 		};
 
-		enum StartupUserAccount
+		// Introduced as of SDK 9.3.1
+		enum class RuntimeParameterDelivery : byte_t
 		{
-			USER_None,
-			USER_Required,
-			USER_RequiredWithNetworkServiceAccountAvailable
+			Always,
+			AlwaysIfUserStateMatched,
+			OnRestart
 		};
 
-		enum TouchScreenUsageMode
+		enum class Screenshot : byte_t
 		{
-			TOUCH_None,
-			TOUCH_Supported,
-			TOUCH_Required,
+			Allow,
+			Deny
 		};
 
-		enum UserAccountSwitchLockValue
+		enum class StartupUserAccount : byte_t
 		{
-			UASL_Disable,
-			UASL_Enable
+			None,
+			Required,
+			RequiredWithNetworkServiceAccountAvailable
 		};
 
-		enum VideoCaptureMode
+		// Introduced as of SDK 7.6.0
+		enum class StartupUserAccountOptionFlag : byte_t
 		{
-			VCAP_Disable,
-			VCAP_Manual,
-			VCAP_Enable
+			IsOptional
+		};
+
+		// Removed as of SDK 3.4.0 (probably 1.0.0)
+		enum class TouchScreenUsage : byte_t
+		{
+			None,
+			Supported,
+			Required,
+		};
+
+		// Introduced as of SDK 6.4.0
+		enum class UserAccountSwitchLock : byte_t
+		{
+			Disable,
+			Enable
+		};
+
+		enum class VideoCapture : byte_t
+		{
+			Disable,
+			Manual,
+			Enable,
+
+			// Deprecated names as of SDK 3.6.0
+			Deny = Disable,
+			Allow = Manual
 		};
 	}
 
 
 #pragma pack(push,1)
-	struct sApplicationTitle
-	{
-		char name[nacp::kNameLength];
-		char publisher[nacp::kPublisherLength];
-	};
-
-	struct sDataConfiguration
-	{
-		le_uint64_t id;
-		byte_t key[nacp::kDataConfigurationKeyLength];
-	};
-
 	struct sApplicationControlProperty
 	{
-		sApplicationTitle title[nacp::kMaxLanguageCount];
+		struct sTitle
+		{
+			char name[nacp::kNameLength];
+			char publisher[nacp::kPublisherLength];
+		} title[nacp::kMaxLanguageCount];
 		char isbn[nacp::kIsbnLength];
 		byte_t startup_user_account;
 		byte_t user_account_switch_lock;
@@ -216,7 +245,8 @@ namespace hac
 		byte_t logo_type;
 		byte_t logo_handling;
 		byte_t runtime_add_on_content_install;
-		byte_t reserved_00[3];
+		byte_t runtime_parameter_delivery;
+		byte_t reserved_00[2];
 		byte_t crash_report;
 		byte_t hdcp;
 		le_uint64_t seed_for_pseudo_device_id;
@@ -239,16 +269,33 @@ namespace hac
 		byte_t program_index;
 		byte_t required_network_service_license_on_launch_flag;
 		byte_t reserved_03[0x4];
-		sDataConfiguration send_data_configuration;
-		sDataConfiguration receivable_data_configuration[nacp::kReceivableDataConfigurationCount];
-		le_uint64_t jit_configuration_flag;
-		le_uint64_t memory_size;
+		struct sNeighborDetectionClientConfiguration
+		{
+			struct sGroupConfiguration
+			{
+				le_uint64_t group_id;
+				byte_t key[nacp::kNeighborDetectionGroupConfigurationKeyLength];
+			};
+
+			sGroupConfiguration send_group_configuration;
+			sGroupConfiguration receivable_group_configuration[nacp::kReceivableGroupConfigurationCount];
+		} neighbour_detection_client_configuration; // introduced SDK 7.6.0
+		struct sJitConfiguration 
+		{
+			le_uint64_t jit_configuration_flag;
+			le_uint64_t memory_size;
+		} jit_configuration;
 		byte_t reserved_04[0xC40];
 	};
+	static_assert(sizeof(sApplicationControlProperty) == 0x4000, "sApplicationControlProperty size.");
 
 	struct sApplicationControlProperty_v0
 	{
-		sApplicationTitle title[nacp::kMaxLanguageCount];
+		struct sTitle
+		{
+			char name[nacp::kNameLength];
+			char publisher[nacp::kPublisherLength];
+		} title[nacp::kMaxLanguageCount];
 		char isbn[nacp::kIsbnLength];
 		byte_t startup_user_account;
 		byte_t touch_screen_usage;
@@ -298,6 +345,8 @@ namespace hac
 		byte_t program_index;
 		byte_t reserved_04[0xDED];
 	};
+	static_assert(sizeof(sApplicationControlProperty_v0) == 0x4000, "sApplicationControlProperty_v0 size.");
+
 #pragma pack(pop)
 }
 }

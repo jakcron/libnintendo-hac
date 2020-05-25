@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
 namespace nn
@@ -27,9 +27,9 @@ namespace hac
 		void setHandleTableSize(uint16_t size);
 	private:
 		const std::string kModuleName = "HANDLE_TABLE_SIZE_ENTRY";
-		static const kc::KernelCapId kCapId = kc::KC_HANDLE_TABLE_SIZE;
+		static const kc::KernelCapId kCapId = kc::KernelCapId::HandleTableSize;
 		static const uint16_t kValBits = 10;
-		static const uint16_t kMaxHandleTableSize = BIT(kValBits) - 1;
+		static const uint16_t kMaxHandleTableSize = _BIT(kValBits) - 1;
 
 		KernelCapabilityEntry mCap;
 		uint16_t mHandleTableSize;

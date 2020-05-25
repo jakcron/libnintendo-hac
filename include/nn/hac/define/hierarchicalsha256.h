@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/sha.h>
 
 namespace nn
@@ -24,6 +24,7 @@ namespace hac
 			le_uint64_t size;
 		} layer[hierarchicalsha256::kMaxLayerNum];
 	};
+	static_assert(sizeof(sHierarchicalSha256Header) == 0x48, "sHierarchicalSha256Header size.");
 #pragma pack(pop)
 }
 }

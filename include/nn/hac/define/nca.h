@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <fnd/aes.h>
 #include <fnd/sha.h>
 #include <fnd/rsa.h>
@@ -21,7 +21,9 @@ namespace hac
 		static const size_t kKeyAreaSize = 0x100;
 		static const size_t kKeyAreaKeyNum = kKeyAreaSize / fnd::aes::kAes128KeySize;
 		static const size_t kKeyAreaEncryptionKeyNum = 3;
-		static const size_t kFsHeaderHashSuperblockLen = 0x138;
+		static const size_t kHashInfoLen = 0xF8;
+		static const size_t kPatchInfoLen = 0x40;
+		static const size_t kSparseInfoLen = 0x30;
 		static const uint16_t kDefaultFsHeaderVersion = 2;
 
 		enum HeaderFormatVersion
@@ -37,20 +39,20 @@ namespace hac
 			PARTITION_LOGO = 2,
 		};
 
-		enum DistributionType
+		enum class DistributionType : byte_t
 		{
-			DIST_DOWNLOAD,
-			DIST_GAME_CARD
+			Download,
+			GameCard
 		};
 
-		enum ContentType
+		enum class ContentType : byte_t
 		{
-			TYPE_PROGRAM,
-			TYPE_META,
-			TYPE_CONTROL,
-			TYPE_MANUAL,
-			TYPE_DATA,
-			TYPE_PUBLIC_DATA
+			Program,
+			Meta,
+			Control,
+			Manual,
+			Data,
+			PublicData
 		};
 
 		enum KeyBankIndex
@@ -69,27 +71,27 @@ namespace hac
 			KAEK_IDX_SYSTEM
 		};
 
-		enum FormatType	
+		enum class FormatType : byte_t
 		{
-			FORMAT_ROMFS,
-			FORMAT_PFS0
+			RomFs,
+			PartitionFs
 		};
 
-		enum HashType
+		enum class HashType : byte_t
 		{
-			HASH_AUTO,
-			HASH_NONE,
-			HASH_HIERARCHICAL_SHA256,
-			HASH_HIERARCHICAL_INTERGRITY // IVFC
+			Auto,
+			None,
+			HierarchicalSha256,
+			HierarchicalIntegrity // IVFC
 		};
 
-		enum EncryptionType
+		enum class EncryptionType : byte_t 
 		{
-			CRYPT_AUTO,
-			CRYPT_NONE,
-			CRYPT_AESXTS,
-			CRYPT_AESCTR,
-			CRYPT_AESCTREX
+			Auto,
+			None,
+			AesXts,
+			AesCtr,
+			AesCtrEx
 		};
 	}
 	
@@ -106,7 +108,8 @@ namespace hac
 		le_uint32_t content_index;
 		le_uint32_t sdk_addon_version;
 		byte_t key_generation_2;
-		byte_t reserved_2[0xf];
+		byte_t signature_key_generation;
+		byte_t reserved_2[0xe];
 		byte_t rights_id[nca::kRightsIdLen];
 		struct sPartitionEntry
 		{
@@ -118,26 +121,32 @@ namespace hac
 		fnd::sha::sSha256Hash fs_header_hash[nca::kPartitionNum];
 		byte_t key_area[nca::kKeyAreaSize];
 	};
+	static_assert(sizeof(sContentArchiveHeader) == 0x200, "sContentArchiveHeader size.");
 
-	struct sNcaFsHeader
+	struct sContentArchiveFsHeader
 	{
 		le_uint16_t version;
 		byte_t format_type;
 		byte_t hash_type;
 		byte_t encryption_type;
 		byte_t reserved_0[3];
-		byte_t hash_superblock[nca::kFsHeaderHashSuperblockLen];
-		byte_t aes_ctr_upper[8];
-		byte_t reserved_1[0xB8];
+		byte_t hash_info[nca::kHashInfoLen];
+		byte_t patch_info[nca::kPatchInfoLen];
+		le_uint32_t generation;
+		le_uint32_t secure_value;
+		byte_t sparse_info[nca::kSparseInfoLen];
+		byte_t reserved_1[0x88];
 	};
+	static_assert(sizeof(sContentArchiveFsHeader) == 0x200, "sContentArchiveFsHeader size.");
 
 	struct sContentArchiveHeaderBlock
 	{
 		byte_t signature_main[fnd::rsa::kRsa2048Size];
 		byte_t signature_acid[fnd::rsa::kRsa2048Size];
 		sContentArchiveHeader header;
-		sNcaFsHeader fs_header[nn::hac::nca::kPartitionNum];
+		sContentArchiveFsHeader fs_header[nn::hac::nca::kPartitionNum];
 	};
+	static_assert(sizeof(sContentArchiveHeaderBlock) == 0xC00, "sContentArchiveHeaderBlock size.");
 
 #pragma pack(pop)
 }

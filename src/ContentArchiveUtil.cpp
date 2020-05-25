@@ -50,16 +50,32 @@ byte_t nn::hac::ContentArchiveUtil::getMasterKeyRevisionFromKeyGeneration(byte_t
 	return masterkey_rev;
 }
 
-void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(const nn::hac::sNcaFsHeader* hdr, byte_t* ctr)
+void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(const nn::hac::sContentArchiveFsHeader* hdr, byte_t* aes_ctr)
 {
+	getNcaPartitionAesCtr(hdr->generation.get(), hdr->secure_value.get(), aes_ctr);
+}
+
+void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(uint32_t generation, uint32_t secure_value, byte_t* aes_ctr)
+{
+	/*
 	for (size_t i = 0; i < 8; i++)
 	{
 		ctr[7-i] = hdr->aes_ctr_upper[i];
 		ctr[15-i] = 0;
 	}
+	*/
+	// hdr->aes_ctr_upper = 00 01 02 03 04 05 06 07
+	// output             = 07 06 05 04 03 02 01 00 
+	// generation = 03020100, secure_value = 07060504
+	be_uint32_t* aes_ctr_words = (be_uint32_t*)aes_ctr;
+	aes_ctr_words[0] = secure_value;
+	aes_ctr_words[1] = generation;
+	aes_ctr_words[2] = 0;
+	aes_ctr_words[3] = 0;
 }
 
-std::string nn::hac::ContentArchiveUtil::getFormatVersionAsString(nn::hac::nca::HeaderFormatVersion val)
+
+std::string nn::hac::ContentArchiveUtil::getFormatHeaderVersionAsString(nn::hac::nca::HeaderFormatVersion val)
 {
 	std::stringstream ss;
 
@@ -108,10 +124,10 @@ std::string nn::hac::ContentArchiveUtil::getDistributionTypeAsString(nn::hac::nc
 
 	switch (val)
 	{
-	case (nn::hac::nca::DIST_DOWNLOAD):
+	case (nn::hac::nca::DistributionType::Download):
 		ss << "Download";
 		break;
-	case (nn::hac::nca::DIST_GAME_CARD):
+	case (nn::hac::nca::DistributionType::GameCard):
 		ss << "Game Card";
 		break;
 	default:
@@ -128,22 +144,22 @@ std::string nn::hac::ContentArchiveUtil::getContentTypeAsString(nn::hac::nca::Co
 
 	switch (val)
 	{
-	case (nn::hac::nca::TYPE_PROGRAM):
+	case (nn::hac::nca::ContentType::Program):
 		ss << "Program";
 		break;
-	case (nn::hac::nca::TYPE_META):
+	case (nn::hac::nca::ContentType::Meta):
 		ss << "Meta";
 		break;
-	case (nn::hac::nca::TYPE_CONTROL):
+	case (nn::hac::nca::ContentType::Control):
 		ss << "Control";
 		break;
-	case (nn::hac::nca::TYPE_MANUAL):
+	case (nn::hac::nca::ContentType::Manual):
 		ss << "Manual";
 		break;
-	case (nn::hac::nca::TYPE_DATA):
+	case (nn::hac::nca::ContentType::Data):
 		ss << "Data";
 		break;
-	case (nn::hac::nca::TYPE_PUBLIC_DATA):
+	case (nn::hac::nca::ContentType::PublicData):
 		ss << "PublicData";
 		break;
 	default:
@@ -160,11 +176,12 @@ std::string nn::hac::ContentArchiveUtil::getFormatTypeAsString(nn::hac::nca::For
 
 	switch (val)
 	{
-	case (nn::hac::nca::FORMAT_ROMFS):
+	case (nn::hac::nca::FormatType::RomFs):
 		ss << "RomFs";
 		break;
-	case (nn::hac::nca::FORMAT_PFS0):
+	case (nn::hac::nca::FormatType::PartitionFs):
 		ss << "PartitionFs";
+		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
 		break;
@@ -179,16 +196,16 @@ std::string nn::hac::ContentArchiveUtil::getHashTypeAsString(nn::hac::nca::HashT
 
 	switch (val)
 	{
-	case (nn::hac::nca::HASH_AUTO):
+	case (nn::hac::nca::HashType::Auto):
 		ss << "Auto";
 		break;
-	case (nn::hac::nca::HASH_NONE):
+	case (nn::hac::nca::HashType::None):
 		ss << "None";
 		break;
-	case (nn::hac::nca::HASH_HIERARCHICAL_SHA256):
+	case (nn::hac::nca::HashType::HierarchicalSha256):
 		ss << "HierarchicalSha256";
 		break;
-	case (nn::hac::nca::HASH_HIERARCHICAL_INTERGRITY):
+	case (nn::hac::nca::HashType::HierarchicalIntegrity):
 		ss << "HierarchicalIntegrity";
 		break;
 	default:
@@ -205,19 +222,19 @@ std::string nn::hac::ContentArchiveUtil::getEncryptionTypeAsString(nn::hac::nca:
 
 	switch (val)
 	{
-	case (nn::hac::nca::CRYPT_AUTO):
+	case (nn::hac::nca::EncryptionType::Auto):
 		ss << "Auto";
 		break;
-	case (nn::hac::nca::CRYPT_NONE):
+	case (nn::hac::nca::EncryptionType::None):
 		ss << "None";
 		break;
-	case (nn::hac::nca::CRYPT_AESXTS):
+	case (nn::hac::nca::EncryptionType::AesXts):
 		ss << "AesXts";
 		break;
-	case (nn::hac::nca::CRYPT_AESCTR):
+	case (nn::hac::nca::EncryptionType::AesCtr):
 		ss << "AesCtr";
 		break;
-	case (nn::hac::nca::CRYPT_AESCTREX):
+	case (nn::hac::nca::EncryptionType::AesCtrEx):
 		ss << "AesCtrEx";
 		break;
 	default:
@@ -248,5 +265,23 @@ std::string nn::hac::ContentArchiveUtil::getKeyAreaEncryptionKeyIndexAsString(nn
 		break;
 	}
 
+	return ss.str();
+}
+
+std::string nn::hac::ContentArchiveUtil::getSdkAddonVersionAsString(uint32_t version)
+{
+	std::stringstream ss;
+
+	ss << (uint32_t)((version>>24) & 0xff);
+	ss << ".";
+	ss << (uint32_t)((version>>16) & 0xff);
+	ss << ".";
+	ss << (uint32_t)((version>>8) & 0xff);
+	if (((version>>0) & 0xff) > 0)
+	{
+		ss << "-";
+		ss << (uint32_t)((version>>0) & 0xff);
+	}
+	
 	return ss.str();
 }

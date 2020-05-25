@@ -35,14 +35,8 @@ void nn::hac::MiscFlagsHandler::importKernelCapabilityList(const fnd::List<Kerne
 	entry.setKernelCapability(caps[0]);
 	
 	clear();
-	for (uint32_t i = 0; i < nn::hac::kc::MiscFlags::MISCFLAG_NUM; i++)
-	{
-		if ((entry.getFlags() & BIT(i)) == BIT(i))
-		{
-			mFlags.addElement((nn::hac::kc::MiscFlags)i);
-		}
-	}
 
+	mFlags = entry.getFlags();
 	mIsSet = true;
 }
 
@@ -51,16 +45,9 @@ void nn::hac::MiscFlagsHandler::exportKernelCapabilityList(fnd::List<KernelCapab
 	if (isSet() == false)
 		return;
 
-	// convert list to word flags
-	uint32_t flag = 0;
-	for (size_t i = 0; i < mFlags.size(); i++)
-	{
-		flag |= BIT(mFlags[i]);
-	}
-
 	// create MiscFlag entry
 	MiscFlagsEntry entry;
-	entry.setFlags(flag);
+	entry.setFlags((uint32_t)mFlags.to_ulong());
 
 	// add to list
 	caps.addElement(entry.getKernelCapability());
@@ -69,7 +56,7 @@ void nn::hac::MiscFlagsHandler::exportKernelCapabilityList(fnd::List<KernelCapab
 void nn::hac::MiscFlagsHandler::clear()
 {
 	mIsSet = false;
-	mFlags.clear();
+	mFlags.reset();
 }
 
 bool nn::hac::MiscFlagsHandler::isSet() const
@@ -77,12 +64,12 @@ bool nn::hac::MiscFlagsHandler::isSet() const
 	return mIsSet;
 }
 
-const fnd::List<nn::hac::kc::MiscFlags>& nn::hac::MiscFlagsHandler::getFlagList() const
+const nn::hac::kc::MiscFlags& nn::hac::MiscFlagsHandler::getMiscFlags() const
 {
 	return mFlags;
 }
 
-void nn::hac::MiscFlagsHandler::setFlagList(fnd::List<nn::hac::kc::MiscFlags> flags)
+void nn::hac::MiscFlagsHandler::setMiscFlags(const nn::hac::kc::MiscFlags& flags)
 {
 	mFlags = flags;
 	mIsSet = true;

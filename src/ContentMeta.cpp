@@ -22,7 +22,10 @@ void nn::hac::ContentMeta::operator=(const ContentMeta& other)
 		mTitleId = other.mTitleId;
 		mTitleVersion = other.mTitleVersion;
 		mType = other.mType;
-		mAttributes = other.mAttributes;
+		mAttribute = other.mAttribute;
+		mStorageId = other.mStorageId;
+		mContentInstallType = other.mContentInstallType;
+		mInstallState = other.mInstallState;
 		mRequiredDownloadSystemVersion = other.mRequiredDownloadSystemVersion;
 		mApplicationMetaExtendedHeader = other.mApplicationMetaExtendedHeader;
 		mPatchMetaExtendedHeader = other.mPatchMetaExtendedHeader;
@@ -30,8 +33,10 @@ void nn::hac::ContentMeta::operator=(const ContentMeta& other)
 		mDeltaMetaExtendedHeader = other.mDeltaMetaExtendedHeader;
 		mContentInfo = other.mContentInfo;
 		mContentMetaInfo = other.mContentMetaInfo;
-		mExtendedData = other.mExtendedData;
-		memcpy(mDigest.data, other.mDigest.data, cnmt::kDigestLen);
+		mPatchMetaExtendedData = other.mPatchMetaExtendedData;
+		mDeltaMetaExtendedData = other.mDeltaMetaExtendedData;
+		mSystemUpdateMetaExtendedData = other.mSystemUpdateMetaExtendedData;
+		memcpy(mDigest.data(), other.mDigest.data(), cnmt::kDigestLen);
 	}
 }
 
@@ -40,7 +45,10 @@ bool nn::hac::ContentMeta::operator==(const ContentMeta& other) const
 	return (mTitleId == other.mTitleId) \
 		&& (mTitleVersion == other.mTitleVersion) \
 		&& (mType == other.mType) \
-		&& (mAttributes == other.mAttributes) \
+		&& (mAttribute == other.mAttribute) \
+		&& (mStorageId == other.mStorageId) \
+		&& (mContentInstallType == other.mContentInstallType) \
+		&& (mInstallState == other.mInstallState) \
 		&& (mRequiredDownloadSystemVersion == other.mRequiredDownloadSystemVersion) \
 		&& (mApplicationMetaExtendedHeader == other.mApplicationMetaExtendedHeader) \
 		&& (mPatchMetaExtendedHeader == other.mPatchMetaExtendedHeader) \
@@ -48,8 +56,10 @@ bool nn::hac::ContentMeta::operator==(const ContentMeta& other) const
 		&& (mDeltaMetaExtendedHeader == other.mDeltaMetaExtendedHeader) \
 		&& (mContentInfo == other.mContentInfo) \
 		&& (mContentMetaInfo == other.mContentMetaInfo) \
-		&& (mExtendedData == other.mExtendedData) \
-		&& (memcmp(mDigest.data, other.mDigest.data, cnmt::kDigestLen) == 0);
+		&& (mPatchMetaExtendedData == other.mPatchMetaExtendedData) \
+		&& (mDeltaMetaExtendedData == other.mDeltaMetaExtendedData) \
+		&& (mSystemUpdateMetaExtendedData == other.mSystemUpdateMetaExtendedData) \
+		&& (memcmp(mDigest.data(), other.mDigest.data(), cnmt::kDigestLen) == 0);
 }
 
 bool nn::hac::ContentMeta::operator!=(const ContentMeta& other) const
@@ -76,7 +86,10 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	mTitleId = hdr->id.get();
 	mTitleVersion = hdr->version.get();
 	mType = (cnmt::ContentMetaType)hdr->type;
-	mAttributes = hdr->attributes;
+	mAttribute = hdr->attributes;
+	mStorageId = cnmt::StorageId(hdr->storage_id);
+	mContentInstallType = cnmt::ContentInstallType(hdr->install_type);
+	mInstallState = hdr->install_state;
 	mRequiredDownloadSystemVersion = hdr->required_download_system_version.get();
 	size_t exdata_size = 0;
 
@@ -85,21 +98,25 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	{
 		switch (mType)
 		{
-			case (cnmt::METATYPE_APPLICATION):
+			case (cnmt::ContentMetaType::Application):
 				mApplicationMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = 0;
 				break;
-			case (cnmt::METATYPE_PATCH):
+			case (cnmt::ContentMetaType::Patch):
 				mPatchMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = mPatchMetaExtendedHeader.getExtendedDataSize();
 				break;
-			case (cnmt::METATYPE_ADD_ON_CONTENT):
+			case (cnmt::ContentMetaType::AddOnContent):
 				mAddOnContentMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = 0;
 				break;
-			case (cnmt::METATYPE_DELTA):
+			case (cnmt::ContentMetaType::Delta):
 				mDeltaMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
 				exdata_size = mDeltaMetaExtendedHeader.getExtendedDataSize();
+				break;
+			case (cnmt::ContentMetaType::SystemUpdate):
+				mSystemUpdateMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
+				exdata_size = mSystemUpdateMetaExtendedHeader.getExtendedDataSize();
 				break;
 			default:
 				throw fnd::Exception(kModuleName, "Unhandled extended header for ContentMeta");
@@ -116,7 +133,7 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 		for (size_t i = 0; i < hdr->content_count.get(); i++)
 		{
 			cinfo.fromBytes((const byte_t*)&info[i], sizeof(sContentInfo));
-			mContentInfo.addElement(cinfo);
+			mContentInfo.push_back(cinfo);
 		}
 	}
 
@@ -128,19 +145,35 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 		for (size_t i = 0; i < hdr->content_meta_count.get(); i++)
 		{	
 			cmeta.fromBytes((const byte_t*)&info[i], sizeof(sContentMetaInfo));
-			mContentMetaInfo.addElement(cmeta);
+			mContentMetaInfo.push_back(cmeta);
 		}
 	}
 
 	// save exdata
 	if (exdata_size > 0)
 	{
-		mExtendedData.alloc(exdata_size);
-		memcpy(mExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+		switch (mType)
+		{
+			case (cnmt::ContentMetaType::Patch):
+				mPatchMetaExtendedData.alloc(exdata_size);
+				memcpy(mPatchMetaExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				break;
+			case (cnmt::ContentMetaType::Delta):
+				mDeltaMetaExtendedData.alloc(exdata_size);
+				memcpy(mDeltaMetaExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				break;
+			case (cnmt::ContentMetaType::SystemUpdate):
+				mSystemUpdateMetaExtendedData.fromBytes(data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				break;
+			default:
+				throw fnd::Exception(kModuleName, "Unhandled extended data for ContentMeta");
+				//exdata_size = 0;
+				//break;
+		}
 	}
 
 	// save digest
-	memcpy(mDigest.data, data + getDigestOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), exdata_size), cnmt::kDigestLen);
+	memcpy(mDigest.data(), data + getDigestOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), exdata_size), cnmt::kDigestLen);
 }
 
 const fnd::Vec<byte_t>& nn::hac::ContentMeta::getBytes() const
@@ -153,17 +186,23 @@ void nn::hac::ContentMeta::clear()
 	mRawBinary.clear();
 	mTitleId = 0;
 	mTitleVersion = 0;
-	mType = cnmt::METATYPE_SYSTEM_PROGRAM;
-	mAttributes = 0;
+	mType = cnmt::ContentMetaType::SystemProgram;
+	mAttribute = 0;
+	mStorageId = cnmt::StorageId::None;
+	mContentInstallType = cnmt::ContentInstallType::Full;
+	mInstallState = 0;
 	mRequiredDownloadSystemVersion = 0;
 	mApplicationMetaExtendedHeader.clear();
 	mPatchMetaExtendedHeader.clear();
 	mAddOnContentMetaExtendedHeader.clear();
 	mDeltaMetaExtendedHeader.clear();
+	mSystemUpdateMetaExtendedHeader.clear();
 	mContentInfo.clear();
 	mContentMetaInfo.clear();
-	mExtendedData.clear();
-	memset(mDigest.data, 0, cnmt::kDigestLen);
+	mPatchMetaExtendedData.clear();
+	mDeltaMetaExtendedData.clear();
+	mSystemUpdateMetaExtendedData.clear();
+	memset(mDigest.data(), 0, cnmt::kDigestLen);
 }
 
 uint64_t nn::hac::ContentMeta::getTitleId() const
@@ -196,14 +235,44 @@ void nn::hac::ContentMeta::setContentMetaType(cnmt::ContentMetaType type)
 	mType = type;
 }
 
-byte_t nn::hac::ContentMeta::getAttributes() const
+const nn::hac::cnmt::ContentMetaAttribute& nn::hac::ContentMeta::getAttribute() const
 {
-	return mAttributes;
+	return mAttribute;
 }
 
-void nn::hac::ContentMeta::setAttributes(byte_t attributes)
+void nn::hac::ContentMeta::setAttribute(const nn::hac::cnmt::ContentMetaAttribute& attr)
 {
-	mAttributes = attributes;
+	mAttribute = attr;
+}
+
+nn::hac::cnmt::StorageId nn::hac::ContentMeta::getStorageId() const
+{
+	return mStorageId;
+}
+
+void nn::hac::ContentMeta::setStorageId(nn::hac::cnmt::StorageId storage_id)
+{
+	mStorageId = storage_id;
+}
+
+nn::hac::cnmt::ContentInstallType nn::hac::ContentMeta::getContentInstallType() const
+{
+	return mContentInstallType;
+}
+
+void nn::hac::ContentMeta::setContentInstallType(nn::hac::cnmt::ContentInstallType install_type)
+{
+	mContentInstallType = install_type;
+}
+
+nn::hac::cnmt::InstallState nn::hac::ContentMeta::getInstallState() const
+{
+	return mInstallState;
+}
+
+void nn::hac::ContentMeta::setInstallState(nn::hac::cnmt::InstallState install_state)
+{
+	mInstallState = install_state;
 }
 
 uint32_t nn::hac::ContentMeta::getRequiredDownloadSystemVersion() const
@@ -256,34 +325,64 @@ void nn::hac::ContentMeta::setDeltaMetaExtendedHeader(const DeltaMetaExtendedHea
 	mDeltaMetaExtendedHeader = exhdr;
 }
 
-const fnd::List<nn::hac::ContentInfo>& nn::hac::ContentMeta::getContentInfo() const
+const nn::hac::SystemUpdateMetaExtendedHeader& nn::hac::ContentMeta::getSystemUpdateMetaExtendedHeader() const
+{
+	return mSystemUpdateMetaExtendedHeader;
+}
+
+void nn::hac::ContentMeta::setSystemUpdateMetaExtendedHeader(const SystemUpdateMetaExtendedHeader& exhdr)
+{
+	mSystemUpdateMetaExtendedHeader = exhdr;
+}
+
+const std::vector<nn::hac::ContentInfo>& nn::hac::ContentMeta::getContentInfo() const
 {
 	return mContentInfo;
 }
 
-void nn::hac::ContentMeta::setContentInfo(const fnd::List<nn::hac::ContentInfo>& info)
+void nn::hac::ContentMeta::setContentInfo(const std::vector<nn::hac::ContentInfo>& info)
 {
 	mContentInfo = info;
 }
 
-const fnd::List<nn::hac::ContentMetaInfo>& nn::hac::ContentMeta::getContentMetaInfo() const
+const std::vector<nn::hac::ContentMetaInfo>& nn::hac::ContentMeta::getContentMetaInfo() const
 {
 	return mContentMetaInfo;
 }
 
-void nn::hac::ContentMeta::setContentMetaInfo(const fnd::List<nn::hac::ContentMetaInfo>& info)
+void nn::hac::ContentMeta::setContentMetaInfo(const std::vector<nn::hac::ContentMetaInfo>& info)
 {
 	mContentMetaInfo = info;
 }
 
-const fnd::Vec<byte_t> & nn::hac::ContentMeta::getExtendedData() const
+const fnd::Vec<byte_t> & nn::hac::ContentMeta::getPatchMetaExtendedData() const
 {
-	return mExtendedData;
+	return mPatchMetaExtendedData;
 }
 
-void nn::hac::ContentMeta::setExtendedData(const fnd::Vec<byte_t>& data)
+void nn::hac::ContentMeta::setPatchMetaExtendedData(const fnd::Vec<byte_t>& exdata)
 {
-	mExtendedData = data;
+	mPatchMetaExtendedData = exdata;
+}
+
+const fnd::Vec<byte_t> & nn::hac::ContentMeta::getDeltaMetaExtendedData() const
+{
+	return mDeltaMetaExtendedData;
+}
+
+void nn::hac::ContentMeta::setDeltaMetaExtendedData(const fnd::Vec<byte_t>& exdata)
+{
+	mDeltaMetaExtendedData = exdata;
+}
+
+const nn::hac::SystemUpdateMetaExtendedData& nn::hac::ContentMeta::getSystemUpdateMetaExtendedData() const
+{
+	return mSystemUpdateMetaExtendedData;
+}
+
+void nn::hac::ContentMeta::setSystemUpdateMetaExtendedData(const SystemUpdateMetaExtendedData& exdata)
+{
+	mSystemUpdateMetaExtendedData = exdata;
 }
 
 const nn::hac::cnmt::sDigest & nn::hac::ContentMeta::getDigest() const
@@ -302,17 +401,20 @@ bool nn::hac::ContentMeta::validateExtendedHeaderSize(cnmt::ContentMetaType type
 
 	switch (type)
 	{
-		case (cnmt::METATYPE_APPLICATION):
+		case (cnmt::ContentMetaType::Application):
 			validSize = (exhdrSize == sizeof(sApplicationMetaExtendedHeader));
 			break;
-		case (cnmt::METATYPE_PATCH):
+		case (cnmt::ContentMetaType::Patch):
 			validSize = (exhdrSize == sizeof(sPatchMetaExtendedHeader));
 			break;
-		case (cnmt::METATYPE_ADD_ON_CONTENT):
+		case (cnmt::ContentMetaType::AddOnContent):
 			validSize = (exhdrSize == sizeof(sAddOnContentMetaExtendedHeader));
 			break;
-		case (cnmt::METATYPE_DELTA):
+		case (cnmt::ContentMetaType::Delta):
 			validSize = (exhdrSize == sizeof(sDeltaMetaExtendedHeader));
+			break;
+		case (cnmt::ContentMetaType::SystemUpdate):
+			validSize = (exhdrSize == sizeof(sSystemUpdateMetaExtendedHeader));
 			break;
 		default:
 			validSize = (exhdrSize == 0);
@@ -324,14 +426,19 @@ bool nn::hac::ContentMeta::validateExtendedHeaderSize(cnmt::ContentMetaType type
 size_t nn::hac::ContentMeta::getExtendedDataSize(cnmt::ContentMetaType type, const byte_t * data) const
 {
 	size_t exdata_len = 0;
-	if (type == cnmt::METATYPE_PATCH)
+	if (type == cnmt::ContentMetaType::Patch)
 	{
 		const sPatchMetaExtendedHeader* exhdr = (const sPatchMetaExtendedHeader*)(data);
 		exdata_len = exhdr->extended_data_size.get();
 	}
-	else if (type == cnmt::METATYPE_DELTA)
+	else if (type == cnmt::ContentMetaType::Delta)
 	{
 		const sDeltaMetaExtendedHeader* exhdr = (const sDeltaMetaExtendedHeader*)(data);
+		exdata_len = exhdr->extended_data_size.get();
+	}
+	else if (type == cnmt::ContentMetaType::SystemUpdate)
+	{
+		const sSystemUpdateMetaExtendedHeader* exhdr = (const sSystemUpdateMetaExtendedHeader*)(data);
 		exdata_len = exhdr->extended_data_size.get();
 	}
 	return exdata_len;

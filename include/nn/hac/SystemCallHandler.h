@@ -9,8 +9,6 @@ namespace hac
 		public IKernelCapabilityHandler
 	{
 	public:
-		static const uint32_t kMaxSystemCall = (BIT(3) * 24) - 1;
-
 		SystemCallHandler();
 
 		void operator=(const SystemCallHandler& other);
@@ -24,15 +22,16 @@ namespace hac
 		bool isSet() const;
 
 		// variables
-		const fnd::List<nn::hac::kc::SystemCall>& getSystemCalls() const;
-		void setSystemCallList(const fnd::List<nn::hac::kc::SystemCall>& calls);
+		const kc::SystemCallIds& getSystemCallIds() const;
+		void setSystemCallIds(const kc::SystemCallIds& syscall_ids);
 
 	private:
 		const std::string kModuleName = "SYSTEM_CALL_HANDLER";
-		static const size_t kSyscallTotalEntryNum = (kMaxSystemCall / 24) + 1;
+		static const size_t kEntrySyscallCount = 24;
+		static const size_t kSyscallTotalEntryNum = (kc::kMaxSystemCallId / kEntrySyscallCount) + 1;
 
 		bool mIsSet;
-		fnd::List<nn::hac::kc::SystemCall> mSystemCalls;
+		kc::SystemCallIds mSystemCallIds;
 	};
 }
 }

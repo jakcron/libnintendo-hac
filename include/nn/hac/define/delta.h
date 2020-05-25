@@ -1,5 +1,5 @@
 #pragma once
-#include <fnd/types.h>
+#include <nn/hac/define/types.h>
 #include <nn/hac/define/macro.h>
 
 namespace nn
@@ -21,6 +21,7 @@ namespace hac
 		le_uint64_t body_size;
 		byte_t reserved_01[0x18];
 	};
+	static_assert(sizeof(sDeltaHeader) == 0x40, "sDeltaHeader size.");
 #pragma pack(pop)
 }
 }

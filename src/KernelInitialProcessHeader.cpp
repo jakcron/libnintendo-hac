@@ -15,8 +15,10 @@ void nn::hac::KernelInitialProcessHeader::operator=(const KernelInitialProcessHe
 	clear();
 	this->mName = other.mName;
 	this->mTitleId = other.mTitleId;
-	this->mProcessCategory = other.mProcessCategory;
-	this->mFlagList = other.mFlagList;
+	this->mVersion = other.mVersion;
+	this->mIs64BitInstructionFlag = other.mIs64BitInstructionFlag;
+	this->mIs64BitAddressSpaceFlag = other.mIs64BitAddressSpaceFlag;
+	this->mUseSecureMemoryFlag = other.mUseSecureMemoryFlag;
 	this->mMainThreadPriority = other.mMainThreadPriority;
 	this->mMainThreadCpuId = other.mMainThreadCpuId;
 	this->mMainThreadStackSize = other.mMainThreadStackSize;
@@ -31,8 +33,10 @@ bool nn::hac::KernelInitialProcessHeader::operator==(const KernelInitialProcessH
 {
 	return (this->mName == other.mName) \
 		&& (this->mTitleId == other.mTitleId) \
-		&& (this->mProcessCategory == other.mProcessCategory) \
-		&& (this->mFlagList == other.mFlagList) \
+		&& (this->mVersion == other.mVersion) \
+		&& (this->mIs64BitInstructionFlag == other.mIs64BitInstructionFlag) \
+		&& (this->mIs64BitAddressSpaceFlag == other.mIs64BitAddressSpaceFlag) \
+		&& (this->mUseSecureMemoryFlag == other.mUseSecureMemoryFlag) \
 		&& (this->mMainThreadPriority == other.mMainThreadPriority) \
 		&& (this->mMainThreadCpuId == other.mMainThreadCpuId) \
 		&& (this->mMainThreadStackSize == other.mMainThreadStackSize) \
@@ -55,14 +59,14 @@ void nn::hac::KernelInitialProcessHeader::toBytes()
 
 	// set header identifers
 	hdr->st_magic = kip::kKipStructMagic;
-	
-	// variable to store flags before commiting to header
-	byte_t flags = 0;
 
 	// properties
 	strncpy(hdr->name, mName.c_str(), kip::kNameMaxLen);
 	hdr->title_id = mTitleId;
-	hdr->process_category = mProcessCategory;
+	hdr->version = mVersion;
+	hdr->flags.is_64bit_instruction = mIs64BitInstructionFlag;
+	hdr->flags.is_64bit_address_space = mIs64BitAddressSpaceFlag;
+	hdr->flags.use_secure_memory = mUseSecureMemoryFlag;
 	hdr->main_thread_priority = mMainThreadPriority;
 	hdr->main_thread_cpu_id = mMainThreadCpuId;
 	hdr->main_thread_stack_size = mMainThreadStackSize;
@@ -81,21 +85,6 @@ void nn::hac::KernelInitialProcessHeader::toBytes()
 		memset(hdr->capabilities + mKernelCapabilities.getBytes().size(), 0xff, kip::kKernCapabilitySize - mKernelCapabilities.getBytes().size());
 	}	
 
-	// flags
-	for (size_t i = 0; i < mFlagList.size(); i++)
-	{
-		switch(mFlagList[i])
-		{
-			case (kip::FLAG_TEXT_COMPRESS) :
-			case (kip::FLAG_RO_COMPRESS) :
-			case (kip::FLAG_DATA_COMPRESS) :
-				break;
-			default:
-				flags |= _BIT(mFlagList[i] & 7);
-				break;
-		}
-	}
-
 	// set bss size
 	hdr->bss.file_size = 0;
 	hdr->bss.memory_offset = 0;
@@ -105,30 +94,19 @@ void nn::hac::KernelInitialProcessHeader::toBytes()
 	hdr->text.memory_offset = mTextInfo.memory_layout.offset;
 	hdr->text.memory_size = mTextInfo.memory_layout.size;
 	hdr->text.file_size = mTextInfo.file_layout.size;
-	if (mTextInfo.is_compressed)
-	{
-		flags |= _BIT(kip::FLAG_TEXT_COMPRESS);
-	}
+	hdr->flags.text_compress = mTextInfo.is_compressed;
 
 	// set ro segment
 	hdr->ro.memory_offset = mRoInfo.memory_layout.offset;
 	hdr->ro.memory_size = mRoInfo.memory_layout.size;
 	hdr->ro.file_size = mRoInfo.file_layout.size;
-	if (mRoInfo.is_compressed)
-	{
-		flags |= _BIT(kip::FLAG_TEXT_COMPRESS);
-	}
+	hdr->flags.ro_compress = mRoInfo.is_compressed;
 
 	// set data segment
 	hdr->data.memory_offset = mDataInfo.memory_layout.offset;
 	hdr->data.memory_size = mDataInfo.memory_layout.size;
 	hdr->data.file_size = mDataInfo.file_layout.size;
-	if (mDataInfo.is_compressed)
-	{
-		flags |= _BIT(kip::FLAG_TEXT_COMPRESS);
-	}
-
-	hdr->flags = flags;
+	hdr->flags.data_compress = mDataInfo.is_compressed;
 }
 
 void nn::hac::KernelInitialProcessHeader::fromBytes(const byte_t* data, size_t len)
@@ -159,47 +137,33 @@ void nn::hac::KernelInitialProcessHeader::fromBytes(const byte_t* data, size_t l
 	if (hdr->name[0] != 0)
 		mName = std::string(hdr->name, _MIN(strlen(hdr->name), kip::kNameMaxLen));
 	mTitleId = hdr->title_id.get();
-	mProcessCategory = (kip::ProcessCategory)hdr->process_category.get();
+	mVersion = hdr->version.get();
+	mIs64BitInstructionFlag = hdr->flags.is_64bit_instruction;
+	mIs64BitAddressSpaceFlag = hdr->flags.is_64bit_address_space;
+	mUseSecureMemoryFlag = hdr->flags.use_secure_memory;
 	mMainThreadPriority = hdr->main_thread_priority;
 	mMainThreadCpuId = hdr->main_thread_cpu_id;
 	mMainThreadStackSize = hdr->main_thread_stack_size.get();
 	mKernelCapabilities.fromBytes(hdr->capabilities, kip::kKernCapabilitySize);
-	
-	for (byte_t i = 0; i < 8; i++)
-	{
-		if (_HAS_BIT(hdr->flags, i))
-		{
-			switch(i)
-			{
-			case (kip::FLAG_TEXT_COMPRESS) :
-			case (kip::FLAG_RO_COMPRESS) :
-			case (kip::FLAG_DATA_COMPRESS) :
-				break;
-			default:
-				mFlagList.addElement((kip::HeaderFlags)i);
-				break;
-			}
-		}
-	}
 
 	// code segment info
 	mTextInfo.file_layout.offset = sizeof(sKipHeader);
 	mTextInfo.file_layout.size = hdr->text.file_size.get();
 	mTextInfo.memory_layout.offset = hdr->text.memory_offset.get();
 	mTextInfo.memory_layout.size = hdr->text.memory_size.get();
-	mTextInfo.is_compressed = _HAS_BIT(hdr->flags, kip::FLAG_TEXT_COMPRESS);
+	mTextInfo.is_compressed = hdr->flags.text_compress;
 
 	mRoInfo.file_layout.offset = mTextInfo.file_layout.offset + mTextInfo.file_layout.size;
 	mRoInfo.file_layout.size = hdr->ro.file_size.get();
 	mRoInfo.memory_layout.offset = hdr->ro.memory_offset.get();
 	mRoInfo.memory_layout.size = hdr->ro.memory_size.get();
-	mRoInfo.is_compressed = _HAS_BIT(hdr->flags, kip::FLAG_RO_COMPRESS);
+	mRoInfo.is_compressed = hdr->flags.ro_compress;
 
 	mDataInfo.file_layout.offset = mRoInfo.file_layout.offset + mRoInfo.file_layout.size;
 	mDataInfo.file_layout.size = hdr->data.file_size.get();
 	mDataInfo.memory_layout.offset = hdr->data.memory_offset.get();
 	mDataInfo.memory_layout.size = hdr->data.memory_size.get();
-	mDataInfo.is_compressed = _HAS_BIT(hdr->flags, kip::FLAG_DATA_COMPRESS);
+	mDataInfo.is_compressed = hdr->flags.data_compress;
 
 	mBssSize = hdr->bss.memory_size.get();
 }
@@ -214,8 +178,10 @@ void nn::hac::KernelInitialProcessHeader::clear()
 	mRawBinary.clear();
 	mName.clear();
 	mTitleId = 0;
-	mProcessCategory = (kip::ProcessCategory)0;
-	mFlagList.clear();
+	mVersion = 0;
+	mIs64BitInstructionFlag = false;
+	mIs64BitAddressSpaceFlag = false;
+	mUseSecureMemoryFlag = false;
 	mMainThreadPriority = 0;
 	mMainThreadCpuId = 0;
 	mMainThreadStackSize = 0;
@@ -246,23 +212,44 @@ void nn::hac::KernelInitialProcessHeader::setTitleId(uint64_t title_id)
 	mTitleId = title_id;
 }
 
-nn::hac::kip::ProcessCategory nn::hac::KernelInitialProcessHeader::getProcessCategory() const
+uint32_t nn::hac::KernelInitialProcessHeader::getVersion() const
 {
-	return mProcessCategory;
+	return mVersion;
 }
 
-void nn::hac::KernelInitialProcessHeader::setProcessCategory(kip::ProcessCategory cat)
+void nn::hac::KernelInitialProcessHeader::setVersion(uint32_t version)
 {
-	mProcessCategory = cat;
+	mVersion = version;
 }
 
-const fnd::List<nn::hac::kip::HeaderFlags>& nn::hac::KernelInitialProcessHeader::getFlagList() const
+bool nn::hac::KernelInitialProcessHeader::getIs64BitInstructionFlag() const
 {
-	return mFlagList;
+	return mIs64BitInstructionFlag;
 }
-void nn::hac::KernelInitialProcessHeader::setFlagList(const fnd::List<kip::HeaderFlags>& flags)
+
+void nn::hac::KernelInitialProcessHeader::setIs64BitInstructionFlag(bool flag)
 {
-	mFlagList = flags;
+	mIs64BitInstructionFlag = flag;
+}
+
+bool nn::hac::KernelInitialProcessHeader::getIs64BitAddressSpaceFlag() const
+{
+	return mIs64BitAddressSpaceFlag;
+}
+
+void nn::hac::KernelInitialProcessHeader::setIs64BitAddressSpaceFlag(bool flag)
+{
+	mIs64BitAddressSpaceFlag = flag;
+}
+
+bool nn::hac::KernelInitialProcessHeader::getUseSecureMemoryFlag() const
+{
+	return mUseSecureMemoryFlag;
+}
+
+void nn::hac::KernelInitialProcessHeader::setUseSecureMemoryFlag(bool flag)
+{
+	mUseSecureMemoryFlag = flag;
 }
 
 byte_t nn::hac::KernelInitialProcessHeader::getMainThreadPriority() const
