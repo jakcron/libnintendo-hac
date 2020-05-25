@@ -34,7 +34,7 @@ void nn::hac::SystemCallHandler::importKernelCapabilityList(const fnd::List<Kern
 	for (size_t i = 0; i < caps.size(); i++)
 	{
 		entry.setKernelCapability(caps[i]);
-		syscallUpper = kEntrySyscallCount * entry.getSystemCallUpperBits();
+		syscallUpper = byte_t(kEntrySyscallCount * entry.getSystemCallUpperBits());
 		for (uint8_t j = 0; j < kEntrySyscallCount; j++)
 		{
 			syscall_id = syscallUpper + j;
