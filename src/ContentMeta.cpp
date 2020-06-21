@@ -174,6 +174,11 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 
 	// save digest
 	memcpy(mDigest.data(), data + getDigestOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), exdata_size), cnmt::kDigestLen);
+
+	// save raw binary
+	mRawBinary.alloc(getDigestOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), exdata_size) + cnmt::kDigestLen);
+
+	memcpy(mRawBinary.data(), data, mRawBinary.size());
 }
 
 const fnd::Vec<byte_t>& nn::hac::ContentMeta::getBytes() const
