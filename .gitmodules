@@ -4,3 +4,6 @@
 [submodule "deps/liblz4"]
 	path = deps/liblz4
 	url = https://github.com/jakcron/liblz4.git
+[submodule "deps/libmbedtls"]
+	path = deps/libmbedtls
+	url = https://github.com/jakcron/libmbedtls
