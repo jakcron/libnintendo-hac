@@ -58,6 +58,10 @@ void nn::hac::ApplicationControlProperty::operator=(const ApplicationControlProp
 	mRequiredNetworkServiceLicenseOnLaunch = other.mRequiredNetworkServiceLicenseOnLaunch;
 	mNeighborDetectionClientConfiguration = other.mNeighborDetectionClientConfiguration;
 	mJitConfiguration = other.mJitConfiguration;
+	mPlayReportPermission = other.mPlayReportPermission;
+	mCrashScreenshotForProd = other.mCrashScreenshotForProd;
+	mCrashScreenshotForDev = other.mCrashScreenshotForDev;
+	mAccessibleLaunchRequiredVersionApplicationId = other.mAccessibleLaunchRequiredVersionApplicationId;
 }
 
 bool nn::hac::ApplicationControlProperty::operator==(const ApplicationControlProperty& other) const
@@ -105,7 +109,11 @@ bool nn::hac::ApplicationControlProperty::operator==(const ApplicationControlPro
 		&& (mProgramIndex == other.mProgramIndex) \
 		&& (mRequiredNetworkServiceLicenseOnLaunch == other.mRequiredNetworkServiceLicenseOnLaunch) \
 		&& (mNeighborDetectionClientConfiguration == other.mNeighborDetectionClientConfiguration) \
-		&& (mJitConfiguration == other.mJitConfiguration);
+		&& (mJitConfiguration == other.mJitConfiguration) \
+		&& (mPlayReportPermission == other.mPlayReportPermission) \
+		&& (mCrashScreenshotForProd == other.mCrashScreenshotForProd) \
+		&& (mCrashScreenshotForDev == other.mCrashScreenshotForDev) \
+		&& (mAccessibleLaunchRequiredVersionApplicationId == other.mAccessibleLaunchRequiredVersionApplicationId);
 }
 
 bool nn::hac::ApplicationControlProperty::operator!=(const ApplicationControlProperty& other) const
@@ -174,7 +182,6 @@ void nn::hac::ApplicationControlProperty::toBytes()
 	}
 	nacp->required_network_service_license_on_launch_flag = required_network_service_license_on_launch_flag;
 
-
 	// enum type casts
 	nacp->startup_user_account = (byte_t)mStartupUserAccount;
 	nacp->user_account_switch_lock = (byte_t)mUserAccountSwitchLock;
@@ -190,8 +197,10 @@ void nn::hac::ApplicationControlProperty::toBytes()
 	nacp->crash_report = (byte_t)mCrashReport;
 	nacp->hdcp = (byte_t)mHdcp;
 	nacp->play_log_query_capability = (byte_t)mPlayLogQueryCapability;
+	nacp->play_report_permission = (byte_t)mPlayReportPermission;
+	nacp->crash_screenshot_for_prod = (byte_t)mCrashScreenshotForProd;
+	nacp->crash_screenshot_for_dev = (byte_t)mCrashScreenshotForDev;
 	
-
 	// misc params
 	nacp->presence_group_id = mPresenceGroupId;
 	memset(nacp->rating_age, nacp::kUnusedAgeRating, nacp::kRatingAgeCount); // clear ratings
@@ -212,6 +221,10 @@ void nn::hac::ApplicationControlProperty::toBytes()
 	}
 	nacp->cache_storage_index_max = mCacheStorageIndexMax;
 	nacp->program_index = mProgramIndex;
+	for (size_t i = 0; i < mAccessibleLaunchRequiredVersionApplicationId.size() && i < nacp::kMaxAccessibleLaunchRequiredVersionApplicationIdCount; i++)
+	{
+		nacp->accessible_launch_required_verison.application_id[i] = mAccessibleLaunchRequiredVersionApplicationId[i];
+	}
 
 	// sizes
 	nacp->user_account_save_data_size = mUserAccountSaveDataSize.size;
@@ -331,6 +344,9 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	mCrashReport = nacp::CrashReport(nacp->crash_report);
 	mHdcp = nacp::Hdcp(nacp->hdcp);
 	mPlayLogQueryCapability = nacp::PlayLogQueryCapability(nacp->play_log_query_capability);
+	mPlayReportPermission = nacp::PlayReportPermission(nacp->play_report_permission);
+	mCrashScreenshotForProd = nacp::CrashScreenshotForProd(nacp->crash_screenshot_for_prod);
+	mCrashScreenshotForDev = nacp::CrashScreenshotForDev(nacp->crash_screenshot_for_dev);
 
 	// misc params
 	mPresenceGroupId = nacp->presence_group_id.get();
@@ -354,6 +370,11 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	}
 	mCacheStorageIndexMax = nacp->cache_storage_index_max.get();
 	mProgramIndex = nacp->program_index;
+	for (size_t i = 0; i < nacp::kMaxAccessibleLaunchRequiredVersionApplicationIdCount; i++)
+	{
+		if (nacp->accessible_launch_required_verison.application_id[i].get() != 0)
+			mAccessibleLaunchRequiredVersionApplicationId.push_back(nacp->accessible_launch_required_verison.application_id[i].get());
+	}
 
 	// sizes
 	mUserAccountSaveDataSize.size = (int64_t)nacp->user_account_save_data_size.get();
@@ -433,6 +454,10 @@ void nn::hac::ApplicationControlProperty::clear()
 	mRequiredNetworkServiceLicenseOnLaunch.clear();
 	mNeighborDetectionClientConfiguration = sNeighborDetectionClientConfiguration();
 	mJitConfiguration = sJitConfiguration();
+	mPlayReportPermission = nacp::PlayReportPermission::None;
+	mCrashScreenshotForProd = nacp::CrashScreenshotForProd::Deny;
+	mCrashScreenshotForDev = nacp::CrashScreenshotForDev::Deny;
+	mAccessibleLaunchRequiredVersionApplicationId.clear();
 }
 
 const std::vector<nn::hac::ApplicationControlProperty::sTitle>& nn::hac::ApplicationControlProperty::getTitle() const
@@ -874,6 +899,46 @@ const nn::hac::ApplicationControlProperty::sJitConfiguration& nn::hac::Applicati
 void nn::hac::ApplicationControlProperty::setJitConfiguration(const sJitConfiguration& var)
 {
 	mJitConfiguration = var;
+}
+
+const nn::hac::nacp::PlayReportPermission& nn::hac::ApplicationControlProperty::getPlayReportPermission() const
+{
+	return mPlayReportPermission;
+}
+
+void nn::hac::ApplicationControlProperty::setPlayReportPermission(const nacp::PlayReportPermission& var)
+{
+	mPlayReportPermission = var;
+}
+
+const nn::hac::nacp::CrashScreenshotForProd& nn::hac::ApplicationControlProperty::getCrashScreenshotForProd() const
+{
+	return mCrashScreenshotForProd;
+}
+
+void nn::hac::ApplicationControlProperty::setCrashScreenshotForProd(const nacp::CrashScreenshotForProd& var)
+{
+	mCrashScreenshotForProd = var;
+}
+
+const nn::hac::nacp::CrashScreenshotForDev& nn::hac::ApplicationControlProperty::getCrashScreenshotForDev() const
+{
+	return mCrashScreenshotForDev;
+}
+
+void nn::hac::ApplicationControlProperty::setCrashScreenshotForDev(const nacp::CrashScreenshotForDev& var)
+{
+	mCrashScreenshotForDev = var;
+}
+
+const std::vector<uint64_t>& nn::hac::ApplicationControlProperty::getAccessibleLaunchRequiredVersionApplicationId() const
+{
+	return mAccessibleLaunchRequiredVersionApplicationId;
+}
+
+void nn::hac::ApplicationControlProperty::setAccessibleLaunchRequiredVersionApplicationId(const std::vector<uint64_t>& var)
+{
+	mAccessibleLaunchRequiredVersionApplicationId = var;
 }
 
 void nn::hac::ApplicationControlProperty::serialiseGroupConfig(const sNeighborDetectionClientConfiguration::sGroupConfiguration& logical, sApplicationControlProperty::sNeighborDetectionClientConfiguration::sGroupConfiguration& serialised)
