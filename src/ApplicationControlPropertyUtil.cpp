@@ -96,6 +96,46 @@ std::string nn::hac::ApplicationControlPropertyUtil::getCrashReportAsString(nn::
 	return ss.str();
 }
 
+std::string nn::hac::ApplicationControlPropertyUtil::getCrashScreenshotForDevAsString(nn::hac::nacp::CrashScreenshotForDev val)
+{
+	std::stringstream ss;
+
+	switch (val)
+	{
+	case (nn::hac::nacp::CrashScreenshotForDev::Deny):
+		ss << "Deny";
+		break;
+	case (nn::hac::nacp::CrashScreenshotForDev::Allow):
+		ss << "Allow";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		break;
+	}
+
+	return ss.str();
+}
+
+std::string nn::hac::ApplicationControlPropertyUtil::getCrashScreenshotForProdAsString(nn::hac::nacp::CrashScreenshotForProd val)
+{
+	std::stringstream ss;
+
+	switch (val)
+	{
+	case (nn::hac::nacp::CrashScreenshotForProd::Deny):
+		ss << "Deny";
+		break;
+	case (nn::hac::nacp::CrashScreenshotForProd::Allow):
+		ss << "Allow";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		break;
+	}
+
+	return ss.str();
+}
+
 std::string nn::hac::ApplicationControlPropertyUtil::getDataLossConfirmationAsString(nn::hac::nacp::DataLossConfirmation val)
 {
 	std::stringstream ss;
@@ -331,14 +371,17 @@ std::string nn::hac::ApplicationControlPropertyUtil::getPlayLogPolicyAsString(nn
 
 	switch (val)
 	{
-	case (nn::hac::nacp::PlayLogPolicy::All):
-		ss << "All";
+	case (nn::hac::nacp::PlayLogPolicy::Open):
+		ss << "Open";
 		break;
 	case (nn::hac::nacp::PlayLogPolicy::LogOnly):
 		ss << "LogOnly";
 		break;
 	case (nn::hac::nacp::PlayLogPolicy::None):
 		ss << "None";
+		break;
+	case (nn::hac::nacp::PlayLogPolicy::Closed):
+		ss << "Closed";
 		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
@@ -362,6 +405,26 @@ std::string nn::hac::ApplicationControlPropertyUtil::getPlayLogQueryCapabilityAs
 		break;
 	case (nn::hac::nacp::PlayLogQueryCapability::All):
 		ss << "All";
+		break;
+	default:
+		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		break;
+	}
+
+	return ss.str();
+}
+
+std::string nn::hac::ApplicationControlPropertyUtil::getPlayReportPermissionAsString(nn::hac::nacp::PlayReportPermission val)
+{
+	std::stringstream ss;
+
+	switch (val)
+	{
+	case (nn::hac::nacp::PlayReportPermission::None):
+		ss << "None";
+		break;
+	case (nn::hac::nacp::PlayReportPermission::TargetMarketing):
+		ss << "TargetMarketing";
 		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
@@ -417,6 +480,9 @@ std::string nn::hac::ApplicationControlPropertyUtil::getRuntimeAddOnContentInsta
 	case (nn::hac::nacp::RuntimeAddOnContentInstall::AllowAppend):
 		ss << "AllowAppend";
 		break;
+	case (nn::hac::nacp::RuntimeAddOnContentInstall::AllowAppendButDontDownloadWhenUsingNetwork):
+		ss << "AllowAppendButDontDownloadWhenUsingNetwork";
+		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
 		break;
@@ -468,23 +534,6 @@ std::string nn::hac::ApplicationControlPropertyUtil::getScreenshotAsString(nn::h
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getStartupUserAccountOptionFlagAsString(nn::hac::nacp::StartupUserAccountOptionFlag val)
-{
-	std::stringstream ss;
-
-	switch (val)
-	{
-	case (nn::hac::nacp::StartupUserAccountOptionFlag::IsOptional):
-		ss << "IsOptional";
-		break;
-	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
-		break;
-	}
-
-	return ss.str();
-}
-
 std::string nn::hac::ApplicationControlPropertyUtil::getStartupUserAccountAsString(nn::hac::nacp::StartupUserAccount val)
 {
 	std::stringstream ss;
@@ -508,20 +557,14 @@ std::string nn::hac::ApplicationControlPropertyUtil::getStartupUserAccountAsStri
 	return ss.str();
 }
 
-std::string nn::hac::ApplicationControlPropertyUtil::getTouchScreenUsageAsString(nn::hac::nacp::TouchScreenUsage val)
+std::string nn::hac::ApplicationControlPropertyUtil::getStartupUserAccountOptionFlagAsString(nn::hac::nacp::StartupUserAccountOptionFlag val)
 {
 	std::stringstream ss;
 
 	switch (val)
 	{
-	case (nn::hac::nacp::TouchScreenUsage::None):
-		ss << "None";
-		break;
-	case (nn::hac::nacp::TouchScreenUsage::Supported):
-		ss << "Supported";
-		break;
-	case (nn::hac::nacp::TouchScreenUsage::Required):
-		ss << "Required";
+	case (nn::hac::nacp::StartupUserAccountOptionFlag::IsOptional):
+		ss << "IsOptional";
 		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;

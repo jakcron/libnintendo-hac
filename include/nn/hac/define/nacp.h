@@ -7,8 +7,10 @@ namespace hac
 {
 	namespace nacp
 	{
-		static const size_t kNameLength = 0x200;
-		static const size_t kPublisherLength = 0x100;
+		static const size_t kNameLength = 512;
+		static const size_t kNameStringLength = 127;
+		static const size_t kPublisherLength = 256;
+		static const size_t kPublisherStringLength = 63;
 		static const size_t kMaxLanguageCount = 16;
 		static const size_t kIsbnLength = 37;
 		static const size_t kRatingAgeCount = 32;
@@ -17,48 +19,63 @@ namespace hac
 		static const size_t kLocalCommunicationIdCount = 8;
 		static const size_t kBcatPassphraseLength = 65;
 		static const size_t kPlayLogQueryableApplicationIdCount = 16;
-		static const int8_t kUnusedAgeRating = -1;
 		static const size_t kNeighborDetectionGroupConfigurationKeyLength = 16;
 		static const size_t kReceivableGroupConfigurationCount = 16;
-		static const uint64_t kDefaultJitMemorySize = 0x400000;
-		static const uint64_t kJitMemoryMultipleSize = 0x200000;
+		static const size_t kRequiredAddOnContentsSetCount = 32;
+
+		static const int8_t kUnusedAgeRating = -1;
+
 		static const uint64_t kBcatAlignmentMask = 0xFFFFF; // cannot have size that isn't a multiple of 1MiB
-		static const uint64_t kBcatMiniumSize = 0x500000; // cannot have a size (non zero) that is smaller than 5MiB
+		static const uint64_t kBcatMiniumSize = 5242880; // cannot have a size (non zero) that is smaller than 5MiB
 		static const uint64_t kSaveDataAlignmentMask = 0x3FFF; // cannot have a size that isn't a multiple of 16KiB
 
-		// Introduced as of SDK 3.4.0
+		static const uint64_t kDefaultJitMemorySize = 0x400000;
+		static const uint64_t kJitMemoryMultipleSize = 0x200000;
+
+		static const size_t kMaxAccessibleLaunchRequiredVersionApplicationIdCount = 8;
+
 		enum class AddOnContentRegistrationType : byte_t
 		{
-			AllOnLaunch,
-			OnDemand
+			AllOnLaunch = 0,
+			OnDemand = 1
 		};
 
 		enum class AttributeFlag : byte_t
 		{
-			Demo,
-			RetailInteractiveDisplay // Introduced as of SDK 3.4.0
+			Demo = 0,
+			RetailInteractiveDisplay = 1
 		};
 
-		// Introduced as of SDK 3.5.2
 		enum class CrashReport : byte_t
 		{
-			Deny,
-			Allow
+			Deny = 0,
+			Allow = 1
+		};
+
+		enum class CrashScreenshotForDev : byte_t
+		{
+			Deny = 0,
+			Allow = 1
+		};
+
+		enum class CrashScreenshotForProd : byte_t
+		{
+			Deny = 0,
+			Allow = 1
 		};
 
 		enum class DataLossConfirmation : byte_t
 		{
-			None,
-			Required
+			None = 0,
+			Required = 1
 		};
 
 		enum class Hdcp : byte_t
 		{
-			None,
-			Required
+			None = 0,
+			Required = 1
 		};
 
-		// Introduced SDK 7.6.0
 		enum class JitConfigurationFlag : uint64_t
 		{
 			Enabled
@@ -66,31 +83,28 @@ namespace hac
 
 		enum class Language : byte_t
 		{
-			AmericanEnglish,
-			BritishEnglish,
-			Japanese,
-			French,
-			German,
-			LatinAmericanSpanish,
-			Spanish,
-			Italian,
-			Dutch,
-			CanadianFrench,
-			Portuguese,
-			Russian,
-			Korean,
-			TraditionalChinese,
-			SimplifiedChinese,
-
-			// Deprecated names as of SDK 3.5.0
-			Taiwanese = TraditionalChinese,
-			Chinese = SimplifiedChinese
+			AmericanEnglish = 0,
+			BritishEnglish = 1,
+			Japanese = 2,
+			French = 3,
+			German = 4,
+			LatinAmericanSpanish = 5,
+			Spanish = 6,
+			Italian = 7,
+			Dutch = 8,
+			CanadianFrench = 9,
+			Portuguese = 10,
+			Russian = 11,
+			Korean = 12,
+			TraditionalChinese = 13,
+			SimplifiedChinese = 14,
+			BrazilianPortuguese = 15
 		};
 
 		enum class LogoHandling : byte_t
 		{
-			Auto,
-			None
+			Auto = 0,
+			None = 1
 		};
 
 		enum class LogoType : byte_t
@@ -102,137 +116,127 @@ namespace hac
 
 		enum class Organisation : byte_t
 		{
-			CERO,
-			GRACGCRB,
-			GSRMR,
-			ESRB,
-			ClassInd,
-			USK,
-			PEGI,
-			PEGIPortugal,
-			PEGIBBFC,
-			Russian,
-			ACB,
-			OFLC,
-			IARCGeneric // introduced as of SDK 9.3.1
+			CERO = 0,
+			GRACGCRB = 1,
+			GSRMR = 2,
+			ESRB = 3,
+			ClassInd = 4,
+			USK = 5,
+			PEGI = 6,
+			PEGIPortugal = 7,
+			PEGIBBFC = 8,
+			Russian = 9,
+			ACB = 10,
+			OFLC = 11,
+			IARCGeneric = 12
 		};
 
 		enum class ParentalControlFlag : uint32_t
 		{
-			FreeCommunication
+			FreeCommunication = 0
 		};
 
 		enum class PlayLogPolicy : byte_t
 		{
-			All,
-			LogOnly,
-			None
+			Open = 0,
+			LogOnly = 1,
+			None = 2,
+			Closed = 3,
+			All = 0
 		};
 
-		// Introduced as of SDK 5.3.0
 		enum class PlayLogQueryCapability : byte_t
 		{
-			None,
-			Whitelist,
-			All
+			None = 0,
+			Whitelist = 1,
+			All = 2
 		};
 
-		// Introduced as of SDK 5.3.0
+		enum class PlayReportPermission : byte_t
+		{
+			None = 0,
+			TargetMarketing = 1
+		};
+
 		enum class RepairFlag : byte_t
 		{
-			SuppressGameCardAccess
+			SuppressGameCardAccess = 0
 		};
 
-		// Introduced as of SDK 6.4.0
 		enum class RequiredNetworkServiceLicenseOnLaunchFlag : byte_t
 		{
-			Common
+			Common = 0
 		};
 
-		// Introduced as of SDK 4.5.0
 		enum class RuntimeAddOnContentInstall : byte_t
 		{
-			Deny,
-			AllowAppend
+			Deny = 0,
+			AllowAppend = 1,
+			AllowAppendButDontDownloadWhenUsingNetwork = 2
 		};
 
-		// Introduced as of SDK 9.3.1
 		enum class RuntimeParameterDelivery : byte_t
 		{
-			Always,
-			AlwaysIfUserStateMatched,
-			OnRestart
+			Always = 0,
+			AlwaysIfUserStateMatched = 1,
+			OnRestart = 2
 		};
 
 		enum class Screenshot : byte_t
 		{
-			Allow,
-			Deny
+			Allow = 0,
+			Deny = 1
 		};
 
 		enum class StartupUserAccount : byte_t
 		{
-			None,
-			Required,
-			RequiredWithNetworkServiceAccountAvailable
+			None = 0,
+			Required = 1,
+			RequiredWithNetworkServiceAccountAvailable = 2
 		};
 
-		// Introduced as of SDK 7.6.0
 		enum class StartupUserAccountOptionFlag : byte_t
 		{
-			IsOptional
+			IsOptional = 0
 		};
 
-		// Removed as of SDK 3.4.0 (probably 1.0.0)
-		enum class TouchScreenUsage : byte_t
-		{
-			None,
-			Supported,
-			Required,
-		};
-
-		// Introduced as of SDK 6.4.0
 		enum class UserAccountSwitchLock : byte_t
 		{
-			Disable,
-			Enable
+			Disable = 0,
+			Enable = 1
 		};
 
 		enum class VideoCapture : byte_t
 		{
-			Disable,
-			Manual,
-			Enable,
-
-			// Deprecated names as of SDK 3.6.0
-			Deny = Disable,
-			Allow = Manual
+			Disable = 0,
+			Manual = 1,
+			Enable = 2
 		};
 	}
 
-
 #pragma pack(push,1)
+	
 	struct sApplicationControlProperty
 	{
 		struct sTitle
 		{
-			char name[nacp::kNameLength];
-			char publisher[nacp::kPublisherLength];
+			char name[nacp::kNameLength]; // utf8
+			char publisher[nacp::kPublisherLength]; // utf8
 		} title[nacp::kMaxLanguageCount];
-		char isbn[nacp::kIsbnLength];
+		char isbn[nacp::kIsbnLength]; // utf8
 		byte_t startup_user_account;
 		byte_t user_account_switch_lock;
-		byte_t add_on_content_registration_type;
+		byte_t add_on_content_registration_type; // default=1=OnDemand
 		le_uint32_t attribute_flag;
 		le_uint32_t supported_language_flag;
 		le_uint32_t parental_control_flag;
 		byte_t screenshot;
-		byte_t video_capture;
+		byte_t video_capture; // default=2=Enable
 		byte_t data_loss_confirmation;
 		byte_t play_log_policy;
 		le_uint64_t presence_group_id;
 		int8_t rating_age[nacp::kRatingAgeCount];
-		char display_version[nacp::kDisplayVersionLength];
+		char display_version[nacp::kDisplayVersionLength]; // utf8
 		le_uint64_t add_on_content_base_id;
 		le_uint64_t save_data_owner_id;
 		le_uint64_t user_account_save_data_size;
@@ -240,19 +244,19 @@ namespace hac
 		le_uint64_t device_save_data_size;
 		le_uint64_t device_save_data_journal_size;
 		le_uint64_t bcat_delivery_cache_storage_size;
-		char application_error_code_category[nacp::kApplicationErrorCodeCategoryLength];
+		char application_error_code_category[nacp::kApplicationErrorCodeCategoryLength]; // utf8
 		le_uint64_t local_communication_id[nacp::kLocalCommunicationIdCount];
 		byte_t logo_type;
 		byte_t logo_handling;
 		byte_t runtime_add_on_content_install;
 		byte_t runtime_parameter_delivery;
 		byte_t reserved_00[2];
-		byte_t crash_report;
+		byte_t crash_report; // default=1=Allow
 		byte_t hdcp;
 		le_uint64_t seed_for_pseudo_device_id;
-		char bcat_passphrase[nacp::kBcatPassphraseLength];
+		char bcat_passphrase[nacp::kBcatPassphraseLength]; // utf8
 		byte_t startup_user_account_option;
-		byte_t reserved_01[6]; //reserved_for_user_account_save_data_operation
+		byte_t reserved_for_user_account_save_data_operation[6];
 		le_uint64_t user_account_save_data_size_max;
 		le_uint64_t user_account_save_data_journal_size_max;
 		le_uint64_t device_save_data_size_max;
@@ -262,15 +266,18 @@ namespace hac
 		le_uint64_t cache_storage_journal_size;
 		le_uint64_t cache_storage_data_and_journal_size_max;
 		le_uint16_t cache_storage_index_max;
-		byte_t reserved_02[6];
+		byte_t reserved_01[6]; // alignment to 0x8 bytes
 		le_uint64_t play_log_queryable_application_id[nacp::kPlayLogQueryableApplicationIdCount];
 		byte_t play_log_query_capability;
 		byte_t repair_flag;
-		byte_t program_index;
+		byte_t program_index; // last byte of programId, (programId - programIndex) is used as default values for PresenceGroupId, SaveDataOwnerId, LocalCommunicationId
 		byte_t required_network_service_license_on_launch_flag;
-		byte_t reserved_03[0x4];
+		byte_t reserved_02[0x4];
 		struct sNeighborDetectionClientConfiguration
 		{
+			// note that group config is empty if both group_id and key are 0/nulls
+			// note that group config is valid if both group_id and key are ser
+			// otherwise group config is invalid
 			struct sGroupConfiguration
 			{
 				le_uint64_t group_id;
@@ -279,73 +286,24 @@ namespace hac
 
 			sGroupConfiguration send_group_configuration;
 			sGroupConfiguration receivable_group_configuration[nacp::kReceivableGroupConfigurationCount];
-		} neighbour_detection_client_configuration; // introduced SDK 7.6.0
+		} neighbour_detection_client_configuration;
 		struct sJitConfiguration 
 		{
 			le_uint64_t jit_configuration_flag;
 			le_uint64_t memory_size;
 		} jit_configuration;
-		byte_t reserved_04[0xC40];
+		le_uint16_t required_add_on_contents_set[nacp::kRequiredAddOnContentsSetCount]; // this is a collection of arrays of AddOnContent Indexes (valid values: 1-2000). Bit 0-14: AddOnContentIndex, Bit 15: If set, this array continues with next value, if not set, this array ends with this value
+		byte_t play_report_permission;
+		byte_t crash_screenshot_for_prod;
+		byte_t crash_screenshot_for_dev;
+		byte_t reserved_03[0x5];
+		struct sAccessibleLaunchRequiredVersion
+		{
+			le_uint64_t application_id[nacp::kMaxAccessibleLaunchRequiredVersionApplicationIdCount];
+		} accessible_launch_required_verison;
+		byte_t _pad_to_0x4000[3000];
 	};
 	static_assert(sizeof(sApplicationControlProperty) == 0x4000, "sApplicationControlProperty size.");
-
-	struct sApplicationControlProperty_v0
-	{
-		struct sTitle
-		{
-			char name[nacp::kNameLength];
-			char publisher[nacp::kPublisherLength];
-		} title[nacp::kMaxLanguageCount];
-		char isbn[nacp::kIsbnLength];
-		byte_t startup_user_account;
-		byte_t touch_screen_usage;
-		byte_t add_on_content_registration_type;
-		le_uint32_t attribute_flag;
-		le_uint32_t supported_language_flag;
-		le_uint32_t parental_control_flag;
-		byte_t screenshot;
-		byte_t video_capture;
-		byte_t data_loss_confirmation;
-		byte_t play_log_policy;
-		le_uint64_t presence_group_id;
-		int8_t rating_age[nacp::kRatingAgeCount];
-		char display_version[nacp::kDisplayVersionLength];
-		le_uint64_t add_on_content_base_id;
-		le_uint64_t save_data_owner_id;
-		le_uint64_t user_account_save_data_size;
-		le_uint64_t user_account_save_data_journal_size;
-		le_uint64_t device_save_data_size;
-		le_uint64_t device_save_data_journal_size;
-		le_uint64_t bcat_delivery_cache_storage_size;
-		char application_error_code_category[nacp::kApplicationErrorCodeCategoryLength];
-		le_uint64_t local_communication_id[nacp::kLocalCommunicationIdCount];
-		byte_t logo_type;
-		byte_t logo_handling;
-		byte_t runtime_add_on_content_install;
-		byte_t reserved_00[3];
-		byte_t crash_report;
-		byte_t hdcp;
-		le_uint64_t seed_for_pseudo_device_id;
-		char bcat_passphrase[nacp::kBcatPassphraseLength];
-		byte_t reserved_01;
-		byte_t reserved_02[6]; //reserved_for_user_account_save_data_operation
-		le_uint64_t user_account_save_data_size_max;
-		le_uint64_t user_account_save_data_journal_size_max;
-		le_uint64_t device_save_data_size_max;
-		le_uint64_t device_save_data_journal_size_max;
-		le_uint64_t temporary_storage_size;
-		le_uint64_t cache_storage_size;
-		le_uint64_t cache_storage_journal_size;
-		le_uint64_t cache_storage_data_and_journal_size_max;
-		le_uint16_t cache_storage_index_max;
-		byte_t reserved_03[6];
-		le_uint64_t play_log_queryable_application_id[nacp::kPlayLogQueryableApplicationIdCount];
-		byte_t play_log_query_capability;
-		byte_t repair_flag;
-		byte_t program_index;
-		byte_t reserved_04[0xDED];
-	};
-	static_assert(sizeof(sApplicationControlProperty_v0) == 0x4000, "sApplicationControlProperty_v0 size.");
 
 #pragma pack(pop)
 }

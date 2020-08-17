@@ -362,6 +362,18 @@ namespace hac
 		const sJitConfiguration& getJitConfiguration() const;
 		void setJitConfiguration(const sJitConfiguration& var);
 
+		const nacp::PlayReportPermission& getPlayReportPermission() const;
+		void setPlayReportPermission(const nacp::PlayReportPermission& var);
+
+		const nacp::CrashScreenshotForProd& getCrashScreenshotForProd() const;
+		void setCrashScreenshotForProd(const nacp::CrashScreenshotForProd& var);
+
+		const nacp::CrashScreenshotForDev& getCrashScreenshotForDev() const;
+		void setCrashScreenshotForDev(const nacp::CrashScreenshotForDev& var);
+
+		const std::vector<uint64_t>& getAccessibleLaunchRequiredVersionApplicationId() const;
+		void setAccessibleLaunchRequiredVersionApplicationId(const std::vector<uint64_t>& var);
+
 	private:
 		const std::string kModuleName = "APPLICATION_CONTROL_PROPERTY";
 
@@ -413,6 +425,10 @@ namespace hac
 		std::vector<nacp::RequiredNetworkServiceLicenseOnLaunchFlag> mRequiredNetworkServiceLicenseOnLaunch;
 		sNeighborDetectionClientConfiguration mNeighborDetectionClientConfiguration;
 		sJitConfiguration mJitConfiguration;
+		nacp::PlayReportPermission mPlayReportPermission;
+		nacp::CrashScreenshotForProd mCrashScreenshotForProd;
+		nacp::CrashScreenshotForDev mCrashScreenshotForDev;
+		std::vector<uint64_t> mAccessibleLaunchRequiredVersionApplicationId;
 
 		void serialiseGroupConfig(const sNeighborDetectionClientConfiguration::sGroupConfiguration& logical, sApplicationControlProperty::sNeighborDetectionClientConfiguration::sGroupConfiguration& serialised);
 		void parseGroupConfig(const sApplicationControlProperty::sNeighborDetectionClientConfiguration::sGroupConfiguration& serialised, sNeighborDetectionClientConfiguration::sGroupConfiguration& logical);

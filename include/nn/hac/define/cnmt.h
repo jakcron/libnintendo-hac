@@ -61,7 +61,8 @@ namespace hac
 		enum class ContentMetaAttributeFlag
 		{
 			IncludesExFatDriver,
-			Rebootless
+			Rebootless,
+			Compacted
 		};
 		
 		using ContentMetaAttribute = std::bitset<8>;

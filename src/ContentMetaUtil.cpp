@@ -168,6 +168,9 @@ std::string nn::hac::ContentMetaUtil::getContentMetaAttributeFlagAsString(nn::ha
 	case (nn::hac::cnmt::ContentMetaAttributeFlag::Rebootless):
 		ss << "Rebootless";
 		break;
+	case (nn::hac::cnmt::ContentMetaAttributeFlag::Compacted):
+		ss << "Compacted";
+		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
 		break;
