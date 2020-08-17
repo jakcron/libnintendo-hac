@@ -172,7 +172,7 @@ namespace hac
 		{
 			Deny = 0,
 			AllowAppend = 1,
-			AllowAppendButDontDownloadWhenUsingNetwork
+			AllowAppendButDontDownloadWhenUsingNetwork = 2
 		};
 
 		enum class RuntimeParameterDelivery : byte_t
