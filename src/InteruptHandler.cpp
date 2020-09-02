@@ -44,7 +44,7 @@ void nn::hac::InteruptHandler::importKernelCapabilityList(const fnd::List<Kernel
 		}
 
 		// we found a stub
-		if (interupts[i][1] == InteruptEntry::kInteruptMax && interupts[i][1] == InteruptEntry::kInteruptMax)
+		if (interupts[i][0] == InteruptEntry::kInteruptMax && interupts[i][1] == InteruptEntry::kInteruptMax)
 		{
 			continue;
 		}
