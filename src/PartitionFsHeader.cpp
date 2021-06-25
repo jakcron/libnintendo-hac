@@ -169,8 +169,8 @@ void nn::hac::PartitionFsHeader::fromBytes(const byte_t* data, size_t len)
 		{
 			mFileList.addElement({ 
 				std::string(raw_name_table + raw_files[i].name_offset.get()), 
-				raw_files[i].data_offset.get() + pfs_full_header_size, 
-				raw_files[i].size.get() 
+				static_cast<unsigned int>(raw_files[i].data_offset.get()) + pfs_full_header_size,
+				static_cast<unsigned int>(raw_files[i].size.get())
 				});
 		}
 	}
@@ -185,8 +185,8 @@ void nn::hac::PartitionFsHeader::fromBytes(const byte_t* data, size_t len)
 		{
 			mFileList.addElement({ 
 				std::string(raw_name_table + raw_files[i].name_offset.get()), 
-				raw_files[i].data_offset.get() + pfs_full_header_size, 
-				raw_files[i].size.get(),
+				static_cast<unsigned int>(raw_files[i].data_offset.get()) + pfs_full_header_size,
+				static_cast<unsigned int>(raw_files[i].size.get()),
 				raw_files[i].hash_protected_size.get(),
 				raw_files[i].hash 
 				});

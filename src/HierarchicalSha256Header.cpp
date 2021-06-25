@@ -65,7 +65,7 @@ void nn::hac::HierarchicalSha256Header::fromBytes(const byte_t* data, size_t len
 	mHashBlockSize = hdr->hash_block_size.get();
 	for (size_t i = 0; i < hdr->layer_num.get(); i++)
 	{
-		mLayerInfo.addElement({hdr->layer[i].offset.get(), hdr->layer[i].size.get()});
+		mLayerInfo.addElement({ static_cast<unsigned int>(hdr->layer[i].offset.get()), static_cast<unsigned int>(hdr->layer[i].size.get())});
 	}
 }
 
