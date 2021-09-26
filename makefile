@@ -1,8 +1,8 @@
 # C++/C Recursive Project Makefile 
 # (c) Jack
-# Version 3
+# Version 4
 
-# Project Defines
+# Project Name
 PROJECT_NAME = libnintendo-hac
 
 # Project Relative Paths
@@ -13,7 +13,7 @@ PROJECT_INCLUDE_PATH = include
 #PROJECT_TESTSRC_PATH = test
 #PROJECT_TESTSRC_SUBDIRS = $(PROJECT_TESTSRC_PATH)
 PROJECT_BIN_PATH = bin
-#PROJECT_DOCS_PATH = docs                                                                                                                                    
+#PROJECT_DOCS_PATH = docs
 #PROJECT_DOXYFILE_PATH = Doxyfile
 
 # Determine if the root makefile has been established, and if not establish this makefile as the root makefile
@@ -25,14 +25,14 @@ endif
 
 # Shared Library Definitions
 PROJECT_SO_VER_MAJOR = 0
-PROJECT_SO_VER_MINOR = 5
-PROJECT_SO_VER_PATCH = 1
+PROJECT_SO_VER_MINOR = 6
+PROJECT_SO_VER_PATCH = 0
 PROJECT_SONAME = $(PROJECT_NAME).so.$(PROJECT_SO_VER_MAJOR)
 PROJECT_SO_FILENAME = $(PROJECT_SONAME).$(PROJECT_SO_VER_MINOR).$(PROJECT_SO_VER_PATCH)
 
 # Project Dependencies
-PROJECT_DEPEND_LOCAL = fnd mbedtls lz4
-PROJECT_DEPEND_EXTERNAL =
+PROJECT_DEPEND = mbedtls toolchain
+PROJECT_DEPEND_LOCAL_DIR = libmbedtls libtoolchain
 
 # Generate compiler flags for including project include path
 ifneq ($(PROJECT_INCLUDE_PATH),)
@@ -40,14 +40,14 @@ ifneq ($(PROJECT_INCLUDE_PATH),)
 endif
 
 # Generate compiler flags for local included dependencies
-ifneq ($(PROJECT_DEPEND_LOCAL),)
-	LIB += $(foreach dep,$(PROJECT_DEPEND_LOCAL), -L"$(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(dep)/bin" -l$(dep))
-	INC += $(foreach dep,$(PROJECT_DEPEND_LOCAL), -I"$(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(dep)/include")
+ifneq ($(PROJECT_DEPEND_LOCAL_DIR),)
+	LIB += $(foreach dep,$(PROJECT_DEPEND_LOCAL_DIR), -L"$(ROOT_PROJECT_DEPENDENCY_PATH)/$(dep)/bin")
+	INC += $(foreach dep,$(PROJECT_DEPEND_LOCAL_DIR), -I"$(ROOT_PROJECT_DEPENDENCY_PATH)/$(dep)/include")
 endif
 
 # Generate compiler flags for external dependencies
-ifneq ($(PROJECT_DEPEND_EXTERNAL),)
-	LIB +=  $(foreach dep,$(PROJECT_DEPEND_EXTERNAL), -l$(dep))
+ifneq ($(PROJECT_DEPEND),)
+	LIB += $(foreach dep,$(PROJECT_DEPEND), -l$(dep))
 endif
 
 # Detect Platform
@@ -170,8 +170,8 @@ endif
 # Dependencies
 .PHONY: deps
 deps:
-	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd "$(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib)" && $(MAKE) static_lib && cd "$(PROJECT_PATH)";)
+	@$(foreach lib,$(PROJECT_DEPEND_LOCAL_DIR), cd "$(ROOT_PROJECT_DEPENDENCY_PATH)/$(lib)" && $(MAKE) static_lib && cd "$(PROJECT_PATH)";)
 
 .PHONY: clean_deps
 clean_deps:
-	@$(foreach lib,$(PROJECT_DEPEND_LOCAL), cd "$(ROOT_PROJECT_DEPENDENCY_PATH)/lib$(lib)" && $(MAKE) clean && cd "$(PROJECT_PATH)";)
+	@$(foreach lib,$(PROJECT_DEPEND_LOCAL_DIR), cd "$(ROOT_PROJECT_DEPENDENCY_PATH)/$(lib)" && $(MAKE) clean && cd "$(PROJECT_PATH)";)
