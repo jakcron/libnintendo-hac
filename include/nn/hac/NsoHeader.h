@@ -78,8 +78,8 @@ namespace hac
 		// variables
 		void clear();
 		
-		const nn::hac::nso::module_id_t& getModuleId() const;
-		void setModuleId(const nn::hac::nso::module_id_t& id);
+		const nn::hac::detail::module_id_t& getModuleId() const;
+		void setModuleId(const nn::hac::detail::module_id_t& id);
 
 		uint32_t getBssSize() const;
 		void setBssSize(uint32_t size);
@@ -111,7 +111,7 @@ namespace hac
 		tc::ByteData mRawBinary;
 
 		// data
-		nn::hac::nso::module_id_t mModuleId;
+		nn::hac::detail::module_id_t mModuleId;
 		uint32_t mBssSize;
 		sCodeSegment mTextSegmentInfo;
 		sCodeSegment mRoSegmentInfo;

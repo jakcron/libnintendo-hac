@@ -11,8 +11,6 @@ namespace hac
 		static const uint32_t kDefaultFormatVersion = 0;
 		static const size_t kModuleIdSize = 32;
 
-		using module_id_t = std::array<byte_t, kModuleIdSize>;
-
 		enum HeaderFlags
 		{
 			FLAG_TEXT_COMPRESS,
@@ -50,7 +48,7 @@ namespace hac
 		tc::bn::le32<uint32_t> module_name_size;
 		sCodeSegment data;
 		tc::bn::le32<uint32_t> bss_size;
-		std::array<byte_t, nso::kModuleIdSize> module_id;
+		detail::module_id_t module_id;
 		tc::bn::le32<uint32_t> text_file_size;
 		tc::bn::le32<uint32_t> ro_file_size;
 		tc::bn::le32<uint32_t> data_file_size;

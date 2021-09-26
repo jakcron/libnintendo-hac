@@ -11,8 +11,6 @@ namespace hac
 		static const uint32_t kDefaultFormatVersion = 0;
 		static const size_t kRoCrtSize = 8;
 		static const size_t kModuleIdSize = 32;
-
-		using module_id_t = std::array<byte_t, kModuleIdSize>;
 	}
 
 #pragma pack(push,1)
@@ -42,7 +40,7 @@ namespace hac
 		sSection data;
 		tc::bn::le32<uint32_t> bss_size;
 		std::array<byte_t, 0x4> reserved_1;
-		nro::module_id_t module_id;
+		detail::module_id_t module_id;
 		std::array<byte_t, 0x8> reserved_2;
 		sSection embedded;
 		sSection dyn_str;

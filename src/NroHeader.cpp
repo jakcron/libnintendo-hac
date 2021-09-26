@@ -244,12 +244,12 @@ void nn::hac::NroHeader::setBssSize(uint32_t size)
 	mBssSize = size;
 }
 
-const nn::hac::nro::module_id_t& nn::hac::NroHeader::getModuleId() const
+const nn::hac::detail::module_id_t& nn::hac::NroHeader::getModuleId() const
 {
 	return mModuleId;
 }
 
-void nn::hac::NroHeader::setModuleId(const nn::hac::nro::module_id_t& id)
+void nn::hac::NroHeader::setModuleId(const nn::hac::detail::module_id_t& id)
 {
 	mModuleId = id;
 }

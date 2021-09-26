@@ -67,8 +67,8 @@ namespace hac
 		uint32_t getBssSize() const;
 		void setBssSize(uint32_t size);
 
-		const nn::hac::nro::module_id_t& getModuleId() const;
-		void setModuleId(const nn::hac::nro::module_id_t& id);
+		const nn::hac::detail::module_id_t& getModuleId() const;
+		void setModuleId(const nn::hac::detail::module_id_t& id);
 
 		const sSection& getRoEmbeddedInfo() const;
 		void setRoEmbeddedInfo(const sSection& info);
@@ -92,7 +92,7 @@ namespace hac
 		sSection mRoInfo;
 		sSection mDataInfo;
 		uint32_t mBssSize;
-		nn::hac::nro::module_id_t mModuleId;
+		nn::hac::detail::module_id_t mModuleId;
 		sSection mRoEmbeddedInfo;
 		sSection mRoDynStrInfo;
 		sSection mRoDynSymInfo;

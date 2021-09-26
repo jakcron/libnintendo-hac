@@ -210,12 +210,12 @@ void nn::hac::NsoHeader::clear()
 	memset(&mRoDynSymInfo, 0, sizeof(mRoDynSymInfo));
 }
 
-const nn::hac::nso::module_id_t& nn::hac::NsoHeader::getModuleId() const
+const nn::hac::detail::module_id_t& nn::hac::NsoHeader::getModuleId() const
 {
 	return mModuleId;
 }
 
-void nn::hac::NsoHeader::setModuleId(const nn::hac::nso::module_id_t& id)
+void nn::hac::NsoHeader::setModuleId(const nn::hac::detail::module_id_t& id)
 {
 	mModuleId = id;
 }

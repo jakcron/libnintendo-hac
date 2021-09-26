@@ -17,5 +17,7 @@ namespace nn { namespace hac { namespace detail {
 	using rsa2048_block_t = std::array<byte_t, tc::crypto::Rsa2048OaepSha256Encryptor::kBlockSize>;
 
 	using rights_id_t = std::array<byte_t, 16>;
+
+	using module_id_t = std::array<byte_t, 32>;
 #pragma pack(pop)
 }}} // end namespace nn::hac::detail
