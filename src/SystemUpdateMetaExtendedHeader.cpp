@@ -29,32 +29,32 @@ bool nn::hac::SystemUpdateMetaExtendedHeader::operator!=(const SystemUpdateMetaE
 
 void nn::hac::SystemUpdateMetaExtendedHeader::toBytes()
 {
-	mRawBinary.alloc(sizeof(sSystemUpdateMetaExtendedHeader));
+	mRawBinary = tc::ByteData(sizeof(sSystemUpdateMetaExtendedHeader));
 	sSystemUpdateMetaExtendedHeader* info = (sSystemUpdateMetaExtendedHeader*)mRawBinary.data();
 
-	info->extended_data_size = mExtendedDataSize;
+	info->extended_data_size.wrap(mExtendedDataSize);
 }
 
 void nn::hac::SystemUpdateMetaExtendedHeader::fromBytes(const byte_t* bytes, size_t len)
 {
 	if (len < sizeof(sSystemUpdateMetaExtendedHeader))
 	{
-		throw fnd::Exception(kModuleName, "SystemUpdateMetaExtendedHeader too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "SystemUpdateMetaExtendedHeader too small");
 	}
 
 	const sSystemUpdateMetaExtendedHeader* info = (const sSystemUpdateMetaExtendedHeader*)bytes;
 
-	mExtendedDataSize = info->extended_data_size.get();
+	mExtendedDataSize = info->extended_data_size.unwrap();
 }
 
-const fnd::Vec<byte_t>& nn::hac::SystemUpdateMetaExtendedHeader::getBytes() const
+const tc::ByteData& nn::hac::SystemUpdateMetaExtendedHeader::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::SystemUpdateMetaExtendedHeader::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mExtendedDataSize = 0;
 }
 

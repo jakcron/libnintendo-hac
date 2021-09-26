@@ -246,6 +246,9 @@
     <ClInclude Include="..\..\..\include\nn\hac\define\romfs.h">
       <Filter>Header Files\define</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\define\types.h">
+      <Filter>Header Files\define</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\AccessControlInfo.cpp">

@@ -74,13 +74,13 @@ void nn::hac::Meta::toBytes()
 	
 
 	// get total size
-	size_t total_size = _MAX(_MAX(acid.offset + acid.size, aci.offset + aci.size), align(sizeof(sMetaHeader), meta::kSectionAlignSize)); 
+	size_t total_size = std::max<size_t>(std::max<size_t>(acid.offset + acid.size, aci.offset + aci.size), align<size_t>(sizeof(sMetaHeader), meta::kSectionAlignSize)); 
 
-	mRawBinary.alloc(total_size);
+	mRawBinary = tc::ByteData(total_size);
 	sMetaHeader* hdr = (sMetaHeader*)mRawBinary.data();
 
 	// set type
-	hdr->st_magic = meta::kMetaStructMagic;
+	hdr->st_magic.wrap(meta::kMetaStructMagic);
 
 	// set variables
 	hdr->aci_desc_key_generation = mAccessControlInfoDescKeyGeneration;
@@ -89,17 +89,17 @@ void nn::hac::Meta::toBytes()
 	hdr->flag.optimise_memory_allocation = mOptimizeMemoryAllocationFlag;
 	hdr->main_thread_priority = mMainThreadPriority;
 	hdr->main_thread_cpu_id = mMainThreadCpuId;
-	hdr->system_resource_size = mSystemResourceSize;
-	hdr->version = mVersion;
-	hdr->main_thread_stack_size = mMainThreadStackSize;
-	strncpy(hdr->name, mName.c_str(), meta::kNameMaxLen);
-	strncpy(hdr->product_code, mProductCode.c_str(), meta::kProductCodeMaxLen);
+	hdr->system_resource_size.wrap(mSystemResourceSize);
+	hdr->version.wrap(mVersion);
+	hdr->main_thread_stack_size.wrap(mMainThreadStackSize);
+	strncpy(hdr->name.data(), mName.c_str(), hdr->name.max_size());
+	strncpy(hdr->product_code.data(), mProductCode.c_str(), hdr->product_code.max_size());
 
 	// set offset/size
-	hdr->aci.offset = aci.offset;
-	hdr->aci.size = aci.size;
-	hdr->aci_desc.offset = acid.offset;
-	hdr->aci_desc.size = acid.size;
+	hdr->aci.offset.wrap(aci.offset);
+	hdr->aci.size.wrap(aci.size);
+	hdr->aci_desc.offset.wrap(acid.offset);
+	hdr->aci_desc.size.wrap(acid.size);
 
 	// write aci & acid
 	if (mAccessControlInfo.getBytes().size() > 0)
@@ -128,9 +128,9 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	memcpy((void*)&hdr, data, sizeof(sMetaHeader));
 
 	// check magic
-	if (hdr.st_magic.get() != meta::kMetaStructMagic)
+	if (hdr.st_magic.unwrap() != meta::kMetaStructMagic)
 	{
-		throw fnd::Exception(kModuleName, "META header corrupt (unrecognised struct signature)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "META header corrupt (unrecognised struct signature)");
 	}
 
 	// save variables
@@ -140,44 +140,44 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	mOptimizeMemoryAllocationFlag = hdr.flag.optimise_memory_allocation;
 	mMainThreadPriority = hdr.main_thread_priority;
 	mMainThreadCpuId = hdr.main_thread_cpu_id;
-	mSystemResourceSize = hdr.system_resource_size.get();
-	mVersion = hdr.version.get();
-	mMainThreadStackSize = hdr.main_thread_stack_size.get();
-	mName = std::string(hdr.name, _MIN(strlen(hdr.name), meta::kNameMaxLen));
-	mProductCode = std::string(hdr.product_code, _MIN(strlen(hdr.product_code), meta::kProductCodeMaxLen));
+	mSystemResourceSize = hdr.system_resource_size.unwrap();
+	mVersion = hdr.version.unwrap();
+	mMainThreadStackSize = hdr.main_thread_stack_size.unwrap();
+	mName = hdr.name.str();
+	mProductCode = hdr.product_code.str();
 
 	// total size
-	size_t total_size = _MAX(_MAX(hdr.aci_desc.offset.get() + hdr.aci_desc.size.get(), hdr.aci.offset.get() + hdr.aci.size.get()), sizeof(sMetaHeader));
+	size_t total_size = std::max<size_t>((size_t)std::max<uint32_t>(hdr.aci_desc.offset.unwrap() + hdr.aci_desc.size.unwrap(), hdr.aci.offset.unwrap() + hdr.aci.size.unwrap()), sizeof(sMetaHeader));
 
 	// check size
 	if (total_size > len)
 	{
-		throw fnd::Exception(kModuleName, "META binary too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "META binary too small");
 	}
 
 	// save local copy
-	mRawBinary.alloc(total_size);
+	mRawBinary = tc::ByteData(total_size);
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	// import AccessControlInfo/AccessControlInfoDesc
-	if (hdr.aci.size.get())
+	if (hdr.aci.size.unwrap())
 	{
-		mAccessControlInfo.fromBytes(mRawBinary.data() + hdr.aci.offset.get(), hdr.aci.size.get());
+		mAccessControlInfo.fromBytes(mRawBinary.data() + hdr.aci.offset.unwrap(), hdr.aci.size.unwrap());
 	}
-	if (hdr.aci_desc.size.get())
+	if (hdr.aci_desc.size.unwrap())
 	{
-		mAccessControlInfoDesc.fromBytes(mRawBinary.data() + hdr.aci_desc.offset.get(), hdr.aci_desc.size.get());
+		mAccessControlInfoDesc.fromBytes(mRawBinary.data() + hdr.aci_desc.offset.unwrap(), hdr.aci_desc.size.unwrap());
 	}	
 }
 
-const fnd::Vec<byte_t>& nn::hac::Meta::getBytes() const
+const tc::ByteData& nn::hac::Meta::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::Meta::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mAccessControlInfoDescKeyGeneration = 0;
 	mIs64BitInstructionFlag = false;
 	mProcessAddressSpace = meta::ProcessAddressSpace(0);

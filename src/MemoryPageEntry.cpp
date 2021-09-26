@@ -64,7 +64,7 @@ void nn::hac::MemoryPageEntry::setKernelCapability(const KernelCapabilityEntry &
 {
 	if (kernel_cap.getType() != kc::KernelCapId::MemoryMap && kernel_cap.getType() != kc::KernelCapId::IoMemoryMap)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'MemoryMap' or 'IOMemoryMap");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry is not type 'MemoryMap' or 'IOMemoryMap");
 	}
 
 	mCap = kernel_cap;
@@ -80,7 +80,7 @@ void nn::hac::MemoryPageEntry::setPage(uint32_t page)
 {
 	if (page > kMaxPage)
 	{
-		throw fnd::Exception(kModuleName, "Illegal memory page. (range: 0x000000 - 0xFFFFFF)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal memory page. (range: 0x000000 - 0xFFFFFF)");
 	}
 
 	mPage = page;

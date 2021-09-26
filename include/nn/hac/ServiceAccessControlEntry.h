@@ -1,14 +1,11 @@
 #pragma once
-#include <string>
 #include <nn/hac/define/types.h>
-#include <fnd/IByteModel.h>
 
 namespace nn
 {
 namespace hac
 {
-	class ServiceAccessControlEntry :
-		public fnd::IByteModel
+	class ServiceAccessControlEntry
 	{
 	public:
 		ServiceAccessControlEntry();
@@ -22,7 +19,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -36,12 +33,12 @@ namespace hac
 
 		enum ServiceAccessControlEntryFlag
 		{
-			SAC_IS_SERVER = _BIT(7),
-			SAC_NAME_LEN_MASK = _BIT(7) - 1
+			SAC_IS_SERVER = (1 << 7),
+			SAC_NAME_LEN_MASK = (1 << 7) - 1
 		};
 
 		// raw binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		bool mIsServer;

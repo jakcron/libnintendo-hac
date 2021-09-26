@@ -49,7 +49,7 @@ void nn::hac::InteruptEntry::setKernelCapability(const KernelCapabilityEntry & k
 {
 	if (kernel_cap.getType() != kCapId)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'EnableInterupts'");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry is not type 'EnableInterupts'");
 	}
 
 	mCap = kernel_cap;
@@ -70,7 +70,7 @@ void nn::hac::InteruptEntry::setInterupt(size_t index, uint32_t interupt)
 {
 	if (interupt > kInteruptMax)
 	{
-		throw fnd::Exception(kModuleName, "Illegal interupt value.");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal interupt value.");
 	}
 
 	mInterupt[index % kInteruptNum] = interupt;

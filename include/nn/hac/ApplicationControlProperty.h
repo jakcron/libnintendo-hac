@@ -1,17 +1,11 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <cstring>
-#include <nn/hac/define/types.h>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/nacp.h>
 
 namespace nn
 {
 namespace hac
 {
-	class ApplicationControlProperty :
-		public fnd::IByteModel
+	class ApplicationControlProperty
 	{
 	public:
 		struct sTitle
@@ -91,18 +85,18 @@ namespace hac
 			struct sGroupConfiguration
 			{
 				uint64_t group_id;
-				byte_t key[nacp::kNeighborDetectionGroupConfigurationKeyLength];
+				std::array<byte_t, nacp::kNeighborDetectionGroupConfigurationKeyLength> key;
 
 				sGroupConfiguration() :
 					group_id(0)
 				{
-					memset(key, 0, nacp::kNeighborDetectionGroupConfigurationKeyLength);
+					memset(key.data(), 0, key.size());
 				}
 
 				sGroupConfiguration& operator=(const sGroupConfiguration& other)
 				{
 					group_id = other.group_id;
-					memcpy(key, other.key, nacp::kNeighborDetectionGroupConfigurationKeyLength);
+					memcpy(key.data(), other.key.data(), key.size());
 
 					return *this;
 				}
@@ -110,7 +104,7 @@ namespace hac
 				bool operator==(const sGroupConfiguration& other) const
 				{
 					return group_id == other.group_id \
-						&& memcmp(key, other.key, nacp::kNeighborDetectionGroupConfigurationKeyLength) == 0;
+						&& memcmp(key.data(), other.key.data(), key.size()) == 0;
 				}
 
 				bool operator!=(const sGroupConfiguration& other) const
@@ -120,7 +114,7 @@ namespace hac
 
 				bool isNull() const
 				{
-					auto null_data = sGroupConfiguration();
+					sGroupConfiguration null_data = sGroupConfiguration();
 
 					return *this == null_data;
 				}
@@ -225,7 +219,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -378,7 +372,7 @@ namespace hac
 		const std::string kModuleName = "APPLICATION_CONTROL_PROPERTY";
 
 		// raw data
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		std::vector<sTitle> mTitle;

@@ -36,7 +36,7 @@ void nn::hac::ServiceAccessControl::toBytes()
 		totalSize += mServices[i].getBytes().size();
 	}
 
-	mRawBinary.alloc(totalSize);
+	mRawBinary = tc::ByteData(totalSize);
 	for (size_t i = 0, pos = 0; i < mServices.size(); pos += mServices[i].getBytes().size(), i++)
 	{
 		memcpy((mRawBinary.data() + pos), mServices[i].getBytes().data(), mServices[i].getBytes().size());
@@ -46,34 +46,34 @@ void nn::hac::ServiceAccessControl::toBytes()
 void nn::hac::ServiceAccessControl::fromBytes(const byte_t* data, size_t len)
 {
 	clear();
-	mRawBinary.alloc(len);
+	mRawBinary = tc::ByteData(len);
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	ServiceAccessControlEntry sac;
-	for (size_t pos = 0; pos < len; pos += mServices.atBack().getBytes().size())
+	for (size_t pos = 0; pos < len; pos += mServices.back().getBytes().size())
 	{
 		sac.fromBytes((const byte_t*)(mRawBinary.data() + pos), len - pos);
-		mServices.addElement(sac);
+		mServices.push_back(sac);
 	}
 }
 
-const fnd::Vec<byte_t>& nn::hac::ServiceAccessControl::getBytes() const
+const tc::ByteData& nn::hac::ServiceAccessControl::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::ServiceAccessControl::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mServices.clear();
 }
 
-const fnd::List<nn::hac::ServiceAccessControlEntry>& nn::hac::ServiceAccessControl::getServiceList() const
+const std::vector<nn::hac::ServiceAccessControlEntry>& nn::hac::ServiceAccessControl::getServiceList() const
 {
 	return mServices;
 }
 
-void nn::hac::ServiceAccessControl::setServiceList(const fnd::List<ServiceAccessControlEntry>& list)
+void nn::hac::ServiceAccessControl::setServiceList(const std::vector<ServiceAccessControlEntry>& list)
 {
 	mServices = list;
 }

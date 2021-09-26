@@ -31,34 +31,34 @@ bool nn::hac::AddOnContentMetaExtendedHeader::operator!=(const AddOnContentMetaE
 
 void nn::hac::AddOnContentMetaExtendedHeader::toBytes()
 {
-	mRawBinary.alloc(sizeof(sAddOnContentMetaExtendedHeader));
+	mRawBinary = tc::ByteData(sizeof(sAddOnContentMetaExtendedHeader));
 	sAddOnContentMetaExtendedHeader* info = (sAddOnContentMetaExtendedHeader*)mRawBinary.data();
 
-	info->application_id = mApplicationId;
-	info->required_application_version = mRequiredApplicationVersion;
+	info->application_id.wrap(mApplicationId);
+	info->required_application_version.wrap(mRequiredApplicationVersion);
 }
 
 void nn::hac::AddOnContentMetaExtendedHeader::fromBytes(const byte_t* bytes, size_t len)
 {
 	if (len < sizeof(sAddOnContentMetaExtendedHeader))
 	{
-		throw fnd::Exception(kModuleName, "AddOnContentMetaExtendedHeader too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "AddOnContentMetaExtendedHeader too small");
 	}
 
 	const sAddOnContentMetaExtendedHeader* info = (const sAddOnContentMetaExtendedHeader*)bytes;
 
-	mApplicationId = info->application_id.get();
-	mRequiredApplicationVersion = info->required_application_version.get();
+	mApplicationId = info->application_id.unwrap();
+	mRequiredApplicationVersion = info->required_application_version.unwrap();
 }
 
-const fnd::Vec<byte_t>& nn::hac::AddOnContentMetaExtendedHeader::getBytes() const
+const tc::ByteData& nn::hac::AddOnContentMetaExtendedHeader::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::AddOnContentMetaExtendedHeader::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mApplicationId = 0;
 	mRequiredApplicationVersion = 0;
 }

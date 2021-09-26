@@ -38,7 +38,7 @@ bool nn::hac::HierarchicalIntegrityHeader::operator!=(const HierarchicalIntegrit
 
 void nn::hac::HierarchicalIntegrityHeader::toBytes()
 {
-	throw fnd::Exception(kModuleName, "exportBinary() not implemented");
+	throw tc::NotImplementedException(kModuleName, "toBytes() not implemented");
 }
 
 void nn::hac::HierarchicalIntegrityHeader::fromBytes(const byte_t* data, size_t len)
@@ -48,64 +48,64 @@ void nn::hac::HierarchicalIntegrityHeader::fromBytes(const byte_t* data, size_t 
 	// validate size for at least header
 	if (len < sizeof(nn::hac::sHierarchicalIntegrityHeader))
 	{
-		throw fnd::Exception(kModuleName, "Header too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Header too small");
 	}
 
 	const nn::hac::sHierarchicalIntegrityHeader* hdr = (const nn::hac::sHierarchicalIntegrityHeader*)data;
 
 	// Validate Header Sig "IVFC"
-	if (hdr->st_magic.get() != hierarchicalintegrity::kStructMagic)
+	if (hdr->st_magic.unwrap() != hierarchicalintegrity::kStructMagic)
 	{
-		throw fnd::Exception(kModuleName, "Invalid struct magic");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Invalid struct magic");
 	}
 
 	// Validate TypeId
-	if (hdr->type_id.get() != (uint32_t)nn::hac::hierarchicalintegrity::TypeId::HAC_RomFs)
+	if (hdr->type_id.unwrap() != (uint32_t)nn::hac::hierarchicalintegrity::TypeId::HAC_RomFs)
 	{
 		error_str.clear();
-		error_str << "Unsupported type id (" << std::hex << hdr->type_id.get() << ")";
-		throw fnd::Exception(kModuleName, error_str.str());
+		error_str << "Unsupported type id (" << std::hex << hdr->type_id.unwrap() << ")";
+		throw tc::ArgumentOutOfRangeException(kModuleName, error_str.str());
 	}
 
 	// Validate Layer Num
-	if (hdr->layer_num.get() != hierarchicalintegrity::kDefaultLayerNumForRomFs+1)
+	if (hdr->layer_num.unwrap() != hierarchicalintegrity::kDefaultLayerNumForRomFs+1)
 	{
 		error_str.clear();
 		error_str << "Invalid layer count. ";
-		error_str << "(actual=" << std::dec << hdr->layer_num.get() << ", expected=" << nn::hac::hierarchicalintegrity::kDefaultLayerNumForRomFs+1 << ")";
-		throw fnd::Exception(kModuleName, error_str.str());
+		error_str << "(actual=" << std::dec << hdr->layer_num.unwrap() << ", expected=" << nn::hac::hierarchicalintegrity::kDefaultLayerNumForRomFs+1 << ")";
+		throw tc::ArgumentOutOfRangeException(kModuleName, error_str.str());
 	}
 	
 	// Get Sizes/Offsets
-	size_t master_hash_offset = align((sizeof(nn::hac::sHierarchicalIntegrityHeader) + sizeof(nn::hac::sHierarchicalIntegrityLayerInfo) * hdr->layer_num.get()), nn::hac::hierarchicalintegrity::kHeaderAlignLen);
-	size_t total_size = master_hash_offset + hdr->master_hash_size.get();
+	size_t master_hash_offset = align((sizeof(nn::hac::sHierarchicalIntegrityHeader) + sizeof(nn::hac::sHierarchicalIntegrityLayerInfo) * hdr->layer_num.unwrap()), nn::hac::hierarchicalintegrity::kHeaderAlignLen);
+	size_t total_size = master_hash_offset + hdr->master_hash_size.unwrap();
 
 	// Validate total size
 	if (len < total_size)
 	{
-		throw fnd::Exception(kModuleName, "Header too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Header too small");
 	}
 
 	// copy to internal storage
-	mRawBinary.alloc(total_size);
+	mRawBinary = tc::ByteData(total_size);
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	// save layer info
 	const nn::hac::sHierarchicalIntegrityLayerInfo* layer_info = (const nn::hac::sHierarchicalIntegrityLayerInfo*)(mRawBinary.data() + sizeof(nn::hac::sHierarchicalIntegrityHeader));
 	for (size_t i = 0; i < hierarchicalintegrity::kDefaultLayerNumForRomFs; i++)
 	{
-		mLayerInfo.addElement({layer_info[i].offset.get(), layer_info[i].size.get(), layer_info[i].block_size.get()});
+		mLayerInfo.push_back({layer_info[i].offset.unwrap(), layer_info[i].size.unwrap(), layer_info[i].block_size.unwrap()});
 	}
 
 	// save hash list
-	const fnd::sha::sSha256Hash* hash_list = (const fnd::sha::sSha256Hash*)(mRawBinary.data() + master_hash_offset);
-	for (size_t i = 0; i < hdr->master_hash_size.get()/sizeof(fnd::sha::sSha256Hash); i++)
+	const detail::sha256_hash_t* hash_list = (const detail::sha256_hash_t*)(mRawBinary.data() + master_hash_offset);
+	for (size_t i = 0; i < hdr->master_hash_size.unwrap()/sizeof(detail::sha256_hash_t); i++)
 	{
-		mMasterHashList.addElement(hash_list[i]);
+		mMasterHashList.push_back(hash_list[i]);
 	}
 }
 
-const fnd::Vec<byte_t>& nn::hac::HierarchicalIntegrityHeader::getBytes() const
+const tc::ByteData& nn::hac::HierarchicalIntegrityHeader::getBytes() const
 {
 	return mRawBinary;
 }
@@ -116,22 +116,22 @@ void nn::hac::HierarchicalIntegrityHeader::clear()
 	mMasterHashList.clear();
 }
 
-const fnd::List<nn::hac::HierarchicalIntegrityHeader::sLayer>& nn::hac::HierarchicalIntegrityHeader::getLayerInfo() const
+const std::vector<nn::hac::HierarchicalIntegrityHeader::sLayer>& nn::hac::HierarchicalIntegrityHeader::getLayerInfo() const
 {
 	return mLayerInfo;
 }
 
-void nn::hac::HierarchicalIntegrityHeader::setLayerInfo(const fnd::List<sLayer>& layer_info)
+void nn::hac::HierarchicalIntegrityHeader::setLayerInfo(const std::vector<sLayer>& layer_info)
 {
 	mLayerInfo = layer_info;
 }
 
-const fnd::List<fnd::sha::sSha256Hash>& nn::hac::HierarchicalIntegrityHeader::getMasterHashList() const
+const std::vector<nn::hac::detail::sha256_hash_t>& nn::hac::HierarchicalIntegrityHeader::getMasterHashList() const
 {
 	return mMasterHashList;
 }
 
-void nn::hac::HierarchicalIntegrityHeader::setMasterHashList(const fnd::List<fnd::sha::sSha256Hash>& master_hash_list)
+void nn::hac::HierarchicalIntegrityHeader::setMasterHashList(const std::vector<nn::hac::detail::sha256_hash_t>& master_hash_list)
 {
 	mMasterHashList = master_hash_list;
 }

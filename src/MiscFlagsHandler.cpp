@@ -21,11 +21,11 @@ bool nn::hac::MiscFlagsHandler::operator!=(const MiscFlagsHandler & other) const
 	return !(*this == other);
 }
 
-void nn::hac::MiscFlagsHandler::importKernelCapabilityList(const fnd::List<KernelCapabilityEntry>& caps)
+void nn::hac::MiscFlagsHandler::importKernelCapabilityList(const std::vector<KernelCapabilityEntry>& caps)
 {
 	if (caps.size() > kMaxKernelCapNum)
 	{
-		throw fnd::Exception(kModuleName, "Too many kernel capabilities");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Too many kernel capabilities");
 	}
 
 	if (caps.size() == 0)
@@ -40,7 +40,7 @@ void nn::hac::MiscFlagsHandler::importKernelCapabilityList(const fnd::List<Kerne
 	mIsSet = true;
 }
 
-void nn::hac::MiscFlagsHandler::exportKernelCapabilityList(fnd::List<KernelCapabilityEntry>& caps) const
+void nn::hac::MiscFlagsHandler::exportKernelCapabilityList(std::vector<KernelCapabilityEntry>& caps) const
 {
 	if (isSet() == false)
 		return;
@@ -50,7 +50,7 @@ void nn::hac::MiscFlagsHandler::exportKernelCapabilityList(fnd::List<KernelCapab
 	entry.setFlags((uint32_t)mFlags.to_ulong());
 
 	// add to list
-	caps.addElement(entry.getKernelCapability());
+	caps.push_back(entry.getKernelCapability());
 }
 
 void nn::hac::MiscFlagsHandler::clear()

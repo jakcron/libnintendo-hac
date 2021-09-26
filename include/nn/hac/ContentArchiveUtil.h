@@ -1,6 +1,5 @@
 #pragma once
 #include <nn/hac/define/nca.h>
-#include <string>
 
 namespace nn
 {
@@ -10,7 +9,7 @@ namespace hac
 	{
 	public:
 		static inline size_t sectorToOffset(size_t sector_index) { return sector_index * nn::hac::nca::kSectorSize; }
-		static void decryptContentArchiveHeader(const byte_t* src, byte_t* dst, const fnd::aes::sAesXts128Key& key);
+		static void decryptContentArchiveHeader(const byte_t* src, byte_t* dst, const detail::aes128_xtskey_t& key);
 		static byte_t getMasterKeyRevisionFromKeyGeneration(byte_t key_generation);
 		static void getNcaPartitionAesCtr(const nn::hac::sContentArchiveFsHeader* hdr, byte_t* aes_ctr);
 		static void getNcaPartitionAesCtr(uint32_t generation, uint32_t secure_value, byte_t* aes_ctr);

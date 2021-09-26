@@ -1,37 +1,13 @@
 #pragma once
-#include <cstring>
 #include <nn/hac/define/nso.h>
-#include <fnd/IByteModel.h>
-#include <fnd/List.h>
 
 namespace nn
 {
 namespace hac
 {
-	class NsoHeader :
-		public fnd::IByteModel
+	class NsoHeader
 	{
 	public:
-		struct sModuleId
-		{
-			byte_t data[nso::kModuleIdSize];
-
-			void operator=(const sModuleId& other)
-			{
-				memcpy(data, other.data, nso::kModuleIdSize);
-			}
-
-			bool operator==(const sModuleId& other) const
-			{
-				return memcmp(data, other.data, nso::kModuleIdSize) == 0;
-			}
-
-			bool operator!=(const sModuleId& other) const
-			{
-				return !(*this == other);
-			}
-		};
-
 		struct sLayout
 		{
 			uint32_t offset;
@@ -61,7 +37,7 @@ namespace hac
 			sLayout memory_layout;
 			bool is_compressed;
 			bool is_hashed;
-			fnd::sha::sSha256Hash hash;
+			detail::sha256_hash_t hash;
 
 			void operator=(const sCodeSegment& other)
 			{
@@ -97,13 +73,13 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
 		
-		const sModuleId& getModuleId() const;
-		void setModuleId(const sModuleId& id);
+		const nn::hac::nso::module_id_t& getModuleId() const;
+		void setModuleId(const nn::hac::nso::module_id_t& id);
 
 		uint32_t getBssSize() const;
 		void setBssSize(uint32_t size);
@@ -132,10 +108,10 @@ namespace hac
 		const std::string kModuleName = "NSO_HEADER";
 
 		// binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// data
-		sModuleId mModuleId;
+		nn::hac::nso::module_id_t mModuleId;
 		uint32_t mBssSize;
 		sCodeSegment mTextSegmentInfo;
 		sCodeSegment mRoSegmentInfo;

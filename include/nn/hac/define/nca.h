@@ -1,9 +1,5 @@
 #pragma once
 #include <nn/hac/define/types.h>
-#include <fnd/aes.h>
-#include <fnd/sha.h>
-#include <fnd/rsa.h>
-#include <nn/hac/define/macro.h>
 #include <nn/hac/define/bktr.h>
 
 namespace nn
@@ -12,20 +8,22 @@ namespace hac
 {
 	namespace nca
 	{
-		static const uint32_t kNca2StructMagic = _MAKE_STRUCT_MAGIC_U32("NCA2");
-		static const uint32_t kNca3StructMagic = _MAKE_STRUCT_MAGIC_U32("NCA3");
+		static const uint32_t kNca2StructMagic = tc::bn::make_struct_magic_uint32("NCA2");
+		static const uint32_t kNca3StructMagic = tc::bn::make_struct_magic_uint32("NCA3");
 		static const size_t kSectorSize = 0x200;
 		static const size_t kPartitionNum = 4;
 		static const size_t kHeaderSectorNum = 6;
 		static const size_t kHeaderSize = kSectorSize * kHeaderSectorNum;
 		static const size_t kRightsIdLen = 0x10;
 		static const size_t kKeyAreaSize = 0x100;
-		static const size_t kKeyAreaKeyNum = kKeyAreaSize / fnd::aes::kAes128KeySize;
+		static const size_t kKeyAreaKeyNum = kKeyAreaSize / sizeof(detail::aes128_key_t);
 		static const size_t kKeyAreaEncryptionKeyNum = 3;
 		static const size_t kHashInfoLen = 0xF8;
 		static const size_t kPatchInfoLen = 0x40;
 		static const size_t kSparseInfoLen = 0x30;
 		static const uint16_t kDefaultFsHeaderVersion = 2;
+
+		using key_area_t = std::array<detail::aes128_key_t, kKeyAreaKeyNum>;
 
 		enum HeaderFormatVersion
 		{
@@ -99,36 +97,36 @@ namespace hac
 #pragma pack(push,1)
 	struct sContentArchiveHeader
 	{
-		le_uint32_t st_magic;
+		tc::bn::le32<uint32_t> st_magic;
 		byte_t distribution_type;
 		byte_t content_type;
 		byte_t key_generation;
 		byte_t key_area_encryption_key_index;
-		le_uint64_t content_size;
-		le_uint64_t program_id;
-		le_uint32_t content_index;
-		le_uint32_t sdk_addon_version;
+		tc::bn::le64<uint64_t> content_size;
+		tc::bn::le64<uint64_t> program_id;
+		tc::bn::le32<uint32_t> content_index;
+		tc::bn::le32<uint32_t> sdk_addon_version;
 		byte_t key_generation_2;
 		byte_t signature_key_generation;
-		byte_t reserved_2[0xe];
-		byte_t rights_id[nca::kRightsIdLen];
+		std::array<byte_t, 0xE> reserved_2;
+		detail::rights_id_t rights_id;
 		struct sPartitionEntry
 		{
-			le_uint32_t start_blk; // block units
-			le_uint32_t end_blk; // block units
+			tc::bn::le32<uint32_t> start_blk; // block units
+			tc::bn::le32<uint32_t> end_blk; // block units
 			byte_t enabled;
-			byte_t reserved[7];
-		} partition_entry[nca::kPartitionNum];
-		fnd::sha::sSha256Hash fs_header_hash[nca::kPartitionNum];
-		byte_t key_area[nca::kKeyAreaSize];
+			std::array<byte_t, 0x7> reserved;
+		};
+		std::array<sPartitionEntry, nca::kPartitionNum> partition_entry;
+		std::array<detail::sha256_hash_t, nca::kPartitionNum> fs_header_hash;
+		nca::key_area_t key_area;
 	};
 	static_assert(sizeof(sContentArchiveHeader) == 0x200, "sContentArchiveHeader size.");
 
 	struct sContentArchiveBucketInfo
 	{
-		static const size_t kHeaderSize = 0x10;
-		le_uint64_t offset;
-		le_uint64_t size;
+		tc::bn::le64<uint64_t> offset;
+		tc::bn::le64<uint64_t> size;
 		sBucketTreeHeader header;
 	};
 	static_assert(sizeof(sContentArchiveBucketInfo) == 0x20, "sContentArchiveBucketInfo size.");
@@ -137,16 +135,16 @@ namespace hac
 	{
 		// if sparse info generation is non-zero then a sparse layer exists
 		sContentArchiveBucketInfo bucket;
-		le_uint64_t physical_offset;
-		le_uint16_t generation;
-		byte_t reserved_0[6];
+		tc::bn::le64<uint64_t> physical_offset;
+		tc::bn::le16<uint16_t> generation;
+		std::array<byte_t, 0x6> reserved_0;
 	};
 	static_assert(sizeof(sContentArchiveFsHeaderSparseInfo) == nca::kSparseInfoLen, "sContentArchiveFsHeaderSparseInfo size.");
 
 	struct sContentArchiveFsHeader
 	{
 		// 0x00
-		le_uint16_t version;
+		tc::bn::le16<uint16_t> version;
 		// 0x02
 		byte_t format_type;
 		// 0x03
@@ -154,30 +152,30 @@ namespace hac
 		// 0x04
 		byte_t encryption_type;
 		// 0x5
-		byte_t reserved_0[3];
+		std::array<byte_t, 0x3> reserved_0;
 		// 0x8
-		byte_t hash_info[nca::kHashInfoLen]; // size=0xf8
+		std::array<byte_t, nca::kHashInfoLen> hash_info; // size=0xf8
 		// 0x100
-		byte_t patch_info[nca::kPatchInfoLen]; // size=0x40
+		std::array<byte_t, nca::kPatchInfoLen> patch_info; // size=0x40
 		// 0x140
-		le_uint32_t generation;
+		tc::bn::le32<uint32_t> generation;
 		// 0x144
-		le_uint32_t secure_value;
+		tc::bn::le32<uint32_t> secure_value;
 		// 0x148
 		sContentArchiveFsHeaderSparseInfo sparse_info;
-		//byte_t sparse_info[nca::kSparseInfoLen]; // size=0x30
+		//std::array<byte_t, nca::kSparseInfoLen>  sparse_info; // size=0x30
 		// 0x178
-		byte_t reserved_1[0x88];
+		std::array<byte_t, 0x88> reserved_1;
 		// 0x200
 	};
 	static_assert(sizeof(sContentArchiveFsHeader) == 0x200, "sContentArchiveFsHeader size.");
 
 	struct sContentArchiveHeaderBlock
 	{
-		byte_t signature_main[fnd::rsa::kRsa2048Size];
-		byte_t signature_acid[fnd::rsa::kRsa2048Size];
+		detail::rsa2048_signature_t signature_main;
+		detail::rsa2048_signature_t signature_acid;
 		sContentArchiveHeader header;
-		sContentArchiveFsHeader fs_header[nn::hac::nca::kPartitionNum];
+		std::array<sContentArchiveFsHeader, nn::hac::nca::kPartitionNum> fs_header;
 	};
 	static_assert(sizeof(sContentArchiveHeaderBlock) == 0xC00, "sContentArchiveHeaderBlock size.");
 

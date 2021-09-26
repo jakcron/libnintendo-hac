@@ -33,36 +33,36 @@ bool nn::hac::ApplicationMetaExtendedHeader::operator!=(const ApplicationMetaExt
 
 void nn::hac::ApplicationMetaExtendedHeader::toBytes()
 {
-	mRawBinary.alloc(sizeof(sApplicationMetaExtendedHeader));
+	mRawBinary = tc::ByteData(sizeof(sApplicationMetaExtendedHeader));
 	sApplicationMetaExtendedHeader* info = (sApplicationMetaExtendedHeader*)mRawBinary.data();
 
-	info->patch_id = mPatchId;
-	info->required_system_version = mRequiredSystemVersion;
-	info->required_application_version = mRequiredApplicationVersion;
+	info->patch_id.wrap(mPatchId);
+	info->required_system_version.wrap(mRequiredSystemVersion);
+	info->required_application_version.wrap(mRequiredApplicationVersion);
 }
 
 void nn::hac::ApplicationMetaExtendedHeader::fromBytes(const byte_t* bytes, size_t len)
 {
 	if (len < sizeof(sApplicationMetaExtendedHeader))
 	{
-		throw fnd::Exception(kModuleName, "ApplicationMetaExtendedHeader too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "ApplicationMetaExtendedHeader too small");
 	}
 
 	const sApplicationMetaExtendedHeader* info = (const sApplicationMetaExtendedHeader*)bytes;
 
-	mPatchId = info->patch_id.get();
-	mRequiredSystemVersion = info->required_system_version.get();
-	mRequiredApplicationVersion = info->required_application_version.get();
+	mPatchId = info->patch_id.unwrap();
+	mRequiredSystemVersion = info->required_system_version.unwrap();
+	mRequiredApplicationVersion = info->required_application_version.unwrap();
 }
 
-const fnd::Vec<byte_t>& nn::hac::ApplicationMetaExtendedHeader::getBytes() const
+const tc::ByteData& nn::hac::ApplicationMetaExtendedHeader::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::ApplicationMetaExtendedHeader::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mPatchId = 0;
 	mRequiredSystemVersion = 0;
 	mRequiredApplicationVersion = 0;

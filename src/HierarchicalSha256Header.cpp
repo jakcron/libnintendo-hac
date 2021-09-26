@@ -39,7 +39,7 @@ bool nn::hac::HierarchicalSha256Header::operator!=(const HierarchicalSha256Heade
 
 void nn::hac::HierarchicalSha256Header::toBytes()
 {
-	throw fnd::Exception(kModuleName, "exportBinary() not implemented");
+	throw tc::NotImplementedException(kModuleName, "toBytes() not implemented");
 }
 
 void nn::hac::HierarchicalSha256Header::fromBytes(const byte_t* data, size_t len)
@@ -48,45 +48,45 @@ void nn::hac::HierarchicalSha256Header::fromBytes(const byte_t* data, size_t len
 
 	if (len < sizeof(nn::hac::sHierarchicalSha256Header))
 	{
-		throw fnd::Exception(kModuleName, "Header too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Header too small");
 	}
 
 	const nn::hac::sHierarchicalSha256Header* hdr = (const nn::hac::sHierarchicalSha256Header*)data;
 
-	if (hdr->layer_num.get() != nn::hac::hierarchicalsha256::kDefaultLayerNum)
+	if (hdr->layer_num.unwrap() != nn::hac::hierarchicalsha256::kDefaultLayerNum)
 	{
 		error_str.clear();
 		error_str << "Invalid layer count. ";
-		error_str << "(actual=" << std::dec << hdr->layer_num.get() << ", expected=" << nn::hac::hierarchicalsha256::kDefaultLayerNum << ")";
-		throw fnd::Exception(kModuleName, error_str.str());
+		error_str << "(actual=" << std::dec << hdr->layer_num.unwrap() << ", expected=" << nn::hac::hierarchicalsha256::kDefaultLayerNum << ")";
+		throw tc::ArgumentOutOfRangeException(kModuleName, error_str.str());
 	}
 
 	mMasterHash = hdr->master_hash;
-	mHashBlockSize = hdr->hash_block_size.get();
-	for (size_t i = 0; i < hdr->layer_num.get(); i++)
+	mHashBlockSize = hdr->hash_block_size.unwrap();
+	for (size_t i = 0; i < hdr->layer_num.unwrap(); i++)
 	{
-		mLayerInfo.addElement({hdr->layer[i].offset.get(), hdr->layer[i].size.get()});
+		mLayerInfo.push_back({hdr->layer[i].offset.unwrap(), hdr->layer[i].size.unwrap()});
 	}
 }
 
-const fnd::Vec<byte_t>& nn::hac::HierarchicalSha256Header::getBytes() const
+const tc::ByteData& nn::hac::HierarchicalSha256Header::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::HierarchicalSha256Header::clear()
 {
-	memset(mMasterHash.bytes, 0, sizeof(fnd::sha::sSha256Hash));
+	memset(mMasterHash.data(), 0, mMasterHash.size());
 	mHashBlockSize = 0;
 	mLayerInfo.clear();
 }
 
-const fnd::sha::sSha256Hash & nn::hac::HierarchicalSha256Header::getMasterHash() const
+const nn::hac::detail::sha256_hash_t& nn::hac::HierarchicalSha256Header::getMasterHash() const
 {
 	return mMasterHash;
 }
 
-void nn::hac::HierarchicalSha256Header::setMasterHash(const fnd::sha::sSha256Hash & master_hash)
+void nn::hac::HierarchicalSha256Header::setMasterHash(const nn::hac::detail::sha256_hash_t& master_hash)
 {
 	mMasterHash = master_hash;
 }
@@ -101,12 +101,12 @@ void nn::hac::HierarchicalSha256Header::setHashBlockSize(size_t hash_block_size)
 	mHashBlockSize = hash_block_size;
 }
 
-const fnd::List<nn::hac::HierarchicalSha256Header::sLayer>& nn::hac::HierarchicalSha256Header::getLayerInfo() const
+const std::vector<nn::hac::HierarchicalSha256Header::sLayer>& nn::hac::HierarchicalSha256Header::getLayerInfo() const
 {
 	return mLayerInfo;
 }
 
-void nn::hac::HierarchicalSha256Header::setLayerInfo(const fnd::List<sLayer>& layer_info)
+void nn::hac::HierarchicalSha256Header::setLayerInfo(const std::vector<sLayer>& layer_info)
 {
 	mLayerInfo = layer_info;
 }

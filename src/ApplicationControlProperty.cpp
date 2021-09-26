@@ -123,64 +123,52 @@ bool nn::hac::ApplicationControlProperty::operator!=(const ApplicationControlPro
 
 void nn::hac::ApplicationControlProperty::toBytes()
 {
-	mRawBinary.alloc(sizeof(nn::hac::sApplicationControlProperty));
+	mRawBinary = tc::ByteData(sizeof(nn::hac::sApplicationControlProperty));
 
 	sApplicationControlProperty* nacp = (sApplicationControlProperty*)mRawBinary.data();
 
 	// strings
 	for (size_t i = 0; i < mTitle.size(); i++)
 	{
-		strncpy(nacp->title[(byte_t)mTitle[i].language].name, mTitle[i].name.c_str(), nacp::kNameLength);
-		strncpy(nacp->title[(byte_t)mTitle[i].language].publisher, mTitle[i].publisher.c_str(), nacp::kPublisherLength);
+		strncpy(nacp->title[(byte_t)mTitle[i].language].name.data(), mTitle[i].name.c_str(), nacp->title[(byte_t)mTitle[i].language].name.max_size());
+		strncpy(nacp->title[(byte_t)mTitle[i].language].publisher.data(), mTitle[i].publisher.c_str(), nacp->title[(byte_t)mTitle[i].language].publisher.max_size());
 	}
 
-	uint32_t supported_langs = 0;
 	for (size_t i = 0; i < mSupportedLanguage.size(); i++)
 	{
-		supported_langs |= _BIT(mSupportedLanguage[i]);
+		nacp->supported_language_flag.set((size_t)mSupportedLanguage[i]);
 	}
-	nacp->supported_language_flag = supported_langs;
 
-	strncpy(nacp->isbn, mIsbn.c_str(), nacp::kIsbnLength);
-	strncpy(nacp->display_version, mDisplayVersion.c_str(), nacp::kDisplayVersionLength);
-	strncpy(nacp->application_error_code_category, mApplicationErrorCodeCategory.c_str(), nacp::kApplicationErrorCodeCategoryLength);
-	strncpy(nacp->bcat_passphrase, mBcatPassphase.c_str(), nacp::kBcatPassphraseLength);
+	strncpy(nacp->isbn.data(), mIsbn.c_str(), nacp->isbn.max_size());
+	strncpy(nacp->display_version.data(), mDisplayVersion.c_str(), nacp->display_version.max_size());
+	strncpy(nacp->application_error_code_category.data(), mApplicationErrorCodeCategory.c_str(), nacp->application_error_code_category.max_size());
+	strncpy(nacp->bcat_passphrase.data(), mBcatPassphase.c_str(), nacp->bcat_passphrase.size());
 
 	// bitfields
-	uint32_t attribute_flag = 0;
 	for (size_t i = 0; i < mAttribute.size(); i++)
 	{
-		attribute_flag |= _BIT(mSupportedLanguage[i]);
+		nacp->attribute_flag.set((size_t)mSupportedLanguage[i]);
 	}
-	nacp->attribute_flag = attribute_flag;
 
-	uint32_t parental_control_flag = 0;
 	for (size_t i = 0; i < mParentalControl.size(); i++)
 	{
-		parental_control_flag |= _BIT(mParentalControl[i]);
+		nacp->parental_control_flag.set((size_t)mParentalControl[i]);
 	}
-	nacp->parental_control_flag = parental_control_flag;
 
-	byte_t startup_user_option = 0;
 	for (size_t i = 0; i < mStartupUserAccountOption.size(); i++)
 	{
-		startup_user_option |= _BIT(mStartupUserAccountOption[i]);
+		nacp->startup_user_account_option.test((size_t)mStartupUserAccountOption[i]);
 	}
-	nacp->startup_user_account_option = startup_user_option;
 
-	byte_t repair_flag = 0;
 	for (size_t i = 0; i < mRepair.size(); i++)
 	{
-		repair_flag |= _BIT(mRepair[i]);
+		nacp->repair_flag.set((size_t)mRepair[i]);
 	}
-	nacp->repair_flag = repair_flag;
 
-	byte_t required_network_service_license_on_launch_flag = 0;
 	for (size_t i = 0; i < mRequiredNetworkServiceLicenseOnLaunch.size(); i++)
 	{
-		required_network_service_license_on_launch_flag |= _BIT(mRequiredNetworkServiceLicenseOnLaunch[i]);
+		nacp->required_network_service_license_on_launch_flag.set((size_t)mRequiredNetworkServiceLicenseOnLaunch[i]);
 	}
-	nacp->required_network_service_license_on_launch_flag = required_network_service_license_on_launch_flag;
 
 	// enum type casts
 	nacp->startup_user_account = (byte_t)mStartupUserAccount;
@@ -202,51 +190,49 @@ void nn::hac::ApplicationControlProperty::toBytes()
 	nacp->crash_screenshot_for_dev = (byte_t)mCrashScreenshotForDev;
 	
 	// misc params
-	nacp->presence_group_id = mPresenceGroupId;
-	memset(nacp->rating_age, nacp::kUnusedAgeRating, nacp::kRatingAgeCount); // clear ratings
+	nacp->presence_group_id.wrap(mPresenceGroupId);
+	memset(nacp->rating_age.data(), nacp::kUnusedAgeRating, nacp::kRatingAgeCount); // clear ratings
 	for (size_t i = 0; i < mRatingAge.size(); i++)
 	{
 		nacp->rating_age[(byte_t)mRatingAge[i].organisation] = mRatingAge[i].age;
 	}
-	nacp->add_on_content_base_id = mAddOnContentBaseId;
-	nacp->save_data_owner_id = mSaveDataOwnerId;
+	nacp->add_on_content_base_id.wrap(mAddOnContentBaseId);
+	nacp->save_data_owner_id.wrap(mSaveDataOwnerId);
 	for (size_t i = 0; i < mLocalCommunicationId.size() && i < nacp::kLocalCommunicationIdCount; i++)
 	{
-		nacp->local_communication_id[i] = mLocalCommunicationId[i];
+		nacp->local_communication_id[i].wrap(mLocalCommunicationId[i]);
 	}
-	nacp->seed_for_pseudo_device_id = mSeedForPsuedoDeviceId;
+	nacp->seed_for_pseudo_device_id.wrap(mSeedForPsuedoDeviceId);
 	for (size_t i = 0; i < mPlayLogQueryableApplicationId.size() && i < nacp::kPlayLogQueryableApplicationIdCount; i++)
 	{
-		nacp->play_log_queryable_application_id[i] = mPlayLogQueryableApplicationId[i];
+		nacp->play_log_queryable_application_id[i].wrap(mPlayLogQueryableApplicationId[i]);
 	}
-	nacp->cache_storage_index_max = mCacheStorageIndexMax;
+	nacp->cache_storage_index_max.wrap(mCacheStorageIndexMax);
 	nacp->program_index = mProgramIndex;
 	for (size_t i = 0; i < mAccessibleLaunchRequiredVersionApplicationId.size() && i < nacp::kMaxAccessibleLaunchRequiredVersionApplicationIdCount; i++)
 	{
-		nacp->accessible_launch_required_verison.application_id[i] = mAccessibleLaunchRequiredVersionApplicationId[i];
+		nacp->accessible_launch_required_verison.application_id[i].wrap(mAccessibleLaunchRequiredVersionApplicationId[i]);
 	}
 
 	// sizes
-	nacp->user_account_save_data_size = mUserAccountSaveDataSize.size;
-	nacp->user_account_save_data_journal_size = mUserAccountSaveDataSize.journal_size;
-	nacp->device_save_data_size = mDeviceSaveDataSize.size;
-	nacp->device_save_data_journal_size = mDeviceSaveDataSize.journal_size;
-	nacp->bcat_delivery_cache_storage_size = mBcatDeliveryCacheStorageSize;
-	nacp->user_account_save_data_size_max = mUserAccountSaveDataMax.size;
-	nacp->user_account_save_data_journal_size_max = mUserAccountSaveDataMax.journal_size;
-	nacp->device_save_data_size_max = mDeviceSaveDataMax.size;
-	nacp->device_save_data_journal_size_max = mDeviceSaveDataMax.journal_size;
-	nacp->temporary_storage_size = 	mTemporaryStorageSize;
-	nacp->cache_storage_size = mCacheStorageSize.size;
-	nacp->cache_storage_journal_size = mCacheStorageSize.journal_size;
-	nacp->cache_storage_data_and_journal_size_max = mCacheStorageDataAndJournalSizeMax;
+	nacp->user_account_save_data_size.wrap(mUserAccountSaveDataSize.size);
+	nacp->user_account_save_data_journal_size.wrap(mUserAccountSaveDataSize.journal_size);
+	nacp->device_save_data_size.wrap(mDeviceSaveDataSize.size);
+	nacp->device_save_data_journal_size.wrap(mDeviceSaveDataSize.journal_size);
+	nacp->bcat_delivery_cache_storage_size.wrap(mBcatDeliveryCacheStorageSize);
+	nacp->user_account_save_data_size_max.wrap(mUserAccountSaveDataMax.size);
+	nacp->user_account_save_data_journal_size_max.wrap(mUserAccountSaveDataMax.journal_size);
+	nacp->device_save_data_size_max.wrap(mDeviceSaveDataMax.size);
+	nacp->device_save_data_journal_size_max.wrap(mDeviceSaveDataMax.journal_size);
+	nacp->temporary_storage_size.wrap(mTemporaryStorageSize);
+	nacp->cache_storage_size.wrap(mCacheStorageSize.size);
+	nacp->cache_storage_journal_size.wrap(mCacheStorageSize.journal_size);
+	nacp->cache_storage_data_and_journal_size_max.wrap(mCacheStorageDataAndJournalSizeMax);
 
 	// jit configuration
-	uint64_t jit_config_flag = 0;
 	if (mJitConfiguration.is_enabled)
-		jit_config_flag |= _BIT(nacp::JitConfigurationFlag::Enabled);
-	nacp->jit_configuration.jit_configuration_flag =  jit_config_flag;
-	nacp->jit_configuration.memory_size = mJitConfiguration.memory_size;
+		nacp->jit_configuration.jit_configuration_flag.set((size_t)nacp::JitConfigurationFlag::Enabled);
+	nacp->jit_configuration.memory_size.wrap(mJitConfiguration.memory_size);
 
 	// neighbor detection client configuration
 	serialiseGroupConfig(mNeighborDetectionClientConfiguration.send_data_configuration, nacp->neighbour_detection_client_configuration.send_group_configuration);
@@ -260,12 +246,12 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 {
 	if (len < sizeof(nn::hac::sApplicationControlProperty))
 	{
-		throw fnd::Exception(kModuleName, "NACP too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "NACP too small");
 	}
 
 	clear();
 
-	mRawBinary.alloc(sizeof(nn::hac::sApplicationControlProperty));
+	mRawBinary = tc::ByteData(sizeof(nn::hac::sApplicationControlProperty));
 	memcpy(mRawBinary.data(), bytes, mRawBinary.size());
 
 	const sApplicationControlProperty* nacp = (const sApplicationControlProperty*)mRawBinary.data();
@@ -273,58 +259,54 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	// strings
 	for (size_t i = 0; i < nacp::kMaxLanguageCount; i++)
 	{
-		if (_HAS_BIT(nacp->supported_language_flag.get(), i))
+		if (nacp->supported_language_flag.test(i))
 		{
 			mSupportedLanguage.push_back(nacp::Language(i));
 		}
-		if (nacp->title[i].name[0] != '\0' && nacp->title[i].publisher[0] != '\0')
+		if (!nacp->title[i].name.str().empty() && !nacp->title[i].publisher.str().empty())
 		{
-			mTitle.push_back({ nacp::Language(i), std::string(nacp->title[i].name, _MIN(strlen(nacp->title[i].name), nacp::kNameLength)), std::string(nacp->title[i].publisher, _MIN(strlen(nacp->title[i].publisher), nacp::kPublisherLength)) });
+			mTitle.push_back({ nacp::Language(i), nacp->title[i].name.str(), nacp->title[i].publisher.str() });
 		}
 	}
 
-	if (nacp->isbn[0] != 0)
-		mIsbn = std::string(nacp->isbn, _MIN(strlen(nacp->isbn), nacp::kIsbnLength));
-	if (nacp->display_version[0] != 0)
-		mDisplayVersion = std::string(nacp->display_version, _MIN(strlen(nacp->display_version), nacp::kDisplayVersionLength));
-	if (nacp->application_error_code_category[0] != 0)
-		mApplicationErrorCodeCategory = std::string(nacp->application_error_code_category, _MIN(strlen(nacp->application_error_code_category), nacp::kApplicationErrorCodeCategoryLength));
-	if (nacp->bcat_passphrase[0] != 0)
-		mBcatPassphase = std::string(nacp->bcat_passphrase, _MIN(strlen(nacp->bcat_passphrase), nacp::kBcatPassphraseLength));
+	mIsbn = nacp->isbn.str();
+	mDisplayVersion = nacp->display_version.str();
+	mApplicationErrorCodeCategory = nacp->application_error_code_category.str();
+	mBcatPassphase = nacp->bcat_passphrase.str();
 
 	// bitfield values
-	for (size_t i = 0; i < sizeof(uint32_t) * 8; i++)
+	for (size_t i = 0; i < nacp->attribute_flag.bit_size(); i++)
 	{
-		if (_HAS_BIT(nacp->attribute_flag.get(), i))
+		if (nacp->attribute_flag.test(i))
 		{
 			mAttribute.push_back(nacp::AttributeFlag(i));
 		}
 	}
-	for (size_t i = 0; i < sizeof(uint32_t) * 8; i++)
+	for (size_t i = 0; i < nacp->parental_control_flag.bit_size(); i++)
 	{
-		if (_HAS_BIT(nacp->parental_control_flag.get(), i))
+		if (nacp->parental_control_flag.test(i))
 		{
 			mParentalControl.push_back(nacp::ParentalControlFlag(i));
 		}
 	}
-	for (size_t i = 0; i < sizeof(byte_t) * 8; i++)
+	for (size_t i = 0; i < nacp->startup_user_account_option.bit_size(); i++)
 	{
-		if (_HAS_BIT(nacp->startup_user_account_option, i))
+		if (nacp->startup_user_account_option.test(i))
 		{
 			mStartupUserAccountOption.push_back(nacp::StartupUserAccountOptionFlag(i));
 		}
 	}
-	for (size_t i = 0; i < sizeof(byte_t) * 8; i++)
+	for (size_t i = 0; i < nacp->repair_flag.bit_size(); i++)
 	{
-		if (_HAS_BIT(nacp->repair_flag, i))
+		if (nacp->repair_flag.test(i))
 		{
 			mRepair.push_back(nacp::RepairFlag(i));
 		}
 	}
 
-	for (size_t i = 0; i < sizeof(byte_t) * 8; i++)
+	for (size_t i = 0; i < nacp->required_network_service_license_on_launch_flag.bit_size(); i++)
 	{
-		if (_HAS_BIT(nacp->required_network_service_license_on_launch_flag, i))
+		if (nacp->required_network_service_license_on_launch_flag.test(i))
 		{
 			mRequiredNetworkServiceLicenseOnLaunch.push_back(nacp::RequiredNetworkServiceLicenseOnLaunchFlag(i));
 		}
@@ -349,51 +331,51 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	mCrashScreenshotForDev = nacp::CrashScreenshotForDev(nacp->crash_screenshot_for_dev);
 
 	// misc params
-	mPresenceGroupId = nacp->presence_group_id.get();
+	mPresenceGroupId = nacp->presence_group_id.unwrap();
 	for (size_t i = 0; i < nacp::kRatingAgeCount; i++)
 	{
 		if (nacp->rating_age[i] != nacp::kUnusedAgeRating)
 			mRatingAge.push_back({nacp::Organisation(i), nacp->rating_age[i]});
 	}
-	mAddOnContentBaseId = nacp->add_on_content_base_id.get();
-	mSaveDataOwnerId = nacp->save_data_owner_id.get();
+	mAddOnContentBaseId = nacp->add_on_content_base_id.unwrap();
+	mSaveDataOwnerId = nacp->save_data_owner_id.unwrap();
 	for (size_t i = 0; i < nacp::kLocalCommunicationIdCount; i++)
 	{
-		if (nacp->local_communication_id[i].get() != 0)
-			mLocalCommunicationId.push_back(nacp->local_communication_id[i].get());
+		if (nacp->local_communication_id[i].unwrap() != 0)
+			mLocalCommunicationId.push_back(nacp->local_communication_id[i].unwrap());
 	}
-	mSeedForPsuedoDeviceId = nacp->seed_for_pseudo_device_id.get();
+	mSeedForPsuedoDeviceId = nacp->seed_for_pseudo_device_id.unwrap();
 	for (size_t i = 0; i < nacp::kPlayLogQueryableApplicationIdCount; i++)
 	{
-		if (nacp->play_log_queryable_application_id[i].get() != 0)
-			mPlayLogQueryableApplicationId.push_back(nacp->play_log_queryable_application_id[i].get());
+		if (nacp->play_log_queryable_application_id[i].unwrap() != 0)
+			mPlayLogQueryableApplicationId.push_back(nacp->play_log_queryable_application_id[i].unwrap());
 	}
-	mCacheStorageIndexMax = nacp->cache_storage_index_max.get();
+	mCacheStorageIndexMax = nacp->cache_storage_index_max.unwrap();
 	mProgramIndex = nacp->program_index;
 	for (size_t i = 0; i < nacp::kMaxAccessibleLaunchRequiredVersionApplicationIdCount; i++)
 	{
-		if (nacp->accessible_launch_required_verison.application_id[i].get() != 0)
-			mAccessibleLaunchRequiredVersionApplicationId.push_back(nacp->accessible_launch_required_verison.application_id[i].get());
+		if (nacp->accessible_launch_required_verison.application_id[i].unwrap() != 0)
+			mAccessibleLaunchRequiredVersionApplicationId.push_back(nacp->accessible_launch_required_verison.application_id[i].unwrap());
 	}
 
 	// sizes
-	mUserAccountSaveDataSize.size = (int64_t)nacp->user_account_save_data_size.get();
-	mUserAccountSaveDataSize.journal_size = (int64_t)nacp->user_account_save_data_journal_size.get();
-	mDeviceSaveDataSize.size = (int64_t)nacp->device_save_data_size.get();
-	mDeviceSaveDataSize.journal_size = (int64_t)nacp->device_save_data_journal_size.get();
-	mBcatDeliveryCacheStorageSize = (int64_t)nacp->bcat_delivery_cache_storage_size.get();
-	mUserAccountSaveDataMax.size = (int64_t)nacp->user_account_save_data_size_max.get();
-	mUserAccountSaveDataMax.journal_size = (int64_t)nacp->user_account_save_data_journal_size_max.get();
-	mDeviceSaveDataMax.size = (int64_t)nacp->device_save_data_size_max.get();
-	mDeviceSaveDataMax.journal_size = (int64_t)nacp->device_save_data_journal_size_max.get();
-	mTemporaryStorageSize = (int64_t)nacp->temporary_storage_size.get();
-	mCacheStorageSize.size = (int64_t)nacp->cache_storage_size.get();
-	mCacheStorageSize.journal_size = (int64_t)nacp->cache_storage_journal_size.get();
-	mCacheStorageDataAndJournalSizeMax = (int64_t)nacp->cache_storage_data_and_journal_size_max.get();
+	mUserAccountSaveDataSize.size = (int64_t)nacp->user_account_save_data_size.unwrap();
+	mUserAccountSaveDataSize.journal_size = (int64_t)nacp->user_account_save_data_journal_size.unwrap();
+	mDeviceSaveDataSize.size = (int64_t)nacp->device_save_data_size.unwrap();
+	mDeviceSaveDataSize.journal_size = (int64_t)nacp->device_save_data_journal_size.unwrap();
+	mBcatDeliveryCacheStorageSize = (int64_t)nacp->bcat_delivery_cache_storage_size.unwrap();
+	mUserAccountSaveDataMax.size = (int64_t)nacp->user_account_save_data_size_max.unwrap();
+	mUserAccountSaveDataMax.journal_size = (int64_t)nacp->user_account_save_data_journal_size_max.unwrap();
+	mDeviceSaveDataMax.size = (int64_t)nacp->device_save_data_size_max.unwrap();
+	mDeviceSaveDataMax.journal_size = (int64_t)nacp->device_save_data_journal_size_max.unwrap();
+	mTemporaryStorageSize = (int64_t)nacp->temporary_storage_size.unwrap();
+	mCacheStorageSize.size = (int64_t)nacp->cache_storage_size.unwrap();
+	mCacheStorageSize.journal_size = (int64_t)nacp->cache_storage_journal_size.unwrap();
+	mCacheStorageDataAndJournalSizeMax = (int64_t)nacp->cache_storage_data_and_journal_size_max.unwrap();
 
 	// jit configuration
-	mJitConfiguration.is_enabled = _HAS_BIT(nacp->jit_configuration.jit_configuration_flag.get(), nacp::JitConfigurationFlag::Enabled);
-	mJitConfiguration.memory_size = nacp->jit_configuration.memory_size.get();
+	mJitConfiguration.is_enabled = nacp->jit_configuration.jit_configuration_flag.test((size_t)nacp::JitConfigurationFlag::Enabled);
+	mJitConfiguration.memory_size = nacp->jit_configuration.memory_size.unwrap();
 
 	// neighbor detection client configuration
 	parseGroupConfig(nacp->neighbour_detection_client_configuration.send_group_configuration, mNeighborDetectionClientConfiguration.send_data_configuration);
@@ -403,14 +385,14 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 	}
 }
 
-const fnd::Vec<byte_t>& nn::hac::ApplicationControlProperty::getBytes() const
+const tc::ByteData& nn::hac::ApplicationControlProperty::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::ApplicationControlProperty::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mTitle.clear();
 	mIsbn.clear();
 	mStartupUserAccount = nacp::StartupUserAccount::None;
@@ -949,12 +931,12 @@ void nn::hac::ApplicationControlProperty::serialiseGroupConfig(const sNeighborDe
 		return;
 	}
 
-	serialised.group_id = logical.group_id;
-	memcpy(serialised.key, logical.key, nacp::kNeighborDetectionGroupConfigurationKeyLength);
+	serialised.group_id.wrap(logical.group_id);
+	memcpy(serialised.key.data(), logical.key.data(), serialised.key.size());
 }
 
 void nn::hac::ApplicationControlProperty::parseGroupConfig(const sApplicationControlProperty::sNeighborDetectionClientConfiguration::sGroupConfiguration& serialised, sNeighborDetectionClientConfiguration::sGroupConfiguration& logical)
 {
-	logical.group_id = serialised.group_id.get();
-	memcpy(logical.key, serialised.key, nacp::kNeighborDetectionGroupConfigurationKeyLength);
+	logical.group_id = serialised.group_id.unwrap();
+	memcpy(logical.key.data(), serialised.key.data(), serialised.key.size());
 }

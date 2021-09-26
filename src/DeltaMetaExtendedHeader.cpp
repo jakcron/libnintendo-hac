@@ -31,34 +31,34 @@ bool nn::hac::DeltaMetaExtendedHeader::operator!=(const DeltaMetaExtendedHeader&
 
 void nn::hac::DeltaMetaExtendedHeader::toBytes()
 {
-	mRawBinary.alloc(sizeof(sDeltaMetaExtendedHeader));
+	mRawBinary = tc::ByteData(sizeof(sDeltaMetaExtendedHeader));
 	sDeltaMetaExtendedHeader* info = (sDeltaMetaExtendedHeader*)mRawBinary.data();
 
-	info->application_id = mApplicationId;
-	info->extended_data_size = mExtendedDataSize;
+	info->application_id.wrap(mApplicationId);
+	info->extended_data_size.wrap(mExtendedDataSize);
 }
 
 void nn::hac::DeltaMetaExtendedHeader::fromBytes(const byte_t* bytes, size_t len)
 {
 	if (len < sizeof(sDeltaMetaExtendedHeader))
 	{
-		throw fnd::Exception(kModuleName, "DeltaMetaExtendedHeader too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "DeltaMetaExtendedHeader too small");
 	}
 
 	const sDeltaMetaExtendedHeader* info = (const sDeltaMetaExtendedHeader*)bytes;
 
-	mApplicationId = info->application_id.get();
-	mExtendedDataSize = info->extended_data_size.get();
+	mApplicationId = info->application_id.unwrap();
+	mExtendedDataSize = info->extended_data_size.unwrap();
 }
 
-const fnd::Vec<byte_t>& nn::hac::DeltaMetaExtendedHeader::getBytes() const
+const tc::ByteData& nn::hac::DeltaMetaExtendedHeader::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::DeltaMetaExtendedHeader::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mApplicationId = 0;
 	mExtendedDataSize = 0;
 }

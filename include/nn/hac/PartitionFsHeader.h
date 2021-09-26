@@ -1,16 +1,11 @@
 #pragma once
-#include <string>
-#include <nn/hac/define/types.h>
-#include <fnd/IByteModel.h>
-#include <fnd/List.h>
 #include <nn/hac/define/pfs.h>
 
 namespace nn
 {
 namespace hac
 {
-	class PartitionFsHeader :
-		public fnd::IByteModel
+	class PartitionFsHeader
 	{
 	public:
 		enum FsType
@@ -25,7 +20,7 @@ namespace hac
 			size_t offset;
 			size_t size;
 			size_t hash_protected_size;
-			fnd::sha::sSha256Hash hash;
+			detail::sha256_hash_t hash;
 
 			sFile& operator=(const sFile& other)
 			{
@@ -72,26 +67,26 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
 
 		FsType getFsType() const;
 		void setFsType(FsType type);
-		const fnd::List<sFile>& getFileList() const;
+		const std::vector<sFile>& getFileList() const;
 		void addFile(const std::string& name, size_t size);
-		void addFile(const std::string& name, size_t size, size_t hash_protected_size, const fnd::sha::sSha256Hash& hash);
+		void addFile(const std::string& name, size_t size, size_t hash_protected_size, const nn::hac::detail::sha256_hash_t& hash);
 
 	private:
 		const std::string kModuleName = "PARTITIONFS_HEADER";
 
 		// binary blob
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		FsType mFsType;
-		fnd::List<sFile> mFileList;
+		std::vector<sFile> mFileList;
 
 		size_t getFileEntrySize(FsType fs_type);
 		void calculateOffsets(size_t data_offset);

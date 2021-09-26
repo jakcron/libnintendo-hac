@@ -1,6 +1,5 @@
 #pragma once
 #include <nn/hac/define/types.h>
-#include <nn/hac/define/macro.h>
 
 namespace nn
 {
@@ -8,10 +7,10 @@ namespace hac
 {
 	namespace meta
 	{
-		static const uint32_t kMetaStructMagic = _MAKE_STRUCT_MAGIC_U32("META");
+		static const uint32_t kMetaStructMagic = tc::bn::make_struct_magic_uint32("META");
 		static const size_t kNameMaxLen = 0x10;
 		static const size_t kProductCodeMaxLen = 0x10;
-		static const uint32_t kMaxPriority = _BIT(6) - 1;
+		static const uint32_t kMaxPriority = (1 << 6) - 1;
 		static const size_t kSectionAlignSize = 0x10;
 		static const uint32_t kDefaultMainThreadStackSize = 4096;
 		static const uint32_t kAlignSystemResourceSize = 0x200000;
@@ -35,9 +34,9 @@ namespace hac
 #pragma pack(push,1)
 	struct sMetaHeader
 	{
-		le_uint32_t st_magic;
+		tc::bn::le32<uint32_t> st_magic;
 		byte_t aci_desc_key_generation;
-		byte_t reserved_0[7];
+		std::array<byte_t, 0x7> reserved_0;
 		struct sFlag
 		{
 			byte_t is_64bit_instruction : 1;
@@ -48,17 +47,17 @@ namespace hac
 		byte_t reserved_1;
 		byte_t main_thread_priority;
 		byte_t main_thread_cpu_id;
-		byte_t reserved_2[4];
-		le_uint32_t system_resource_size; // this can only be set if KernelCaps.MiscParams.ProgramType is Application or Applet and flag.process_address_space == AddressSpace64Bit. Using this makes SystemCalls MapPhysicalMemory & UnmapPhysicalMemory unavailable.
-		le_uint32_t version; // sdk will set this to default_core_version if available
-		le_uint32_t main_thread_stack_size;
-		char name[meta::kNameMaxLen]; // important
-		char product_code[meta::kProductCodeMaxLen]; // can be empty
-		byte_t reserved_3[48];
+		std::array<byte_t, 0x4> reserved_2;
+		tc::bn::le32<uint32_t> system_resource_size; // this can only be set if KernelCaps.MiscParams.ProgramType is Application or Applet and flag.process_address_space == AddressSpace64Bit. Using this makes SystemCalls MapPhysicalMemory & UnmapPhysicalMemory unavailable.
+		tc::bn::le32<uint32_t> version; // sdk will set this to default_core_version if available
+		tc::bn::le32<uint32_t> main_thread_stack_size;
+		tc::bn::string<meta::kNameMaxLen> name; // important
+		tc::bn::string<meta::kProductCodeMaxLen> product_code; // can be empty
+		std::array<byte_t, 0x30> reserved_3;
 		struct sSection
 		{
-			le_uint32_t offset;
-			le_uint32_t size;
+			tc::bn::le32<uint32_t> offset;
+			tc::bn::le32<uint32_t> size;
 		} aci, aci_desc;
 	};
 	static_assert(sizeof(sMetaHeader) == 0x80, "sMetaHeader size");

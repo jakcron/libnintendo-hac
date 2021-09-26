@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
@@ -34,7 +33,7 @@ namespace hac
 	private:
 		const std::string kModuleName = "MEMORY_PAGE_ENTRY";
 		static const uint32_t kPageBits = 24;
-		static const uint32_t kMaxPage = _BIT(kPageBits) - 1;
+		static const uint32_t kMaxPage = (1 << kPageBits) - 1;
 
 		KernelCapabilityEntry mCap;
 		uint32_t mPage;

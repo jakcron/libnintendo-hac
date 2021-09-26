@@ -1,7 +1,6 @@
 #pragma once
-#include <fnd/rsa.h>
 #include <nn/hac/define/types.h>
-#include <nn/hac/define/macro.h>
+#include <bitset>
 
 namespace nn
 {
@@ -192,7 +191,7 @@ namespace hac
 			CallSecureMonitor              = 127
 		};
 
-		static const uint32_t kMaxSystemCallNum = (_BIT(3) * 24);
+		static const uint32_t kMaxSystemCallNum = ((1 << 3) * 24);
 		static const uint32_t kMaxSystemCallId = kMaxSystemCallNum - 1;
 		using SystemCallIds = std::bitset<kMaxSystemCallNum>;
 	}

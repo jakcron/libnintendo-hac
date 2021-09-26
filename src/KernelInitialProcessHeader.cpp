@@ -54,58 +54,58 @@ bool nn::hac::KernelInitialProcessHeader::operator!=(const KernelInitialProcessH
 
 void nn::hac::KernelInitialProcessHeader::toBytes()
 {
-	mRawBinary.alloc(sizeof(sKipHeader));
+	mRawBinary = tc::ByteData(sizeof(sKipHeader));
 	nn::hac::sKipHeader* hdr = (nn::hac::sKipHeader*)mRawBinary.data();
 
 	// set header identifers
-	hdr->st_magic = kip::kKipStructMagic;
+	hdr->st_magic.wrap(kip::kKipStructMagic);
 
 	// properties
-	strncpy(hdr->name, mName.c_str(), kip::kNameMaxLen);
-	hdr->title_id = mTitleId;
-	hdr->version = mVersion;
+	strncpy(hdr->name.data(), mName.c_str(), hdr->name.max_size());
+	hdr->title_id.wrap(mTitleId);
+	hdr->version.wrap(mVersion);
 	hdr->flags.is_64bit_instruction = mIs64BitInstructionFlag;
 	hdr->flags.is_64bit_address_space = mIs64BitAddressSpaceFlag;
 	hdr->flags.use_secure_memory = mUseSecureMemoryFlag;
 	hdr->main_thread_priority = mMainThreadPriority;
 	hdr->main_thread_cpu_id = mMainThreadCpuId;
-	hdr->main_thread_stack_size = mMainThreadStackSize;
+	hdr->main_thread_stack_size.wrap(mMainThreadStackSize);
 
 	// kernel caps
 	mKernelCapabilities.toBytes();
-	if (mKernelCapabilities.getBytes().size() > kip::kKernCapabilitySize)
+	if (mKernelCapabilities.getBytes().size() > hdr->capabilities.size())
 	{
-		throw fnd::Exception(kModuleName, "Too many kernel capabilities");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Too many kernel capabilities");
 	}
-	memcpy(hdr->capabilities, mKernelCapabilities.getBytes().data(), mKernelCapabilities.getBytes().size());
+	memcpy(hdr->capabilities.data(), mKernelCapabilities.getBytes().data(), mKernelCapabilities.getBytes().size());
 	
 	// stub remaining entries
-	if (mKernelCapabilities.getBytes().size() <  kip::kKernCapabilitySize)
+	if (mKernelCapabilities.getBytes().size() < hdr->capabilities.size())
 	{
-		memset(hdr->capabilities + mKernelCapabilities.getBytes().size(), 0xff, kip::kKernCapabilitySize - mKernelCapabilities.getBytes().size());
+		memset(hdr->capabilities.data() + mKernelCapabilities.getBytes().size(), 0xff, hdr->capabilities.size() - mKernelCapabilities.getBytes().size());
 	}	
 
 	// set bss size
-	hdr->bss.file_size = 0;
-	hdr->bss.memory_offset = 0;
-	hdr->bss.memory_size = mBssSize;
+	hdr->bss.file_size.wrap(0);
+	hdr->bss.memory_offset.wrap(0);
+	hdr->bss.memory_size.wrap(mBssSize);
 
 	// set text segment
-	hdr->text.memory_offset = mTextInfo.memory_layout.offset;
-	hdr->text.memory_size = mTextInfo.memory_layout.size;
-	hdr->text.file_size = mTextInfo.file_layout.size;
+	hdr->text.memory_offset.wrap(mTextInfo.memory_layout.offset);
+	hdr->text.memory_size.wrap(mTextInfo.memory_layout.size);
+	hdr->text.file_size.wrap(mTextInfo.file_layout.size);
 	hdr->flags.text_compress = mTextInfo.is_compressed;
 
 	// set ro segment
-	hdr->ro.memory_offset = mRoInfo.memory_layout.offset;
-	hdr->ro.memory_size = mRoInfo.memory_layout.size;
-	hdr->ro.file_size = mRoInfo.file_layout.size;
+	hdr->ro.memory_offset.wrap(mRoInfo.memory_layout.offset);
+	hdr->ro.memory_size.wrap(mRoInfo.memory_layout.size);
+	hdr->ro.file_size.wrap(mRoInfo.file_layout.size);
 	hdr->flags.ro_compress = mRoInfo.is_compressed;
 
 	// set data segment
-	hdr->data.memory_offset = mDataInfo.memory_layout.offset;
-	hdr->data.memory_size = mDataInfo.memory_layout.size;
-	hdr->data.file_size = mDataInfo.file_layout.size;
+	hdr->data.memory_offset.wrap(mDataInfo.memory_layout.offset);
+	hdr->data.memory_size.wrap(mDataInfo.memory_layout.size);
+	hdr->data.file_size.wrap(mDataInfo.file_layout.size);
 	hdr->flags.data_compress = mDataInfo.is_compressed;
 }
 
@@ -114,68 +114,67 @@ void nn::hac::KernelInitialProcessHeader::fromBytes(const byte_t* data, size_t l
 	// check input data size
 	if (len < sizeof(sKipHeader))
 	{
-		throw fnd::Exception(kModuleName, "KIP header size is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KIP header size is too small");
 	}
 
 	// clear internal members
 	clear();
 
 	// allocate internal local binary copy
-	mRawBinary.alloc(sizeof(sKipHeader));
+	mRawBinary = tc::ByteData(sizeof(sKipHeader));
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	// get sKipHeader ptr
 	const nn::hac::sKipHeader* hdr = (const nn::hac::sKipHeader*)mRawBinary.data();
 	
 	// check KIP signature
-	if (hdr->st_magic.get() != kip::kKipStructMagic)
+	if (hdr->st_magic.unwrap() != kip::kKipStructMagic)
 	{
-		throw fnd::Exception(kModuleName, "KIP header corrupt (unrecognised header signature)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KIP header corrupt (unrecognised header signature)");
 	}
 
 	// properties
-	if (hdr->name[0] != 0)
-		mName = std::string(hdr->name, _MIN(strlen(hdr->name), kip::kNameMaxLen));
-	mTitleId = hdr->title_id.get();
-	mVersion = hdr->version.get();
+	mName = hdr->name.str();
+	mTitleId = hdr->title_id.unwrap();
+	mVersion = hdr->version.unwrap();
 	mIs64BitInstructionFlag = hdr->flags.is_64bit_instruction;
 	mIs64BitAddressSpaceFlag = hdr->flags.is_64bit_address_space;
 	mUseSecureMemoryFlag = hdr->flags.use_secure_memory;
 	mMainThreadPriority = hdr->main_thread_priority;
 	mMainThreadCpuId = hdr->main_thread_cpu_id;
-	mMainThreadStackSize = hdr->main_thread_stack_size.get();
-	mKernelCapabilities.fromBytes(hdr->capabilities, kip::kKernCapabilitySize);
+	mMainThreadStackSize = hdr->main_thread_stack_size.unwrap();
+	mKernelCapabilities.fromBytes(hdr->capabilities.data(), hdr->capabilities.size());
 
 	// code segment info
 	mTextInfo.file_layout.offset = sizeof(sKipHeader);
-	mTextInfo.file_layout.size = hdr->text.file_size.get();
-	mTextInfo.memory_layout.offset = hdr->text.memory_offset.get();
-	mTextInfo.memory_layout.size = hdr->text.memory_size.get();
+	mTextInfo.file_layout.size = hdr->text.file_size.unwrap();
+	mTextInfo.memory_layout.offset = hdr->text.memory_offset.unwrap();
+	mTextInfo.memory_layout.size = hdr->text.memory_size.unwrap();
 	mTextInfo.is_compressed = hdr->flags.text_compress;
 
 	mRoInfo.file_layout.offset = mTextInfo.file_layout.offset + mTextInfo.file_layout.size;
-	mRoInfo.file_layout.size = hdr->ro.file_size.get();
-	mRoInfo.memory_layout.offset = hdr->ro.memory_offset.get();
-	mRoInfo.memory_layout.size = hdr->ro.memory_size.get();
+	mRoInfo.file_layout.size = hdr->ro.file_size.unwrap();
+	mRoInfo.memory_layout.offset = hdr->ro.memory_offset.unwrap();
+	mRoInfo.memory_layout.size = hdr->ro.memory_size.unwrap();
 	mRoInfo.is_compressed = hdr->flags.ro_compress;
 
 	mDataInfo.file_layout.offset = mRoInfo.file_layout.offset + mRoInfo.file_layout.size;
-	mDataInfo.file_layout.size = hdr->data.file_size.get();
-	mDataInfo.memory_layout.offset = hdr->data.memory_offset.get();
-	mDataInfo.memory_layout.size = hdr->data.memory_size.get();
+	mDataInfo.file_layout.size = hdr->data.file_size.unwrap();
+	mDataInfo.memory_layout.offset = hdr->data.memory_offset.unwrap();
+	mDataInfo.memory_layout.size = hdr->data.memory_size.unwrap();
 	mDataInfo.is_compressed = hdr->flags.data_compress;
 
-	mBssSize = hdr->bss.memory_size.get();
+	mBssSize = hdr->bss.memory_size.unwrap();
 }
 
-const fnd::Vec<byte_t>& nn::hac::KernelInitialProcessHeader::getBytes() const
+const tc::ByteData& nn::hac::KernelInitialProcessHeader::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::KernelInitialProcessHeader::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mName.clear();
 	mTitleId = 0;
 	mVersion = 0;

@@ -1,15 +1,13 @@
 #pragma once
 #include <string>
 #include <cstring>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/cnmt.h>
 
 namespace nn
 {
 namespace hac
 {
-	class ContentInfo :
-		public fnd::IByteModel
+	class ContentInfo
 	{
 	public:
 		ContentInfo();
@@ -22,16 +20,16 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
 
-		const fnd::sha::sSha256Hash& getContentHash() const;
-		void setContentHash(const fnd::sha::sSha256Hash& hash);
+		const nn::hac::detail::sha256_hash_t& getContentHash() const;
+		void setContentHash(const nn::hac::detail::sha256_hash_t& hash);
 
-		const cnmt::sContentId& getContentId() const;
-		void setContentId(const cnmt::sContentId& content_id);
+		const cnmt::content_id_t& getContentId() const;
+		void setContentId(const cnmt::content_id_t& content_id);
 
 		size_t getContentSize() const;
 		void setContentSize(size_t size);
@@ -46,11 +44,11 @@ namespace hac
 		const std::string kModuleName = "CONTENT_INFO";
 
 		// binary blob
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
-		fnd::sha::sSha256Hash mHash;
-		cnmt::sContentId mContentId;
+		nn::hac::detail::sha256_hash_t mHash;
+		cnmt::content_id_t mContentId;
 		size_t mSize;
 		cnmt::ContentType mType;
 		byte_t mIdOffset;

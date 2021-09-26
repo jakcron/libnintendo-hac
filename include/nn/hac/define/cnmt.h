@@ -1,7 +1,5 @@
 #pragma once
 #include <nn/hac/define/types.h>
-#include <fnd/sha.h>
-#include <nn/hac/define/types.h>
 
 namespace nn
 {
@@ -65,20 +63,20 @@ namespace hac
 			Compacted
 		};
 		
-		using ContentMetaAttribute = std::bitset<8>;
+		using content_meta_attribute_t = tc::bn::bitarray<sizeof(byte_t)>;
 
 		enum class InstallStateFlag
 		{
 			Committed
 		};
 
-		using InstallState = std::bitset<8>;
+		using install_state_t = tc::bn::bitarray<sizeof(byte_t)>;
 
 		static const size_t kContentIdLen = 0x10;
-		using sContentId = std::array<byte_t, kContentIdLen>;
+		using content_id_t = std::array<byte_t, kContentIdLen>;
 
 		static const size_t kDigestLen = 0x20;
-		using sDigest = std::array<byte_t, kDigestLen>;
+		using digest_t = detail::sha256_hash_t;
 	}
 
 
@@ -97,28 +95,28 @@ namespace hac
 
 	struct sContentMetaHeader
 	{
-		le_uint64_t id;
-		le_uint32_t version;
+		tc::bn::le64<uint64_t> id;
+		tc::bn::le32<uint32_t> version;
 		byte_t type;
 		byte_t reserved_0;
-		le_uint16_t exhdr_size;
-		le_uint16_t content_count;
-		le_uint16_t content_meta_count;
-		byte_t attributes;
+		tc::bn::le16<uint16_t> exhdr_size;
+		tc::bn::le16<uint16_t> content_count;
+		tc::bn::le16<uint16_t> content_meta_count;
+		cnmt::content_meta_attribute_t attributes;
 		byte_t storage_id;
 		byte_t install_type;
-		byte_t install_state;
-		le_uint32_t required_download_system_version;
-		byte_t reserved_1[4];
+		cnmt::install_state_t install_state;
+		tc::bn::le32<uint32_t> required_download_system_version;
+		std::array<byte_t, 0x4> reserved_1;
 	};
 	static_assert(sizeof(sContentMetaHeader) == 0x20, "sContentMetaHeader size.");
 
 	struct sContentInfo
 	{
-		fnd::sha::sSha256Hash content_hash;
-		cnmt::sContentId content_id;
-		le_uint32_t size_lower;
-		le_uint16_t size_higher;
+		detail::sha256_hash_t content_hash;
+		cnmt::content_id_t content_id;
+		tc::bn::le32<uint32_t> size_lower;
+		tc::bn::le16<uint16_t> size_higher;
 		byte_t content_type;
 		byte_t id_offset;
 	};
@@ -126,50 +124,50 @@ namespace hac
 
 	struct sContentMetaInfo
 	{
-		le_uint64_t id;
-		le_uint32_t version;
+		tc::bn::le64<uint64_t> id;
+		tc::bn::le32<uint32_t> version;
 		byte_t type;
-		byte_t attributes;
-		byte_t reserved[2];
+		cnmt::content_meta_attribute_t attributes;
+		std::array<byte_t, 0x2> reserved;
 	};
 	static_assert(sizeof(sContentMetaInfo) == 0x10, "sContentMetaInfo size.");
 
 	struct sApplicationMetaExtendedHeader
 	{
-		le_uint64_t patch_id;
-		le_uint32_t required_system_version;
-		le_uint32_t required_application_version;
+		tc::bn::le64<uint64_t> patch_id;
+		tc::bn::le32<uint32_t> required_system_version;
+		tc::bn::le32<uint32_t> required_application_version;
 	};
 	static_assert(sizeof(sApplicationMetaExtendedHeader) == 0x10, "sApplicationMetaExtendedHeader size.");
 
 	struct sPatchMetaExtendedHeader
 	{
-		le_uint64_t application_id;
-		le_uint32_t required_system_version;
-		le_uint32_t extended_data_size;
-		byte_t reserved[8];
+		tc::bn::le64<uint64_t> application_id;
+		tc::bn::le32<uint32_t> required_system_version;
+		tc::bn::le32<uint32_t> extended_data_size;
+		std::array<byte_t, 0x8> reserved;
 	};
 	static_assert(sizeof(sPatchMetaExtendedHeader) == 0x18, "sPatchMetaExtendedHeader size.");
 
 	struct sAddOnContentMetaExtendedHeader
 	{
-		le_uint64_t application_id;
-		le_uint32_t required_application_version;
-		byte_t reserved[4];
+		tc::bn::le64<uint64_t> application_id;
+		tc::bn::le32<uint32_t> required_application_version;
+		std::array<byte_t, 0x4> reserved;
 	};
 	static_assert(sizeof(sAddOnContentMetaExtendedHeader) == 0x10, "sAddOnContentMetaExtendedHeader size.");
 
 	struct sDeltaMetaExtendedHeader
 	{
-		le_uint64_t application_id;
-		le_uint32_t extended_data_size;
-		byte_t reserved[4];
+		tc::bn::le64<uint64_t> application_id;
+		tc::bn::le32<uint32_t> extended_data_size;
+		std::array<byte_t, 0x4> reserved;
 	};
 	static_assert(sizeof(sDeltaMetaExtendedHeader) == 0x10, "sDeltaMetaExtendedHeader size.");
 
 	struct sSystemUpdateMetaExtendedHeader
 	{
-		le_uint32_t extended_data_size;
+		tc::bn::le32<uint32_t> extended_data_size;
 	};
 	static_assert(sizeof(sSystemUpdateMetaExtendedHeader) == 0x4, "sSystemUpdateMetaExtendedHeader size.");
 
@@ -183,7 +181,7 @@ namespace hac
 		}
 		else if (header.version == 2)
 		{
-			le_uint32_t firmware_variation_id[header.variation_count];
+			tc::bn::le32<uint32_t> firmware_variation_id[header.variation_count];
 			sFirmwareVariationInfo_v2 variation_info[header.variation_count];
 			sContentMetaInfo content_meta_info[total of variation_infos.meta_count IF refer_to_base is false]
 		}
@@ -196,24 +194,24 @@ namespace hac
 
 	struct sSystemUpdateMetaExtendedDataHeader
 	{
-		le_uint32_t version;
-		le_uint32_t variation_count;
+		tc::bn::le32<uint32_t> version;
+		tc::bn::le32<uint32_t> variation_count;
 	};
 	static_assert(sizeof(sSystemUpdateMetaExtendedDataHeader) == 0x8, "sSystemUpdateMetaExtendedDataHeader size.");
 
 	struct sFirmwareVariationInfo_v1
 	{
-		le_uint32_t firmware_variation_id;
-		byte_t reserved_x04[0x1C];
+		tc::bn::le32<uint32_t> firmware_variation_id;
+		std::array<byte_t, 0x1C> reserved_x04;
 	};
 	static_assert(sizeof(sFirmwareVariationInfo_v1) == 0x20, "sFirmwareVariationInfo_v1 size.");
 
 	struct sFirmwareVariationInfo_v2
 	{
 		byte_t refer_to_base;
-		byte_t reserved_x01[3];
-		le_uint32_t meta_count;
-		byte_t reserved_x08[24];
+		std::array<byte_t, 0x3> reserved_x01;
+		tc::bn::le32<uint32_t> meta_count;
+		std::array<byte_t, 0x18> reserved_x08;
 	};
 	static_assert(sizeof(sFirmwareVariationInfo_v2) == 0x20, "sFirmwareVariationInfo_v2 size.");
 

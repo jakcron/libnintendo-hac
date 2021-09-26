@@ -25,7 +25,9 @@ void nn::hac::AccessControlInfoDesc::operator=(const AccessControlInfoDesc & oth
 
 bool nn::hac::AccessControlInfoDesc::operator==(const AccessControlInfoDesc & other) const
 {
-	return (mContentArchiveHeaderSignature2Key == other.mContentArchiveHeaderSignature2Key) \
+	return (mContentArchiveHeaderSignature2Key.n == other.mContentArchiveHeaderSignature2Key.n) \
+		&& (mContentArchiveHeaderSignature2Key.e == other.mContentArchiveHeaderSignature2Key.e) \
+		&& (mContentArchiveHeaderSignature2Key.d == other.mContentArchiveHeaderSignature2Key.d) \
 		&& (mProductionFlag == other.mProductionFlag) \
 		&& (mUnqualifiedApprovalFlag == other.mUnqualifiedApprovalFlag) \
 		&& (mMemoryRegion == other.mMemoryRegion) \
@@ -52,46 +54,54 @@ void nn::hac::AccessControlInfoDesc::toBytes()
 		uint32_t offset, size;
 	} fac, sac, kc;
 
-	fac.offset = (uint32_t)align(sizeof(sAciDescHeader), aci::kSectionAlignSize);
+	fac.offset = (uint32_t)align<size_t>(sizeof(sAciDescHeader), aci::kSectionAlignSize);
 	fac.size = (uint32_t)mFileSystemAccessControl.getBytes().size();
-	sac.offset = (uint32_t)align(fac.offset + fac.size, aci::kSectionAlignSize);
+	sac.offset = (uint32_t)align<size_t>(fac.offset + fac.size, aci::kSectionAlignSize);
 	sac.size = (uint32_t)mServiceAccessControl.getBytes().size();
-	kc.offset = (uint32_t)align(sac.offset + sac.size, aci::kSectionAlignSize);
+	kc.offset = (uint32_t)align<size_t>(sac.offset + sac.size, aci::kSectionAlignSize);
 	kc.size = (uint32_t)mKernelCapabilities.getBytes().size();
 
 	// get total size
-	size_t total_size = _MAX(_MAX(fac.offset + fac.size, sac.offset + sac.size), kc.offset + kc.size); 
+	size_t total_size = std::max<uint32_t>(std::max<uint32_t>(fac.offset + fac.size, sac.offset + sac.size), kc.offset + kc.size); 
 
-	mRawBinary.alloc(total_size);
+	mRawBinary = tc::ByteData(total_size);
 	sAciDescHeader* hdr = (sAciDescHeader*)mRawBinary.data();
 
 	// set rsa modulus
-	memcpy(hdr->nca_rsa_signature2_modulus, mContentArchiveHeaderSignature2Key.modulus, fnd::rsa::kRsa2048Size);
+	if (mContentArchiveHeaderSignature2Key.n.size() == hdr->nca_rsa_signature2_modulus.size())
+	{
+		memcpy(hdr->nca_rsa_signature2_modulus.data(), mContentArchiveHeaderSignature2Key.n.data(), hdr->nca_rsa_signature2_modulus.size());
+	}
+	else
+	{
+		// print warning when modulus isn't expected length?
+		memset(hdr->nca_rsa_signature2_modulus.data(), 0x00, hdr->nca_rsa_signature2_modulus.size());
+	}
 
 	// set type
-	hdr->st_magic = aci::kAciDescStructMagic;
+	hdr->st_magic.wrap(aci::kAciDescStructMagic);
 
 	// set "acid size"
-	hdr->signed_size = (uint32_t)(total_size - fnd::rsa::kRsa2048Size);
+	hdr->signed_size.wrap((uint32_t)(total_size - sizeof(detail::rsa2048_signature_t)));
 
 	// set flags
 	sAciDescHeaderFlag flags;
 	flags.production = mProductionFlag;
 	flags.unqualified_approval = mUnqualifiedApprovalFlag;
 	flags.memory_region = (byte_t)mMemoryRegion;
-	hdr->flags = flags.raw;
+	hdr->flags.wrap(flags.raw);
 
 	// set program id restrict settings
-	hdr->program_id_min = mProgramIdRestrict.min;
-	hdr->program_id_max = mProgramIdRestrict.max;
+	hdr->program_id_min.wrap(mProgramIdRestrict.min);
+	hdr->program_id_max.wrap(mProgramIdRestrict.max);
 
 	// set offset/size
-	hdr->fac.offset = fac.offset;
-	hdr->fac.size = fac.size;
-	hdr->sac.offset = sac.offset;
-	hdr->sac.size = sac.size;
-	hdr->kc.offset = kc.offset;
-	hdr->kc.size = kc.size;
+	hdr->fac.offset.wrap(fac.offset);
+	hdr->fac.size.wrap(fac.size);
+	hdr->sac.offset.wrap(sac.offset);
+	hdr->sac.size.wrap(sac.size);
+	hdr->kc.offset.wrap(kc.offset);
+	hdr->kc.size.wrap(kc.size);
 
 	// write data
 	memcpy(mRawBinary.data() + fac.offset, mFileSystemAccessControl.getBytes().data(), fac.size);
@@ -104,7 +114,7 @@ void nn::hac::AccessControlInfoDesc::fromBytes(const byte_t* data, size_t len)
 	// check size
 	if (len < sizeof(sAciDescHeader))
 	{
-		throw fnd::Exception(kModuleName, "AccessControlInfoDesc binary is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "AccessControlInfoDesc binary is too small");
 	}
 	
 	// clear variables
@@ -115,81 +125,81 @@ void nn::hac::AccessControlInfoDesc::fromBytes(const byte_t* data, size_t len)
 	memcpy((void*)&hdr, data, sizeof(sAciDescHeader));
 
 	// check magic
-	if (hdr.st_magic.get() != aci::kAciDescStructMagic)
+	if (hdr.st_magic.unwrap() != aci::kAciDescStructMagic)
 	{
-		throw fnd::Exception(kModuleName, "AccessControlInfoDesc header corrupt");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "AccessControlInfoDesc header corrupt");
 	}
 	
 	// get total size
-	size_t total_size = _MAX(_MAX(hdr.fac.offset.get() + hdr.fac.size.get(), hdr.sac.offset.get() + hdr.sac.size.get()), hdr.kc.offset.get() + hdr.kc.size.get()); 
+	size_t total_size = std::max<uint32_t>(std::max<uint32_t>(hdr.fac.offset.unwrap() + hdr.fac.size.unwrap(), hdr.sac.offset.unwrap() + hdr.sac.size.unwrap()), hdr.kc.offset.unwrap() + hdr.kc.size.unwrap()); 
 
 	// validate binary size
 	if (len < total_size)
 	{
-		throw fnd::Exception(kModuleName, "AccessControlInfoDesc binary is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "AccessControlInfoDesc binary is too small");
 	}
 
 	// allocate memory for header
-	mRawBinary.alloc(total_size);
+	mRawBinary = tc::ByteData(total_size);
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	// save variables
-	memcpy(mContentArchiveHeaderSignature2Key.modulus, hdr.nca_rsa_signature2_modulus, fnd::rsa::kRsa2048Size);
+	mContentArchiveHeaderSignature2Key = tc::crypto::RsaPublicKey(hdr.nca_rsa_signature2_modulus.data(), hdr.nca_rsa_signature2_modulus.size());
 
 	// acid flags
 	sAciDescHeaderFlag flags;
-	flags.raw = hdr.flags.get();
+	flags.raw = hdr.flags.unwrap();
 	mProductionFlag = flags.production;
 	mUnqualifiedApprovalFlag = flags.unqualified_approval;
 	mMemoryRegion = aci::MemoryRegion(flags.memory_region);
 
 	// program id
-	mProgramIdRestrict.min = hdr.program_id_min.get();
-	mProgramIdRestrict.max = hdr.program_id_max.get();
+	mProgramIdRestrict.min = hdr.program_id_min.unwrap();
+	mProgramIdRestrict.max = hdr.program_id_max.unwrap();
 
 	// fac,sac,kc
-	mFileSystemAccessControl.fromBytes(mRawBinary.data() + hdr.fac.offset.get(), hdr.fac.size.get());
-	mServiceAccessControl.fromBytes(mRawBinary.data() + hdr.sac.offset.get(), hdr.sac.size.get());
-	mKernelCapabilities.fromBytes(mRawBinary.data() + hdr.kc.offset.get(), hdr.kc.size.get());
+	mFileSystemAccessControl.fromBytes(mRawBinary.data() + hdr.fac.offset.unwrap(), hdr.fac.size.unwrap());
+	mServiceAccessControl.fromBytes(mRawBinary.data() + hdr.sac.offset.unwrap(), hdr.sac.size.unwrap());
+	mKernelCapabilities.fromBytes(mRawBinary.data() + hdr.kc.offset.unwrap(), hdr.kc.size.unwrap());
 }
 
-const fnd::Vec<byte_t>& nn::hac::AccessControlInfoDesc::getBytes() const
+const tc::ByteData& nn::hac::AccessControlInfoDesc::getBytes() const
 {
 	return mRawBinary;
 }
 
-void nn::hac::AccessControlInfoDesc::generateSignature(const fnd::rsa::sRsa2048Key& key)
+void nn::hac::AccessControlInfoDesc::generateSignature(const tc::crypto::RsaKey& key)
 {
 	if (mRawBinary.size() == 0)
 		toBytes();
 
-	byte_t hash[fnd::sha::kSha256HashLen];
-	fnd::sha::Sha256(mRawBinary.data() + fnd::rsa::kRsa2048Size, mRawBinary.size() - fnd::rsa::kRsa2048Size, hash);
+	detail::sha256_hash_t hash;
+	tc::crypto::GenerateSha256Hash(hash.data(), mRawBinary.data() + sizeof(detail::rsa2048_signature_t), mRawBinary.size() - sizeof(detail::rsa2048_signature_t));
 
-	if (fnd::rsa::pss::rsaSign(key, fnd::sha::HASH_SHA256, hash, mRawBinary.data()) != 0)
+	if (tc::crypto::SignRsa2048PssSha256(mRawBinary.data(), hash.data(), key) == false)
 	{
-		throw fnd::Exception(kModuleName, "Failed to sign Access Control Info Desc");
+		throw tc::crypto::CryptoException(kModuleName, "Failed to sign Access Control Info Desc");
 	}
 }
 
-void nn::hac::AccessControlInfoDesc::validateSignature(const fnd::rsa::sRsa2048Key& key) const
+void nn::hac::AccessControlInfoDesc::validateSignature(const tc::crypto::RsaKey& key) const
 {
 	if (mRawBinary.size() == 0)
 		throw fnd::Exception(kModuleName, "No Access Control Info Desc binary exists to verify");
 
-	byte_t hash[fnd::sha::kSha256HashLen];
-	fnd::sha::Sha256(mRawBinary.data() + fnd::rsa::kRsa2048Size, mRawBinary.size() - fnd::rsa::kRsa2048Size, hash);
+	detail::sha256_hash_t hash;
+	tc::crypto::GenerateSha256Hash(hash.data(), mRawBinary.data() + sizeof(detail::rsa2048_signature_t), mRawBinary.size() - sizeof(detail::rsa2048_signature_t));
 
-	if (fnd::rsa::pss::rsaVerify(key, fnd::sha::HASH_SHA256, hash, mRawBinary.data()) != 0)
+	if (tc::crypto::VerifyRsa2048PssSha256(mRawBinary.data(), hash.data(), key) == false)
 	{
-		throw fnd::Exception(kModuleName, "Failed to verify Access Control Info Desc");
+		throw tc::crypto::CryptoException(kModuleName, "Failed to verify Access Control Info Desc");
 	}
 }
 
 void nn::hac::AccessControlInfoDesc::clear()
 {
-	mRawBinary.clear();
-	memset((void*)&mContentArchiveHeaderSignature2Key, 0, sizeof(mContentArchiveHeaderSignature2Key));
+	mRawBinary = tc::ByteData();
+	mContentArchiveHeaderSignature2Key = tc::crypto::RsaKey();
 	mProductionFlag = false;
 	mUnqualifiedApprovalFlag = false;
 	mMemoryRegion = aci::MemoryRegion::Application;
@@ -200,12 +210,12 @@ void nn::hac::AccessControlInfoDesc::clear()
 	mKernelCapabilities.clear();
 }
 
-const fnd::rsa::sRsa2048Key& nn::hac::AccessControlInfoDesc::getContentArchiveHeaderSignature2Key() const
+const tc::crypto::RsaKey& nn::hac::AccessControlInfoDesc::getContentArchiveHeaderSignature2Key() const
 {
 	return mContentArchiveHeaderSignature2Key;
 }
 
-void nn::hac::AccessControlInfoDesc::setContentArchiveHeaderSignature2Key(const fnd::rsa::sRsa2048Key& key)
+void nn::hac::AccessControlInfoDesc::setContentArchiveHeaderSignature2Key(const tc::crypto::RsaKey& key)
 {
 	mContentArchiveHeaderSignature2Key = key;
 }

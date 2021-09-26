@@ -1,14 +1,13 @@
 #pragma once
 #include <nn/hac/define/gc.h>
-#include <fnd/IByteModel.h>
-#include <fnd/List.h>
+
+#include <tc/NotImplementedException.h>
 
 namespace nn
 {
 namespace hac
 {
-	class GameCardHeader :
-		public fnd::IByteModel
+	class GameCardHeader
 	{
 	public:
 		GameCardHeader();
@@ -21,7 +20,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -43,16 +42,16 @@ namespace hac
 		void setPackageId(uint64_t id);
 		uint32_t getValidDataEndPage() const;
 		void setValidDataEndPage(uint32_t page);
-		const fnd::aes::sAesIvCtr& getAesCbcIv() const;
-		void setAesCbcIv(const fnd::aes::sAesIvCtr& iv);
+		const nn::hac::detail::aes_iv_t& getAesCbcIv() const;
+		void setAesCbcIv(const nn::hac::detail::aes_iv_t& iv);
 		uint64_t getPartitionFsAddress() const;
 		void setPartitionFsAddress(uint64_t address);
 		uint64_t getPartitionFsSize() const;
 		void setPartitionFsSize(uint64_t size);
-		const fnd::sha::sSha256Hash& getPartitionFsHash() const;
-		void setPartitionFsHash(const fnd::sha::sSha256Hash& hash);
-		const fnd::sha::sSha256Hash& getInitialDataHash() const;
-		void setInitialDataHash(const fnd::sha::sSha256Hash& hash);
+		const nn::hac::detail::sha256_hash_t& getPartitionFsHash() const;
+		void setPartitionFsHash(const nn::hac::detail::sha256_hash_t& hash);
+		const nn::hac::detail::sha256_hash_t& getInitialDataHash() const;
+		void setInitialDataHash(const nn::hac::detail::sha256_hash_t& hash);
 		uint32_t getSelSec() const;
 		void setSelSec(uint32_t sel_sec);
 		uint32_t getSelT1Key() const;
@@ -80,8 +79,8 @@ namespace hac
 		void setUppVersion(uint32_t version);
 		byte_t getCompatibilityType() const;
 		void setCompatibilityType(byte_t compat_type);
-		const byte_t* getUppHash() const;
-		void setUppHash(const byte_t* hash);
+		const nn::hac::gc::upp_hash_t& getUppHash() const;
+		void setUppHash(const nn::hac::gc::upp_hash_t& hash);
 		uint64_t getUppId() const;
 		void setUppId(uint64_t id);
 
@@ -89,7 +88,7 @@ namespace hac
 		const std::string kModuleName = "GAMECARD_HEADER";
 
 		// binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// data
 		uint32_t mRomAreaStartPage;
@@ -101,11 +100,11 @@ namespace hac
 		byte_t mFlags;
 		uint64_t mPackageId;
 		uint32_t mValidDataEndPage;
-		fnd::aes::sAesIvCtr mAesCbcIv;
+		nn::hac::detail::aes_iv_t mAesCbcIv;
 		uint64_t mPartitionFsHeaderAddress;
 		uint64_t mPartitionFsHeaderSize;
-		fnd::sha::sSha256Hash mPartitionFsHeaderHash;
-		fnd::sha::sSha256Hash mInitialDataHash;
+		nn::hac::detail::sha256_hash_t mPartitionFsHeaderHash;
+		nn::hac::detail::sha256_hash_t mInitialDataHash;
 		uint32_t mSelSec;
 		uint32_t mSelT1Key;
 		uint32_t mSelKey;
@@ -121,7 +120,7 @@ namespace hac
 		uint32_t mFwMode;
 		uint32_t mUppVersion;
 		byte_t mCompatibilityType;
-		byte_t mUppHash[8];
+		nn::hac::gc::upp_hash_t mUppHash;
 		uint64_t mUppId;
 	};
 }

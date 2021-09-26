@@ -50,7 +50,7 @@ void nn::hac::KernelVersionEntry::setKernelCapability(const KernelCapabilityEntr
 {
 	if (kernel_cap.getType() != kCapId)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'KernelVersion'");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry is not type 'KernelVersion'");
 	}
 
 	mCap = kernel_cap;
@@ -66,7 +66,7 @@ void nn::hac::KernelVersionEntry::setVerMajor(uint16_t major)
 {
 	if (major > kVerMajorMax)
 	{
-		throw fnd::Exception(kModuleName, "Illegal KernelVersionMajor. (range: 0-0x1fff)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal KernelVersionMajor. (range: 0-0x1fff)");
 	}
 
 	mVerMajor = major;
@@ -82,7 +82,7 @@ void nn::hac::KernelVersionEntry::setVerMinor(uint8_t minor)
 {
 	if (minor > kVerMinorMax)
 	{
-		throw fnd::Exception(kModuleName, "Illegal KernelVersionMinor. (range: 0-0xf)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal KernelVersionMinor. (range: 0-0xf)");
 	}
 
 	mVerMinor = minor;

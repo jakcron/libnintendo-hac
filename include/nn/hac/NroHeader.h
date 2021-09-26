@@ -1,37 +1,13 @@
 #pragma once
-#include <cstring>
 #include <nn/hac/define/nro.h>
-#include <fnd/IByteModel.h>
-#include <fnd/List.h>
 
 namespace nn
 {
 namespace hac
 {
-	class NroHeader :
-		public fnd::IByteModel
+	class NroHeader
 	{
 	public:
-		struct sModuleId
-		{
-			byte_t data[nro::kModuleIdSize];
-
-			void operator=(const sModuleId& other)
-			{
-				memcpy(data, other.data, nro::kModuleIdSize);
-			}
-
-			bool operator==(const sModuleId& other) const
-			{
-				return memcmp(data, other.data, nro::kModuleIdSize) == 0;
-			}
-
-			bool operator!=(const sModuleId& other) const
-			{
-				return !(*this == other);
-			}
-		};
-
 		struct sSection
 		{
 			uint32_t memory_offset;
@@ -65,7 +41,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -91,8 +67,8 @@ namespace hac
 		uint32_t getBssSize() const;
 		void setBssSize(uint32_t size);
 
-		const sModuleId& getModuleId() const;
-		void setModuleId(const sModuleId& id);
+		const nn::hac::nro::module_id_t& getModuleId() const;
+		void setModuleId(const nn::hac::nro::module_id_t& id);
 
 		const sSection& getRoEmbeddedInfo() const;
 		void setRoEmbeddedInfo(const sSection& info);
@@ -106,7 +82,7 @@ namespace hac
 		const std::string kModuleName = "NRO_HEADER";
 
 		// binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// data
 		uint32_t mRoCrtEntryPoint;
@@ -116,7 +92,7 @@ namespace hac
 		sSection mRoInfo;
 		sSection mDataInfo;
 		uint32_t mBssSize;
-		sModuleId mModuleId;
+		nn::hac::nro::module_id_t mModuleId;
 		sSection mRoEmbeddedInfo;
 		sSection mRoDynStrInfo;
 		sSection mRoDynSymInfo;

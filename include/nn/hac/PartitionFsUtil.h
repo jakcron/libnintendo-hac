@@ -1,7 +1,6 @@
 #pragma once
 #include <nn/hac/define/pfs.h>
 #include <nn/hac/PartitionFsHeader.h>
-#include <string>
 
 namespace nn
 {

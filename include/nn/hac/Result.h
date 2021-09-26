@@ -31,7 +31,7 @@ namespace hac
 		static const uint32_t kDescriptionBitPos = 9;
 		static const uint32_t kSubDescriptionBitWidth = 10;
 		static const uint32_t kSubDescriptionBitPos = 22;
-		inline uint32_t bitWidthToMask(uint32_t bit_width) const { return _BIT(bit_width) - 1; }
+		inline uint32_t bitWidthToMask(uint32_t bit_width) const { return (1 << bit_width) - 1; }
 
 		uint32_t mResult;
 	};

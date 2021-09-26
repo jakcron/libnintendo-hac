@@ -36,7 +36,7 @@ void nn::hac::ContentMeta::operator=(const ContentMeta& other)
 		mPatchMetaExtendedData = other.mPatchMetaExtendedData;
 		mDeltaMetaExtendedData = other.mDeltaMetaExtendedData;
 		mSystemUpdateMetaExtendedData = other.mSystemUpdateMetaExtendedData;
-		memcpy(mDigest.data(), other.mDigest.data(), cnmt::kDigestLen);
+		memcpy(mDigest.data(), other.mDigest.data(), mDigest.size());
 	}
 }
 
@@ -59,7 +59,7 @@ bool nn::hac::ContentMeta::operator==(const ContentMeta& other) const
 		&& (mPatchMetaExtendedData == other.mPatchMetaExtendedData) \
 		&& (mDeltaMetaExtendedData == other.mDeltaMetaExtendedData) \
 		&& (mSystemUpdateMetaExtendedData == other.mSystemUpdateMetaExtendedData) \
-		&& (memcmp(mDigest.data(), other.mDigest.data(), cnmt::kDigestLen) == 0);
+		&& (memcmp(mDigest.data(), other.mDigest.data(), mDigest.size()) == 0);
 }
 
 bool nn::hac::ContentMeta::operator!=(const ContentMeta& other) const
@@ -69,7 +69,7 @@ bool nn::hac::ContentMeta::operator!=(const ContentMeta& other) const
 
 void nn::hac::ContentMeta::toBytes()
 {
-	throw fnd::Exception(kModuleName, "toBytes() not implemented");
+	throw tc::NotImplementedException(kModuleName, "toBytes() not implemented");
 }
 
 void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
@@ -83,54 +83,66 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	// get pointer to header structure
 	const sContentMetaHeader* hdr = (const sContentMetaHeader*)data;
 
-	mTitleId = hdr->id.get();
-	mTitleVersion = hdr->version.get();
+	mTitleId = hdr->id.unwrap();
+	mTitleVersion = hdr->version.unwrap();
 	mType = (cnmt::ContentMetaType)hdr->type;
-	mAttribute = hdr->attributes;
+	for (size_t i = 0; i < hdr->attributes.bit_size(); i++)
+	{
+		if (hdr->attributes.test(i))
+		{
+			mAttribute.push_back((cnmt::ContentMetaAttributeFlag)i);
+		}
+	}
 	mStorageId = cnmt::StorageId(hdr->storage_id);
 	mContentInstallType = cnmt::ContentInstallType(hdr->install_type);
-	mInstallState = hdr->install_state;
-	mRequiredDownloadSystemVersion = hdr->required_download_system_version.get();
+	for (size_t i = 0; i < hdr->install_state.bit_size(); i++)
+	{
+		if (hdr->install_state.test(i))
+		{
+			mInstallState.push_back((cnmt::InstallStateFlag)i);
+		}
+	}
+	mRequiredDownloadSystemVersion = hdr->required_download_system_version.unwrap();
 	size_t exdata_size = 0;
 
 	// save exheader
-	if (hdr->exhdr_size.get() > 0)
+	if (hdr->exhdr_size.unwrap() > 0)
 	{
 		switch (mType)
 		{
 			case (cnmt::ContentMetaType::Application):
-				mApplicationMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
+				mApplicationMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.unwrap());
 				exdata_size = 0;
 				break;
 			case (cnmt::ContentMetaType::Patch):
-				mPatchMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
+				mPatchMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.unwrap());
 				exdata_size = mPatchMetaExtendedHeader.getExtendedDataSize();
 				break;
 			case (cnmt::ContentMetaType::AddOnContent):
-				mAddOnContentMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
+				mAddOnContentMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.unwrap());
 				exdata_size = 0;
 				break;
 			case (cnmt::ContentMetaType::Delta):
-				mDeltaMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
+				mDeltaMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.unwrap());
 				exdata_size = mDeltaMetaExtendedHeader.getExtendedDataSize();
 				break;
 			case (cnmt::ContentMetaType::SystemUpdate):
-				mSystemUpdateMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.get());
+				mSystemUpdateMetaExtendedHeader.fromBytes(data + getExtendedHeaderOffset(), hdr->exhdr_size.unwrap());
 				exdata_size = mSystemUpdateMetaExtendedHeader.getExtendedDataSize();
 				break;
 			default:
-				throw fnd::Exception(kModuleName, "Unhandled extended header for ContentMeta");
+				throw tc::ArgumentOutOfRangeException(kModuleName, "Unhandled extended header for ContentMeta");
 				//exdata_size = 0;
 				//break;
 		}
 	}
 
 	// save content info
-	if (hdr->content_count.get() > 0)
+	if (hdr->content_count.unwrap() > 0)
 	{
-		const sContentInfo* info = (const sContentInfo*)(data + getContentInfoOffset(hdr->exhdr_size.get()));
+		const sContentInfo* info = (const sContentInfo*)(data + getContentInfoOffset(hdr->exhdr_size.unwrap()));
 		ContentInfo cinfo;
-		for (size_t i = 0; i < hdr->content_count.get(); i++)
+		for (size_t i = 0; i < hdr->content_count.unwrap(); i++)
 		{
 			cinfo.fromBytes((const byte_t*)&info[i], sizeof(sContentInfo));
 			mContentInfo.push_back(cinfo);
@@ -138,11 +150,11 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 	}
 
 	// save content meta info
-	if (hdr->content_meta_count.get() > 0)
+	if (hdr->content_meta_count.unwrap() > 0)
 	{
-		const sContentMetaInfo* info = (const sContentMetaInfo*)(data + getContentMetaInfoOffset(hdr->exhdr_size.get(), hdr->content_count.get()));
+		const sContentMetaInfo* info = (const sContentMetaInfo*)(data + getContentMetaInfoOffset(hdr->exhdr_size.unwrap(), hdr->content_count.unwrap()));
 		ContentMetaInfo cmeta;
-		for (size_t i = 0; i < hdr->content_meta_count.get(); i++)
+		for (size_t i = 0; i < hdr->content_meta_count.unwrap(); i++)
 		{	
 			cmeta.fromBytes((const byte_t*)&info[i], sizeof(sContentMetaInfo));
 			mContentMetaInfo.push_back(cmeta);
@@ -155,47 +167,47 @@ void nn::hac::ContentMeta::fromBytes(const byte_t* data, size_t len)
 		switch (mType)
 		{
 			case (cnmt::ContentMetaType::Patch):
-				mPatchMetaExtendedData.alloc(exdata_size);
-				memcpy(mPatchMetaExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				mPatchMetaExtendedData = tc::ByteData(exdata_size);
+				memcpy(mPatchMetaExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.unwrap(), hdr->content_count.unwrap(), hdr->content_meta_count.unwrap()), exdata_size);
 				break;
 			case (cnmt::ContentMetaType::Delta):
-				mDeltaMetaExtendedData.alloc(exdata_size);
-				memcpy(mDeltaMetaExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				mDeltaMetaExtendedData = tc::ByteData(exdata_size);
+				memcpy(mDeltaMetaExtendedData.data(), data + getExtendedDataOffset(hdr->exhdr_size.unwrap(), hdr->content_count.unwrap(), hdr->content_meta_count.unwrap()), exdata_size);
 				break;
 			case (cnmt::ContentMetaType::SystemUpdate):
-				mSystemUpdateMetaExtendedData.fromBytes(data + getExtendedDataOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get()), exdata_size);
+				mSystemUpdateMetaExtendedData.fromBytes(data + getExtendedDataOffset(hdr->exhdr_size.unwrap(), hdr->content_count.unwrap(), hdr->content_meta_count.unwrap()), exdata_size);
 				break;
 			default:
-				throw fnd::Exception(kModuleName, "Unhandled extended data for ContentMeta");
+				throw tc::ArgumentOutOfRangeException(kModuleName, "Unhandled extended data for ContentMeta");
 				//exdata_size = 0;
 				//break;
 		}
 	}
 
 	// save digest
-	memcpy(mDigest.data(), data + getDigestOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), exdata_size), cnmt::kDigestLen);
+	memcpy(mDigest.data(), data + getDigestOffset(hdr->exhdr_size.unwrap(), hdr->content_count.unwrap(), hdr->content_meta_count.unwrap(), exdata_size), mDigest.size());
 
 	// save raw binary
-	mRawBinary.alloc(getDigestOffset(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), exdata_size) + cnmt::kDigestLen);
+	mRawBinary = tc::ByteData(getDigestOffset(hdr->exhdr_size.unwrap(), hdr->content_count.unwrap(), hdr->content_meta_count.unwrap(), exdata_size) + mDigest.size());
 
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 }
 
-const fnd::Vec<byte_t>& nn::hac::ContentMeta::getBytes() const
+const tc::ByteData& nn::hac::ContentMeta::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::ContentMeta::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mTitleId = 0;
 	mTitleVersion = 0;
 	mType = cnmt::ContentMetaType::SystemProgram;
-	mAttribute = 0;
+	mAttribute.clear();
 	mStorageId = cnmt::StorageId::None;
 	mContentInstallType = cnmt::ContentInstallType::Full;
-	mInstallState = 0;
+	mInstallState.clear();
 	mRequiredDownloadSystemVersion = 0;
 	mApplicationMetaExtendedHeader.clear();
 	mPatchMetaExtendedHeader.clear();
@@ -204,10 +216,10 @@ void nn::hac::ContentMeta::clear()
 	mSystemUpdateMetaExtendedHeader.clear();
 	mContentInfo.clear();
 	mContentMetaInfo.clear();
-	mPatchMetaExtendedData.clear();
-	mDeltaMetaExtendedData.clear();
+	mPatchMetaExtendedData = tc::ByteData();
+	mDeltaMetaExtendedData = tc::ByteData();
 	mSystemUpdateMetaExtendedData.clear();
-	memset(mDigest.data(), 0, cnmt::kDigestLen);
+	memset(mDigest.data(), 0, mDigest.size());
 }
 
 uint64_t nn::hac::ContentMeta::getTitleId() const
@@ -235,17 +247,17 @@ nn::hac::cnmt::ContentMetaType nn::hac::ContentMeta::getContentMetaType() const
 	return mType;
 }
 
-void nn::hac::ContentMeta::setContentMetaType(cnmt::ContentMetaType type)
+void nn::hac::ContentMeta::setContentMetaType(nn::hac::cnmt::ContentMetaType type)
 {
 	mType = type;
 }
 
-const nn::hac::cnmt::ContentMetaAttribute& nn::hac::ContentMeta::getAttribute() const
+const std::vector<nn::hac::cnmt::ContentMetaAttributeFlag>& nn::hac::ContentMeta::getAttribute() const
 {
 	return mAttribute;
 }
 
-void nn::hac::ContentMeta::setAttribute(const nn::hac::cnmt::ContentMetaAttribute& attr)
+void nn::hac::ContentMeta::setAttribute(const std::vector<nn::hac::cnmt::ContentMetaAttributeFlag>& attr)
 {
 	mAttribute = attr;
 }
@@ -270,12 +282,12 @@ void nn::hac::ContentMeta::setContentInstallType(nn::hac::cnmt::ContentInstallTy
 	mContentInstallType = install_type;
 }
 
-nn::hac::cnmt::InstallState nn::hac::ContentMeta::getInstallState() const
+const std::vector<nn::hac::cnmt::InstallStateFlag>& nn::hac::ContentMeta::getInstallState() const
 {
 	return mInstallState;
 }
 
-void nn::hac::ContentMeta::setInstallState(nn::hac::cnmt::InstallState install_state)
+void nn::hac::ContentMeta::setInstallState(const std::vector<nn::hac::cnmt::InstallStateFlag>& install_state)
 {
 	mInstallState = install_state;
 }
@@ -295,7 +307,7 @@ const nn::hac::ApplicationMetaExtendedHeader& nn::hac::ContentMeta::getApplicati
 	return mApplicationMetaExtendedHeader;
 }
 
-void nn::hac::ContentMeta::setApplicationMetaExtendedHeader(const ApplicationMetaExtendedHeader& exhdr)
+void nn::hac::ContentMeta::setApplicationMetaExtendedHeader(const nn::hac::ApplicationMetaExtendedHeader& exhdr)
 {
 	mApplicationMetaExtendedHeader = exhdr;
 }
@@ -305,7 +317,7 @@ const nn::hac::PatchMetaExtendedHeader& nn::hac::ContentMeta::getPatchMetaExtend
 	return mPatchMetaExtendedHeader;
 }
 
-void nn::hac::ContentMeta::setPatchMetaExtendedHeader(const PatchMetaExtendedHeader& exhdr)
+void nn::hac::ContentMeta::setPatchMetaExtendedHeader(const nn::hac::PatchMetaExtendedHeader& exhdr)
 {
 	mPatchMetaExtendedHeader = exhdr;
 }
@@ -315,7 +327,7 @@ const nn::hac::AddOnContentMetaExtendedHeader& nn::hac::ContentMeta::getAddOnCon
 	return mAddOnContentMetaExtendedHeader;
 }
 
-void nn::hac::ContentMeta::setAddOnContentMetaExtendedHeader(const AddOnContentMetaExtendedHeader& exhdr)
+void nn::hac::ContentMeta::setAddOnContentMetaExtendedHeader(const nn::hac::AddOnContentMetaExtendedHeader& exhdr)
 {
 	mAddOnContentMetaExtendedHeader = exhdr;
 }
@@ -325,7 +337,7 @@ const nn::hac::DeltaMetaExtendedHeader& nn::hac::ContentMeta::getDeltaMetaExtend
 	return mDeltaMetaExtendedHeader;
 }
 
-void nn::hac::ContentMeta::setDeltaMetaExtendedHeader(const DeltaMetaExtendedHeader& exhdr)
+void nn::hac::ContentMeta::setDeltaMetaExtendedHeader(const nn::hac::DeltaMetaExtendedHeader& exhdr)
 {
 	mDeltaMetaExtendedHeader = exhdr;
 }
@@ -335,7 +347,7 @@ const nn::hac::SystemUpdateMetaExtendedHeader& nn::hac::ContentMeta::getSystemUp
 	return mSystemUpdateMetaExtendedHeader;
 }
 
-void nn::hac::ContentMeta::setSystemUpdateMetaExtendedHeader(const SystemUpdateMetaExtendedHeader& exhdr)
+void nn::hac::ContentMeta::setSystemUpdateMetaExtendedHeader(const nn::hac::SystemUpdateMetaExtendedHeader& exhdr)
 {
 	mSystemUpdateMetaExtendedHeader = exhdr;
 }
@@ -360,22 +372,22 @@ void nn::hac::ContentMeta::setContentMetaInfo(const std::vector<nn::hac::Content
 	mContentMetaInfo = info;
 }
 
-const fnd::Vec<byte_t> & nn::hac::ContentMeta::getPatchMetaExtendedData() const
+const tc::ByteData & nn::hac::ContentMeta::getPatchMetaExtendedData() const
 {
 	return mPatchMetaExtendedData;
 }
 
-void nn::hac::ContentMeta::setPatchMetaExtendedData(const fnd::Vec<byte_t>& exdata)
+void nn::hac::ContentMeta::setPatchMetaExtendedData(const tc::ByteData& exdata)
 {
 	mPatchMetaExtendedData = exdata;
 }
 
-const fnd::Vec<byte_t> & nn::hac::ContentMeta::getDeltaMetaExtendedData() const
+const tc::ByteData & nn::hac::ContentMeta::getDeltaMetaExtendedData() const
 {
 	return mDeltaMetaExtendedData;
 }
 
-void nn::hac::ContentMeta::setDeltaMetaExtendedData(const fnd::Vec<byte_t>& exdata)
+void nn::hac::ContentMeta::setDeltaMetaExtendedData(const tc::ByteData& exdata)
 {
 	mDeltaMetaExtendedData = exdata;
 }
@@ -385,17 +397,17 @@ const nn::hac::SystemUpdateMetaExtendedData& nn::hac::ContentMeta::getSystemUpda
 	return mSystemUpdateMetaExtendedData;
 }
 
-void nn::hac::ContentMeta::setSystemUpdateMetaExtendedData(const SystemUpdateMetaExtendedData& exdata)
+void nn::hac::ContentMeta::setSystemUpdateMetaExtendedData(const nn::hac::SystemUpdateMetaExtendedData& exdata)
 {
 	mSystemUpdateMetaExtendedData = exdata;
 }
 
-const nn::hac::cnmt::sDigest & nn::hac::ContentMeta::getDigest() const
+const nn::hac::cnmt::digest_t & nn::hac::ContentMeta::getDigest() const
 {
 	return mDigest;
 }
 
-void nn::hac::ContentMeta::setDigest(const nn::hac::cnmt::sDigest& digest)
+void nn::hac::ContentMeta::setDigest(const nn::hac::cnmt::digest_t& digest)
 {
 	mDigest = digest;
 }
@@ -434,17 +446,17 @@ size_t nn::hac::ContentMeta::getExtendedDataSize(cnmt::ContentMetaType type, con
 	if (type == cnmt::ContentMetaType::Patch)
 	{
 		const sPatchMetaExtendedHeader* exhdr = (const sPatchMetaExtendedHeader*)(data);
-		exdata_len = exhdr->extended_data_size.get();
+		exdata_len = exhdr->extended_data_size.unwrap();
 	}
 	else if (type == cnmt::ContentMetaType::Delta)
 	{
 		const sDeltaMetaExtendedHeader* exhdr = (const sDeltaMetaExtendedHeader*)(data);
-		exdata_len = exhdr->extended_data_size.get();
+		exdata_len = exhdr->extended_data_size.unwrap();
 	}
 	else if (type == cnmt::ContentMetaType::SystemUpdate)
 	{
 		const sSystemUpdateMetaExtendedHeader* exhdr = (const sSystemUpdateMetaExtendedHeader*)(data);
-		exdata_len = exhdr->extended_data_size.get();
+		exdata_len = exhdr->extended_data_size.unwrap();
 	}
 	return exdata_len;
 }
@@ -454,27 +466,27 @@ void nn::hac::ContentMeta::validateBinary(const byte_t * data, size_t len) const
 	// check if it is large enough to read the header
 	if (len < sizeof(sContentMetaHeader))
 	{
-		throw fnd::Exception(kModuleName, "Binary too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Binary too small");
 	}
 
 	// get pointer to header structure
 	const sContentMetaHeader* hdr = (const sContentMetaHeader*)data;
 
 	// validate extended header size
-	if (validateExtendedHeaderSize((cnmt::ContentMetaType)hdr->type, hdr->exhdr_size.get()) == false)
+	if (validateExtendedHeaderSize((cnmt::ContentMetaType)hdr->type, hdr->exhdr_size.unwrap()) == false)
 	{
-		throw fnd::Exception(kModuleName, "Invalid extended header size");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Invalid extended header size");
 	}
 
 	// check binary size again for new minimum size
-	if (len < getTotalSize(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), 0))
+	if (len < getTotalSize(hdr->exhdr_size.unwrap(), hdr->content_count.unwrap(), hdr->content_meta_count.unwrap(), 0))
 	{
-		throw fnd::Exception(kModuleName, "Binary too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Binary too small");
 	}
 
 	// check binary size again with extended data size
-	if (len < getTotalSize(hdr->exhdr_size.get(), hdr->content_count.get(), hdr->content_meta_count.get(), getExtendedDataSize((cnmt::ContentMetaType)hdr->type, data + getExtendedHeaderOffset())))
+	if (len < getTotalSize(hdr->exhdr_size.unwrap(), hdr->content_count.unwrap(), hdr->content_meta_count.unwrap(), getExtendedDataSize((cnmt::ContentMetaType)hdr->type, data + getExtendedHeaderOffset())))
 	{
-		throw fnd::Exception(kModuleName, "Binary too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Binary too small");
 	}
 }

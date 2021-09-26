@@ -22,11 +22,11 @@ bool nn::hac::KernelVersionHandler::operator!=(const KernelVersionHandler & othe
 	return !(*this == other);
 }
 
-void nn::hac::KernelVersionHandler::importKernelCapabilityList(const fnd::List<KernelCapabilityEntry>& caps)
+void nn::hac::KernelVersionHandler::importKernelCapabilityList(const std::vector<KernelCapabilityEntry>& caps)
 {
 	if (caps.size() > kMaxKernelCapNum)
 	{ 
-		throw fnd::Exception(kModuleName, "Too many kernel capabilities");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Too many kernel capabilities");
 	}
 
 	if (caps.size() == 0)
@@ -37,12 +37,12 @@ void nn::hac::KernelVersionHandler::importKernelCapabilityList(const fnd::List<K
 	mIsSet = true;
 }
 
-void nn::hac::KernelVersionHandler::exportKernelCapabilityList(fnd::List<KernelCapabilityEntry>& caps) const
+void nn::hac::KernelVersionHandler::exportKernelCapabilityList(std::vector<KernelCapabilityEntry>& caps) const
 {
 	if (isSet() == false)
 		return;
 
-	caps.addElement(mEntry.getKernelCapability());
+	caps.push_back(mEntry.getKernelCapability());
 }
 
 void nn::hac::KernelVersionHandler::clear()

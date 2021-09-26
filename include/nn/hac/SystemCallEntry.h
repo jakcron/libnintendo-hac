@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
@@ -33,8 +32,8 @@ namespace hac
 		static const kc::KernelCapId kCapId = kc::KernelCapId::EnableSystemCalls;
 		static const uint32_t kSysCallUpperBits = 3;
 		static const uint32_t kSysCallLowerBits = 24;
-		static const uint32_t kSysCallUpperMax = _BIT(kSysCallUpperBits) - 1;
-		static const uint32_t kSysCallLowerMax = _BIT(kSysCallLowerBits) - 1;
+		static const uint32_t kSysCallUpperMax = (1 << kSysCallUpperBits) - 1;
+		static const uint32_t kSysCallLowerMax = (1 << kSysCallLowerBits) - 1;
 
 		KernelCapabilityEntry mCap;
 		uint32_t mSystemCallUpper;

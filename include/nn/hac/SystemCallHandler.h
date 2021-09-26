@@ -16,8 +16,8 @@ namespace hac
 		bool operator!=(const SystemCallHandler& other) const;
 
 		// kernel capabilty list in/out
-		void importKernelCapabilityList(const fnd::List<KernelCapabilityEntry>& caps);
-		void exportKernelCapabilityList(fnd::List<KernelCapabilityEntry>& caps) const;
+		void importKernelCapabilityList(const std::vector<KernelCapabilityEntry>& caps);
+		void exportKernelCapabilityList(std::vector<KernelCapabilityEntry>& caps) const;
 		void clear();
 		bool isSet() const;
 

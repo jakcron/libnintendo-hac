@@ -44,7 +44,7 @@ void nn::hac::MiscParamsEntry::setKernelCapability(const KernelCapabilityEntry &
 {
 	if (kernel_cap.getType() != kCapId)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'ThreadInfo'");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry is not type 'ThreadInfo'");
 	}
 
 	mCap = kernel_cap;
@@ -60,7 +60,7 @@ void nn::hac::MiscParamsEntry::setProgramType(nn::hac::kc::ProgramType type)
 {
 	if ((byte_t)type > kMaxProgramType)
 	{
-		throw fnd::Exception(kModuleName, "Illegal ProgramType. (range: 0-7 inclusive)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal ProgramType. (range: 0-7 inclusive)");
 	}
 
 	mProgramType = type;

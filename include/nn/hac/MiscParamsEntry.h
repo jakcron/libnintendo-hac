@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
@@ -29,7 +28,7 @@ namespace hac
 		const std::string kModuleName = "MISC_PARAMS_ENTRY";
 		static const kc::KernelCapId kCapId = kc::KernelCapId::MiscParams;
 		static const byte_t kValBits = 3;
-		static const byte_t kMaxProgramType = _BIT(kValBits)-1;
+		static const byte_t kMaxProgramType = (1 << kValBits) - 1;
 
 		KernelCapabilityEntry mCap;
 		kc::ProgramType mProgramType;

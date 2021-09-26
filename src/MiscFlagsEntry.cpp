@@ -44,7 +44,7 @@ void nn::hac::MiscFlagsEntry::setKernelCapability(const KernelCapabilityEntry & 
 {
 	if (kernel_cap.getType() != kCapId)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'MiscFlags'");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry is not type 'MiscFlags'");
 	}
 
 	mCap = kernel_cap;
@@ -60,7 +60,7 @@ void nn::hac::MiscFlagsEntry::setFlags(uint32_t flags)
 {
 	if ((flags & ~kMaxVal) != 0)
 	{
-		throw fnd::Exception(kModuleName, "Illegal MiscFlag bits set. (settable bits: 0-14 inclusive)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal MiscFlag bits set. (settable bits: 0-14 inclusive)");
 	}
 
 	mFlags = flags;

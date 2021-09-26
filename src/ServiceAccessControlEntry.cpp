@@ -47,21 +47,21 @@ bool nn::hac::ServiceAccessControlEntry::operator!=(const ServiceAccessControlEn
 void nn::hac::ServiceAccessControlEntry::toBytes()
 {
 	try {
-		mRawBinary.alloc(mName.size() + 1);
+		mRawBinary = tc::ByteData(mName.size() + 1);
 	}
-	catch (const fnd::Exception& e)
+	catch (const tc::OutOfMemoryException& e)
 	{
-		throw fnd::Exception(kModuleName, "Failed to allocate memory for ServiceAccessControlEntry: " + std::string(e.what()));
+		throw tc::OutOfMemoryException(kModuleName, "Failed to allocate memory for ServiceAccessControlEntry: " + std::string(e.what()));
 	}
 
 	if (mName.length() == 0)
 	{
-		throw fnd::Exception(kModuleName, "Service name is empty");
+		throw tc::ArgumentException(kModuleName, "Service name is empty");
 	}
 
 	if (mName.length() > kMaxServiceNameLen)
 	{
-		throw fnd::Exception(kModuleName, "Service name string too long (max 8 chars)");
+		throw tc::ArgumentException(kModuleName, "Service name string too long (max 8 chars)");
 	}
 
 	// copy data into binary blob
@@ -76,26 +76,26 @@ void nn::hac::ServiceAccessControlEntry::fromBytes(const byte_t* data, size_t le
 
 	if (nameLen+1 > len)
 	{
-		throw fnd::Exception(kModuleName, "SAC entry is too small");
+		throw tc::ArgumentException(kModuleName, "SAC entry is too small");
 	}
 
 	if (nameLen == 0)
 	{
-		throw fnd::Exception(kModuleName, "SAC entry has no service name");
+		throw tc::ArgumentException(kModuleName, "SAC entry has no service name");
 	}
 	else if (nameLen > kMaxServiceNameLen)
 	{
-		throw fnd::Exception(kModuleName, "Service name string too long (max 8 chars)");
+		throw tc::ArgumentException(kModuleName, "Service name string too long (max 8 chars)");
 	}
 
-	mRawBinary.alloc(nameLen + 1);
+	mRawBinary = tc::ByteData(nameLen + 1);
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	mIsServer = isServer;
 	mName = std::string((const char*)(mRawBinary.data() + 1), nameLen);
 }
 
-const fnd::Vec<byte_t>& nn::hac::ServiceAccessControlEntry::getBytes() const
+const tc::ByteData& nn::hac::ServiceAccessControlEntry::getBytes() const
 {
 	return mRawBinary;
 }
@@ -125,7 +125,7 @@ void nn::hac::ServiceAccessControlEntry::setName(const std::string & name)
 {
 	if (name.length() > kMaxServiceNameLen)
 	{
-		throw fnd::Exception(kModuleName, "Service name string too long (max 8 chars)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Service name string too long (max 8 chars)");
 	}
 
 	mName = name;

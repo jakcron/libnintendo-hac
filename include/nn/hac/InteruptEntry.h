@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
 namespace nn
@@ -11,7 +9,7 @@ namespace hac
 	{
 	public:
 		static const uint32_t kInteruptBits = 10;
-		static const uint32_t kInteruptMax = _BIT(kInteruptBits) - 1;
+		static const uint32_t kInteruptMax = (1 << kInteruptBits) - 1;
 		static const uint32_t kInteruptNum = 2;
 
 		InteruptEntry();

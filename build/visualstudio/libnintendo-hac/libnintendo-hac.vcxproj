@@ -52,6 +52,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\define\nso.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\pfs.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\romfs.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\define\types.h" />
     <ClInclude Include="..\..\..\include\nn\hac\DeltaMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessControl.h" />
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessUtil.h" />
@@ -154,6 +155,11 @@
     <ClCompile Include="..\..\..\src\ThreadInfoEntry.cpp" />
     <ClCompile Include="..\..\..\src\ThreadInfoHandler.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)..\..\deps\libtoolchain\build\visualstudio\libtoolchain\libtoolchain.vcxproj">
+      <Project>{e194e4b8-1482-40a2-901b-75d4387822e9}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{8885C125-83FB-4F73-A93A-C712B1434D54}</ProjectGuid>
@@ -212,7 +218,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libmbedtls\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libtoolchain\include;$(SolutionDir)..\..\deps\libfmt\include;$(SolutionDir)..\..\deps\libmbedtls\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -222,7 +228,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libmbedtls\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libtoolchain\include;$(SolutionDir)..\..\deps\libfmt\include;$(SolutionDir)..\..\deps\libmbedtls\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -234,7 +240,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libmbedtls\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libtoolchain\include;$(SolutionDir)..\..\deps\libfmt\include;$(SolutionDir)..\..\deps\libmbedtls\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -250,7 +256,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libmbedtls\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\include;$(SolutionDir)..\..\deps\libfnd\include;$(SolutionDir)..\..\deps\libtoolchain\include;$(SolutionDir)..\..\deps\libfmt\include;$(SolutionDir)..\..\deps\libmbedtls\include;$(SolutionDir)..\..\deps\liblz4\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

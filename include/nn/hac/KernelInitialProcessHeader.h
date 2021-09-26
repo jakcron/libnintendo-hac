@@ -1,7 +1,4 @@
 #pragma once
-#include <string>
-#include <fnd/List.h>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/kip.h>
 #include <nn/hac/KernelCapabilityControl.h>
 
@@ -9,8 +6,7 @@ namespace nn
 {
 namespace hac
 {
-	class KernelInitialProcessHeader :
-		public fnd::IByteModel
+	class KernelInitialProcessHeader
 	{
 	public:
 		struct sLayout
@@ -72,7 +68,7 @@ namespace hac
 		// export/import binary
 		void toBytes();
 		void fromBytes(const byte_t* data, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -123,7 +119,7 @@ namespace hac
 		const std::string kModuleName = "KERNEL_INITIAL_PROCESS_HEADER";
 
 		// raw binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		std::string mName;

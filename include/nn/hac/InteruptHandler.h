@@ -17,20 +17,20 @@ namespace hac
 		bool operator!=(const InteruptHandler& other) const;
 
 		// kernel capabilty list in/out
-		void importKernelCapabilityList(const fnd::List<KernelCapabilityEntry>& caps);
-		void exportKernelCapabilityList(fnd::List<KernelCapabilityEntry>& caps) const;
+		void importKernelCapabilityList(const std::vector<KernelCapabilityEntry>& caps);
+		void exportKernelCapabilityList(std::vector<KernelCapabilityEntry>& caps) const;
 		void clear();
 		bool isSet() const;
 
 		// variables
-		const fnd::List<uint16_t>& getInteruptList() const;
-		void setInteruptList(const fnd::List<uint16_t>& interupts);
+		const std::vector<uint16_t>& getInteruptList() const;
+		void setInteruptList(const std::vector<uint16_t>& interupts);
 
 	private:
 		const std::string kModuleName = "INTERUPT_HANDLER";
 
 		bool mIsSet;
-		fnd::List<uint16_t> mInterupts;
+		std::vector<uint16_t> mInterupts;
 	};
 }
 }

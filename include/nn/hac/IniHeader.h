@@ -1,15 +1,11 @@
 #pragma once
-#include <string>
-#include <fnd/List.h>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/ini.h>
 
 namespace nn
 {
 namespace hac
 {
-	class IniHeader :
-		public fnd::IByteModel
+	class IniHeader
 	{
 	public:
 		IniHeader();
@@ -22,7 +18,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* data, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -36,7 +32,7 @@ namespace hac
 		const std::string kModuleName = "INI_HEADER";
 
 		// raw binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		uint32_t mSize;

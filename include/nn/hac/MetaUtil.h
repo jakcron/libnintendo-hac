@@ -1,6 +1,5 @@
 #pragma once
 #include <nn/hac/define/meta.h>
-#include <string>
 
 namespace nn
 {

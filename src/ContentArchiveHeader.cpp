@@ -2,8 +2,6 @@
 
 nn::hac::ContentArchiveHeader::ContentArchiveHeader()
 {
-	mRightsId.alloc(nca::kRightsIdLen);
-	mKeyArea.alloc(nca::kKeyAreaSize);
 	clear();
 }
 
@@ -54,20 +52,20 @@ void nn::hac::ContentArchiveHeader::operator=(const ContentArchiveHeader & other
 
 void nn::hac::ContentArchiveHeader::toBytes()
 {
-	mRawBinary.alloc(sizeof(sContentArchiveHeader));
+	mRawBinary = tc::ByteData(sizeof(sContentArchiveHeader));
 	sContentArchiveHeader* hdr = (sContentArchiveHeader*)mRawBinary.data();
 
 	// set header magic
 	switch(mFormatVersion)
 	{
 	case (nca::FORMAT_NCA2):
-		hdr->st_magic = nca::kNca2StructMagic;
+		hdr->st_magic.wrap(nca::kNca2StructMagic);
 		break;
 	case (nca::FORMAT_NCA3):
-		hdr->st_magic = nca::kNca3StructMagic;
+		hdr->st_magic.wrap(nca::kNca3StructMagic);
 		break;
 	default:
-		throw fnd::Exception(kModuleName, "Unsupported format version");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Unsupported format version");
 	}
 
 	// set variables
@@ -85,12 +83,12 @@ void nn::hac::ContentArchiveHeader::toBytes()
 	}
 	hdr->signature_key_generation = mSignatureKeyGeneration;
 	hdr->key_area_encryption_key_index = mKaekIndex;
-	hdr->content_size = mContentSize;
-	hdr->program_id = mProgramId;
-	hdr->content_index = mContentIndex;
-	hdr->sdk_addon_version = mSdkAddonVersion;
-	memcpy(hdr->rights_id, mRightsId.data(), nca::kRightsIdLen);
-	memcpy(hdr->key_area, mKeyArea.data(), nca::kKeyAreaSize);
+	hdr->content_size.wrap(mContentSize);
+	hdr->program_id.wrap(mProgramId);
+	hdr->content_index.wrap(mContentIndex);
+	hdr->sdk_addon_version.wrap(mSdkAddonVersion);
+	memcpy(hdr->rights_id.data(), mRightsId.data(), hdr->rights_id.size());
+	memcpy(hdr->key_area.data(), mKeyArea.data(), hdr->key_area.size());
 
 	for (size_t i = 0; i < mPartitionEntryList.size(); i++)
 	{
@@ -98,8 +96,8 @@ void nn::hac::ContentArchiveHeader::toBytes()
 		
 		if (index >= nca::kPartitionNum) continue;
 
-		hdr->partition_entry[index].start_blk = sizeToBlockNum(mPartitionEntryList[index].offset);
-		hdr->partition_entry[index].end_blk = (sizeToBlockNum(mPartitionEntryList[index].offset) + sizeToBlockNum(mPartitionEntryList[index].size));
+		hdr->partition_entry[index].start_blk.wrap(sizeToBlockNum(mPartitionEntryList[index].offset));
+		hdr->partition_entry[index].end_blk.wrap((sizeToBlockNum(mPartitionEntryList[index].offset) + sizeToBlockNum(mPartitionEntryList[index].size)));
 		hdr->partition_entry[index].enabled = true;
 		hdr->fs_header_hash[index] = mPartitionEntryList[i].fs_header_hash;	
 	}
@@ -109,18 +107,18 @@ void nn::hac::ContentArchiveHeader::fromBytes(const byte_t * data, size_t len)
 {
 	if (len < sizeof(sContentArchiveHeader))
 	{
-		throw fnd::Exception(kModuleName, "ContentArchive header size is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "ContentArchive header size is too small");
 	}
 
 	clear();
 
-	mRawBinary.alloc(sizeof(sContentArchiveHeader));
+	mRawBinary = tc::ByteData(sizeof(sContentArchiveHeader));
 	memcpy(mRawBinary.data(), data, sizeof(sContentArchiveHeader));
 
 	sContentArchiveHeader* hdr = (sContentArchiveHeader*)mRawBinary.data();
 
 	// check magic
-	switch(hdr->st_magic.get())
+	switch(hdr->st_magic.unwrap())
 	{
 		case (nca::kNca2StructMagic) :
 			mFormatVersion = nca::FORMAT_NCA2;
@@ -128,32 +126,32 @@ void nn::hac::ContentArchiveHeader::fromBytes(const byte_t * data, size_t len)
 		case (nca::kNca3StructMagic) :
 			mFormatVersion = nca::FORMAT_NCA3;
 			break;
-		throw fnd::Exception(kModuleName, "ContentArchive header corrupt (unrecognised header magic).");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "ContentArchive header corrupt (unrecognised header magic).");
 	}
 
 	// variables
 	mDistributionType = nca::DistributionType(hdr->distribution_type);
 	mContentType = nca::ContentType(hdr->content_type);
-	mKeyGeneration = _MAX(hdr->key_generation, hdr->key_generation_2);
+	mKeyGeneration = std::max<byte_t>(hdr->key_generation, hdr->key_generation_2);
 	mSignatureKeyGeneration = hdr->signature_key_generation;
 	mKaekIndex = hdr->key_area_encryption_key_index;
-	mContentSize = *hdr->content_size;
-	mProgramId = *hdr->program_id;
-	mContentIndex = *hdr->content_index;
-	mSdkAddonVersion = *hdr->sdk_addon_version;
-	memcpy(mRightsId.data(), hdr->rights_id, nca::kRightsIdLen);
-	memcpy(mKeyArea.data(), hdr->key_area, nca::kKeyAreaSize);
+	mContentSize = hdr->content_size.unwrap();
+	mProgramId = hdr->program_id.unwrap();
+	mContentIndex = hdr->content_index.unwrap();
+	mSdkAddonVersion = hdr->sdk_addon_version.unwrap();
+	mRightsId = hdr->rights_id;
+	mKeyArea = tc::ByteData(mKeyArea.data(), mKeyArea.size());
 
 	for (size_t i = 0; i < nca::kPartitionNum; i++)
 	{
 		if (hdr->partition_entry[i].enabled)
 		{
-			mPartitionEntryList.addElement({(byte_t)i, blockNumToSize(hdr->partition_entry[i].start_blk.get()), blockNumToSize(hdr->partition_entry[i].end_blk.get() - hdr->partition_entry[i].start_blk.get()), hdr->fs_header_hash[i] });
+			mPartitionEntryList.push_back({(byte_t)i, blockNumToSize(hdr->partition_entry[i].start_blk.unwrap()), blockNumToSize(hdr->partition_entry[i].end_blk.unwrap() - hdr->partition_entry[i].start_blk.unwrap()), hdr->fs_header_hash[i] });
 		}
 	}
 }
 
-const fnd::Vec<byte_t>& nn::hac::ContentArchiveHeader::getBytes() const
+const tc::ByteData& nn::hac::ContentArchiveHeader::getBytes() const
 {
 	return mRawBinary;
 }
@@ -171,7 +169,7 @@ void nn::hac::ContentArchiveHeader::clear()
 	mSdkAddonVersion = 0;
 	memset(mRightsId.data(), 0, mRightsId.size());
 	mPartitionEntryList.clear();
-	memset(mKeyArea.data(), 0, mKeyArea.size());
+	mKeyArea = tc::ByteData(nca::kKeyAreaSize);
 }
 
 byte_t nn::hac::ContentArchiveHeader::getFormatVersion() const
@@ -287,41 +285,41 @@ bool nn::hac::ContentArchiveHeader::hasRightsId() const
 	return rightsIdIsSet;
 }
 
-const byte_t* nn::hac::ContentArchiveHeader::getRightsId() const
+const nn::hac::detail::rights_id_t& nn::hac::ContentArchiveHeader::getRightsId() const
 {
-	return mRightsId.data();
+	return mRightsId;
 }
 
-void nn::hac::ContentArchiveHeader::setRightsId(const byte_t* rights_id)
+void nn::hac::ContentArchiveHeader::setRightsId(const nn::hac::detail::rights_id_t& rights_id)
 {
-	memcpy(mRightsId.data(), rights_id, nca::kRightsIdLen);
+	mRightsId = rights_id;
 }
 
-const fnd::List<nn::hac::ContentArchiveHeader::sPartitionEntry>& nn::hac::ContentArchiveHeader::getPartitionEntryList() const
+const std::vector<nn::hac::ContentArchiveHeader::sPartitionEntry>& nn::hac::ContentArchiveHeader::getPartitionEntryList() const
 {
 	return mPartitionEntryList;
 }
 
-void nn::hac::ContentArchiveHeader::setPartitionEntryList(const fnd::List<nn::hac::ContentArchiveHeader::sPartitionEntry>& partition_entry_list)
+void nn::hac::ContentArchiveHeader::setPartitionEntryList(const std::vector<nn::hac::ContentArchiveHeader::sPartitionEntry>& partition_entry_list)
 {
 	mPartitionEntryList = partition_entry_list;
 
 	// sanity check the list
 	if (mPartitionEntryList.size() >= nca::kPartitionNum)
 	{
-		throw fnd::Exception(kModuleName, "Too many partitions");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Too many partitions");
 	}
 	for (size_t i = 0; i < mPartitionEntryList.size(); i++)
 	{
 		if (mPartitionEntryList[i].header_index >= nca::kPartitionNum)
 		{
-			throw fnd::Exception(kModuleName, "Illegal partition index");
+			throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal partition index");
 		}
 		for (size_t j = i+1; j < mPartitionEntryList.size(); j++)
 		{
 			if (mPartitionEntryList[i].header_index == mPartitionEntryList[j].header_index)
 			{
-				throw fnd::Exception(kModuleName, "Duplicated partition index");
+				throw tc::ArgumentOutOfRangeException(kModuleName, "Duplicated partition index");
 			}
 		}
 	}

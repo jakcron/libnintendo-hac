@@ -62,7 +62,7 @@ void nn::hac::ThreadInfoEntry::setKernelCapability(const KernelCapabilityEntry &
 {
 	if (kernel_cap.getType() != kCapId)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'ThreadInfo'");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry is not type 'ThreadInfo'");
 	}
 
 	mCap = kernel_cap;
@@ -78,7 +78,7 @@ void nn::hac::ThreadInfoEntry::setMinPriority(uint8_t priority)
 {
 	if (priority > kMaxVal)
 	{
-		throw fnd::Exception(kModuleName, "Illegal MinPriority (range 0-63)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal MinPriority (range 0-63)");
 	}
 
 	mMinPriority = priority;
@@ -94,7 +94,7 @@ void nn::hac::ThreadInfoEntry::setMaxPriority(uint8_t priority)
 {
 	if (priority > kMaxVal)
 	{
-		throw fnd::Exception(kModuleName, "Illegal MaxPriority (range 0-63)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal MaxPriority (range 0-63)");
 	}
 
 	mMaxPriority = priority;
@@ -110,7 +110,7 @@ void nn::hac::ThreadInfoEntry::setMinCpuId(uint8_t core_num)
 {
 	if (core_num > kMaxVal)
 	{
-		throw fnd::Exception(kModuleName, "Illegal MinCoreNumber (range 0-63)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal MinCoreNumber (range 0-63)");
 	}
 
 	mMinCpuId = core_num;
@@ -126,7 +126,7 @@ void nn::hac::ThreadInfoEntry::setMaxCpuId(uint8_t core_num)
 {
 	if (core_num > kMaxVal)
 	{
-		throw fnd::Exception(kModuleName, "Illegal MaxCoreNumber (range 0-63)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal MaxCoreNumber (range 0-63)");
 	}
 
 	mMaxCpuId = core_num;

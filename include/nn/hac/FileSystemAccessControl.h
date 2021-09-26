@@ -1,16 +1,11 @@
 #pragma once
-#include <string>
-#include <nn/hac/define/types.h>
-#include <fnd/IByteModel.h>
-#include <fnd/List.h>
 #include <nn/hac/define/fac.h>
 
 namespace nn
 {
 namespace hac
 {
-	class FileSystemAccessControl :
-		public fnd::IByteModel
+	class FileSystemAccessControl
 	{
 	public:
 		struct sSaveDataOwnerId
@@ -46,7 +41,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* data, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -54,25 +49,25 @@ namespace hac
 		uint32_t getFormatVersion() const;
 		void setFormatVersion(uint32_t version);
 
-		const fac::FsAccess& getFsAccess() const;
-		void setFsAccess(const fac::FsAccess& access);
+		const std::vector<nn::hac::fac::FsAccessFlag>& getFsAccess() const;
+		void setFsAccess(const std::vector<nn::hac::fac::FsAccessFlag>& access);
 
-		const fnd::List<uint64_t>& getContentOwnerIdList() const;
-		void setContentOwnerIdList(const fnd::List<uint64_t>& list);
+		const std::vector<uint64_t>& getContentOwnerIdList() const;
+		void setContentOwnerIdList(const std::vector<uint64_t>& list);
 
-		const fnd::List<sSaveDataOwnerId>& getSaveDataOwnerIdList() const;
-		void setSaveDataOwnerIdList(const fnd::List<sSaveDataOwnerId>& list);
+		const std::vector<sSaveDataOwnerId>& getSaveDataOwnerIdList() const;
+		void setSaveDataOwnerIdList(const std::vector<sSaveDataOwnerId>& list);
 	private:
 		const std::string kModuleName = "FILE_SYSTEM_ACCESS_CONTROL";
 
 		// raw data
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		uint32_t mVersion;
-		fac::FsAccess mFsAccess;
-		fnd::List<uint64_t> mContentOwnerIdList;
-		fnd::List<sSaveDataOwnerId> mSaveDataOwnerIdList;
+		std::vector<nn::hac::fac::FsAccessFlag> mFsAccess;
+		std::vector<uint64_t> mContentOwnerIdList;
+		std::vector<sSaveDataOwnerId> mSaveDataOwnerIdList;
 	};
 }
 }

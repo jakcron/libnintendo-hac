@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <nn/hac/define/types.h>
 #include <nn/hac/KernelCapabilityEntry.h>
 
@@ -29,7 +28,7 @@ namespace hac
 		const std::string kModuleName = "MISC_FLAG_ENTRY";
 		static const kc::KernelCapId kCapId = kc::KernelCapId::MiscFlags;
 		static const uint32_t kValueBits = 15;
-		static const uint32_t kMaxVal = _BIT(kValueBits)-1;
+		static const uint32_t kMaxVal = (1 << kValueBits) - 1;
 
 		KernelCapabilityEntry mCap;
 		uint32_t mFlags;

@@ -22,11 +22,11 @@ bool nn::hac::MiscParamsHandler::operator!=(const MiscParamsHandler & other) con
 	return !(*this == other);
 }
 
-void nn::hac::MiscParamsHandler::importKernelCapabilityList(const fnd::List<KernelCapabilityEntry>& caps)
+void nn::hac::MiscParamsHandler::importKernelCapabilityList(const std::vector<KernelCapabilityEntry>& caps)
 {
 	if (caps.size() > kMaxKernelCapNum)
 	{
-		throw fnd::Exception(kModuleName, "Too many kernel capabilities");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Too many kernel capabilities");
 	}
 
 	if (caps.size() == 0)
@@ -37,12 +37,12 @@ void nn::hac::MiscParamsHandler::importKernelCapabilityList(const fnd::List<Kern
 	mIsSet = true;
 }
 
-void nn::hac::MiscParamsHandler::exportKernelCapabilityList(fnd::List<KernelCapabilityEntry>& caps) const
+void nn::hac::MiscParamsHandler::exportKernelCapabilityList(std::vector<KernelCapabilityEntry>& caps) const
 {
 	if (isSet() == false)
 		return;
 
-	caps.addElement(mEntry.getKernelCapability());
+	caps.push_back(mEntry.getKernelCapability());
 }
 
 void nn::hac::MiscParamsHandler::clear()

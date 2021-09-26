@@ -1,7 +1,5 @@
 #pragma once
 #include <nn/hac/define/types.h>
-#include <fnd/sha.h>
-#include <nn/hac/define/macro.h>
 
 namespace nn
 {
@@ -9,7 +7,7 @@ namespace hac
 {
 	namespace kip
 	{
-		static const uint32_t kKipStructMagic = _MAKE_STRUCT_MAGIC_U32("KIP1");
+		static const uint32_t kKipStructMagic = tc::bn::make_struct_magic_uint32("KIP1");
 		static const uint32_t kDefaultKipVersion = 1;
 		static const size_t kNameMaxLen = 0xC;
 		static const size_t kKernCapabilityNum = 0x20;
@@ -33,16 +31,16 @@ namespace hac
 		};
 		struct sCodeSegment
 		{
-			le_uint32_t memory_offset;
-			le_uint32_t memory_size;
-			le_uint32_t file_size;
+			tc::bn::le32<uint32_t> memory_offset;
+			tc::bn::le32<uint32_t> memory_size;
+			tc::bn::le32<uint32_t> file_size;
 		};
 
 		// layout
-		le_uint32_t st_magic;
-		char name[kip::kNameMaxLen];
-		le_uint64_t title_id;
-		le_uint32_t version;
+		tc::bn::le32<uint32_t> st_magic;
+		tc::bn::string<kip::kNameMaxLen> name;
+		tc::bn::le64<uint64_t> title_id;
+		tc::bn::le32<uint32_t> version;
 		byte_t main_thread_priority;
 		byte_t main_thread_cpu_id;
 		byte_t reserved_01;
@@ -50,13 +48,13 @@ namespace hac
 		sCodeSegment text;
 		byte_t reserved_02[4];
 		sCodeSegment ro;
-		le_uint32_t main_thread_stack_size;
+		tc::bn::le32<uint32_t> main_thread_stack_size;
 		sCodeSegment data;
-		byte_t reserved_03[4];
+		std::array<byte_t, 0x4> reserved_03;
 		sCodeSegment bss;
-		byte_t reserved_04[4];
-		byte_t reserved_05[0x20];
-		byte_t capabilities[kip::kKernCapabilitySize];
+		std::array<byte_t, 0x4> reserved_04;
+		std::array<byte_t, 0x20> reserved_05;
+		std::array<byte_t, kip::kKernCapabilitySize> capabilities;
 	};
 	static_assert(sizeof(sKipHeader) == 0x100, "sKipHeader size.");
 #pragma pack(pop)

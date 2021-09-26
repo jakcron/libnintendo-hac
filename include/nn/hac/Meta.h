@@ -1,7 +1,4 @@
 #pragma once
-#include <string>
-#include <fnd/List.h>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/meta.h>
 #include <nn/hac/AccessControlInfo.h>
 #include <nn/hac/AccessControlInfoDesc.h>
@@ -10,8 +7,7 @@ namespace nn
 {
 namespace hac
 {
-	class Meta :
-		public fnd::IByteModel
+	class Meta
 	{
 	public:
 		Meta();
@@ -24,7 +20,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -71,7 +67,7 @@ namespace hac
 		const std::string kModuleName = "META";
 
 		// raw binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		byte_t mAccessControlInfoDescKeyGeneration;

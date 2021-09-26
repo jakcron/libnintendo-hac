@@ -1,8 +1,4 @@
 #pragma once
-#include <string>
-#include <nn/hac/define/types.h>
-#include <fnd/List.h>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/aci.h>
 #include <nn/hac/FileSystemAccessControl.h>
 #include <nn/hac/ServiceAccessControl.h>
@@ -12,8 +8,7 @@ namespace nn
 {
 namespace hac
 {
-	class AccessControlInfoDesc :
-		public fnd::IByteModel
+	class AccessControlInfoDesc
 	{
 	public:
 		struct sProgramIdRestrict
@@ -49,16 +44,16 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* data, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
-		void generateSignature(const fnd::rsa::sRsa2048Key& key);
-		void validateSignature(const fnd::rsa::sRsa2048Key& key) const;
+		void generateSignature(const tc::crypto::RsaKey& key);
+		void validateSignature(const tc::crypto::RsaKey& key) const;
 
 		// variables
 		void clear();
 
-		const fnd::rsa::sRsa2048Key& getContentArchiveHeaderSignature2Key() const;
-		void setContentArchiveHeaderSignature2Key(const fnd::rsa::sRsa2048Key& key);
+		const tc::crypto::RsaKey& getContentArchiveHeaderSignature2Key() const;
+		void setContentArchiveHeaderSignature2Key(const tc::crypto::RsaKey& key);
 
 		bool getProductionFlag() const;
 		void setProductionFlag(bool flag);
@@ -84,10 +79,10 @@ namespace hac
 		const std::string kModuleName = "ACCESS_CONTROL_INFO_DESC_BINARY";
 
 		// raw data
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
-		fnd::rsa::sRsa2048Key mContentArchiveHeaderSignature2Key;
+		tc::crypto::RsaKey mContentArchiveHeaderSignature2Key;
 		bool mProductionFlag;
 		bool mUnqualifiedApprovalFlag;
 		nn::hac::aci::MemoryRegion mMemoryRegion;

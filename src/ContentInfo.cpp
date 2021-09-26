@@ -35,13 +35,13 @@ bool nn::hac::ContentInfo::operator!=(const ContentInfo& other) const
 
 void nn::hac::ContentInfo::toBytes()
 {
-	mRawBinary.alloc(sizeof(sContentInfo));
+	mRawBinary = tc::ByteData(sizeof(sContentInfo));
 	sContentInfo* info = (sContentInfo*)mRawBinary.data();
 
 	info->content_hash = mHash;
 	info->content_id = mContentId;
-	info->size_lower = mSize & (uint32_t)(-1);
-	info->size_higher = (mSize >> 32) & (uint16_t)(-1);
+	info->size_lower.wrap(mSize & (uint32_t)(-1));
+	info->size_higher.wrap((mSize >> 32) & (uint16_t)(-1));
 	info->content_type = (byte_t)mType;
 	info->id_offset = mIdOffset;
 }
@@ -50,44 +50,44 @@ void nn::hac::ContentInfo::fromBytes(const byte_t* bytes, size_t len)
 {
 	if (len < sizeof(sContentInfo))
 	{
-		throw fnd::Exception(kModuleName, "ContentInfo too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "ContentInfo too small");
 	}
 
 	const sContentInfo* info = (const sContentInfo*)bytes;
 
 	mHash = info->content_hash;
 	mContentId = info->content_id;
-	mSize = (uint64_t)(info->size_lower.get()) | (uint64_t)(info->size_higher.get()) << 32;
+	mSize = (uint64_t)(info->size_lower.unwrap()) | (uint64_t)(info->size_higher.unwrap()) << 32;
 	mType = (cnmt::ContentType)info->content_type;
 	mIdOffset = info->id_offset;
 }
 
-const fnd::Vec<byte_t>& nn::hac::ContentInfo::getBytes() const
+const tc::ByteData& nn::hac::ContentInfo::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::ContentInfo::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 }
 
-const fnd::sha::sSha256Hash& nn::hac::ContentInfo::getContentHash() const
+const nn::hac::detail::sha256_hash_t& nn::hac::ContentInfo::getContentHash() const
 {
 	return mHash;
 }
 
-void nn::hac::ContentInfo::setContentHash(const fnd::sha::sSha256Hash& hash)
+void nn::hac::ContentInfo::setContentHash(const nn::hac::detail::sha256_hash_t& hash)
 {
 	mHash = hash;
 }
 
-const nn::hac::cnmt::sContentId& nn::hac::ContentInfo::getContentId() const
+const nn::hac::cnmt::content_id_t& nn::hac::ContentInfo::getContentId() const
 {
 	return mContentId;
 }
 
-void nn::hac::ContentInfo::setContentId(const cnmt::sContentId& content_id)
+void nn::hac::ContentInfo::setContentId(const nn::hac::cnmt::content_id_t& content_id)
 {
 	mContentId = content_id;
 }

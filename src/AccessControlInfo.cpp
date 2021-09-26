@@ -44,32 +44,32 @@ void nn::hac::AccessControlInfo::toBytes()
 		uint32_t offset, size;
 	} fac, sac, kc;
 
-	fac.offset = (uint32_t)align(sizeof(sAciHeader), aci::kSectionAlignSize);
+	fac.offset = (uint32_t)align<size_t>(sizeof(sAciHeader), aci::kSectionAlignSize);
 	fac.size = (uint32_t)mFileSystemAccessControl.getBytes().size();
-	sac.offset = (uint32_t)align(fac.offset + fac.size, aci::kSectionAlignSize);
+	sac.offset = (uint32_t)align<size_t>(fac.offset + fac.size, aci::kSectionAlignSize);
 	sac.size = (uint32_t)mServiceAccessControl.getBytes().size();
-	kc.offset = (uint32_t)align(sac.offset + sac.size, aci::kSectionAlignSize);
+	kc.offset = (uint32_t)align<size_t>(sac.offset + sac.size, aci::kSectionAlignSize);
 	kc.size = (uint32_t)mKernelCapabilities.getBytes().size();
 
 	// get total size
 	size_t total_size = _MAX(_MAX(fac.offset + fac.size, sac.offset + sac.size), kc.offset + kc.size); 
 
-	mRawBinary.alloc(total_size);
+	mRawBinary = tc::ByteData(total_size);
 	sAciHeader* hdr = (sAciHeader*)mRawBinary.data();
 
 	// set type
-	hdr->st_magic = aci::kAciStructMagic;
+	hdr->st_magic.wrap(aci::kAciStructMagic);
 
 	// set program id
-	hdr->program_id = mProgramId;
+	hdr->program_id.wrap(mProgramId);
 
 	// set offset/size
-	hdr->fac.offset = fac.offset;
-	hdr->fac.size = fac.size;
-	hdr->sac.offset = sac.offset;
-	hdr->sac.size = sac.size;
-	hdr->kc.offset = kc.offset;
-	hdr->kc.size = kc.size;
+	hdr->fac.offset.wrap(fac.offset);
+	hdr->fac.size.wrap(fac.size);
+	hdr->sac.offset.wrap(sac.offset);
+	hdr->sac.size.wrap(sac.size);
+	hdr->kc.offset.wrap(kc.offset);
+	hdr->kc.size.wrap(kc.size);
 
 	// write data
 	memcpy(mRawBinary.data() + fac.offset, mFileSystemAccessControl.getBytes().data(), fac.size);
@@ -82,7 +82,7 @@ void nn::hac::AccessControlInfo::fromBytes(const byte_t* data, size_t len)
 	// check size
 	if (len < sizeof(sAciHeader))
 	{
-		throw fnd::Exception(kModuleName, "AccessControlInfo binary is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "AccessControlInfo binary is too small");
 	}
 	
 	// clear variables
@@ -93,39 +93,39 @@ void nn::hac::AccessControlInfo::fromBytes(const byte_t* data, size_t len)
 	memcpy((void*)&hdr, data, sizeof(sAciHeader));
 
 	// check magic
-	if (hdr.st_magic.get() != aci::kAciStructMagic)
+	if (hdr.st_magic.unwrap() != aci::kAciStructMagic)
 	{
-		throw fnd::Exception(kModuleName, "AccessControlInfo header corrupt");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "AccessControlInfo header corrupt");
 	}
 	
 	// get total size
-	size_t total_size = _MAX(_MAX(hdr.fac.offset.get() + hdr.fac.size.get(), hdr.sac.offset.get() + hdr.sac.size.get()), hdr.kc.offset.get() + hdr.kc.size.get()); 
+	size_t total_size = std::max<uint32_t>(std::max<uint32_t>(hdr.fac.offset.unwrap() + hdr.fac.size.unwrap(), hdr.sac.offset.unwrap() + hdr.sac.size.unwrap()), hdr.kc.offset.unwrap() + hdr.kc.size.unwrap()); 
 
 	// validate binary size
 	if (len < total_size)
 	{
-		throw fnd::Exception(kModuleName, "AccessControlInfo binary is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "AccessControlInfo binary is too small");
 	}
 
 	// allocate memory for header
-	mRawBinary.alloc(total_size);
+	mRawBinary = tc::ByteData(total_size);
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	// save variables
-	mProgramId = hdr.program_id.get();
-	mFileSystemAccessControl.fromBytes(mRawBinary.data() + hdr.fac.offset.get(), hdr.fac.size.get());
-	mServiceAccessControl.fromBytes(mRawBinary.data() + hdr.sac.offset.get(), hdr.sac.size.get());
-	mKernelCapabilities.fromBytes(mRawBinary.data() + hdr.kc.offset.get(), hdr.kc.size.get());
+	mProgramId = hdr.program_id.unwrap();
+	mFileSystemAccessControl.fromBytes(mRawBinary.data() + hdr.fac.offset.unwrap(), hdr.fac.size.unwrap());
+	mServiceAccessControl.fromBytes(mRawBinary.data() + hdr.sac.offset.unwrap(), hdr.sac.size.unwrap());
+	mKernelCapabilities.fromBytes(mRawBinary.data() + hdr.kc.offset.unwrap(), hdr.kc.size.unwrap());
 }
 
-const fnd::Vec<byte_t>& nn::hac::AccessControlInfo::getBytes() const
+const tc::ByteData& nn::hac::AccessControlInfo::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::AccessControlInfo::clear()
 {
-	mRawBinary.clear();
+	mRawBinary =tc::ByteData();
 	mProgramId = 0;
 	mFileSystemAccessControl.clear();
 	mServiceAccessControl.clear();

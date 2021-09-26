@@ -33,24 +33,24 @@ void nn::hac::SystemUpdateMetaExtendedData::toBytes()
 {	
 	if (mFormatVersion == 1)
 	{
-		mRawBinary.alloc(sizeof(sSystemUpdateMetaExtendedDataHeader) + sizeof(sFirmwareVariationInfo_v1) * mFirmwareVariationInfo.size());
+		mRawBinary = tc::ByteData(sizeof(sSystemUpdateMetaExtendedDataHeader) + sizeof(sFirmwareVariationInfo_v1) * mFirmwareVariationInfo.size());
 
 		sSystemUpdateMetaExtendedDataHeader* hdr = (sSystemUpdateMetaExtendedDataHeader*)(mRawBinary.data() + 0x0);
 		sFirmwareVariationInfo_v1* variation_info = (sFirmwareVariationInfo_v1*)(mRawBinary.data() + sizeof(sSystemUpdateMetaExtendedDataHeader));
 
 		// write header
-		hdr->version = 1;
-		hdr->variation_count = (uint32_t)mFirmwareVariationInfo.size();
+		hdr->version.wrap(1);
+		hdr->variation_count.wrap((uint32_t)mFirmwareVariationInfo.size());
 
 		// write variations
 		for (auto info = mFirmwareVariationInfo.begin(); info != mFirmwareVariationInfo.end(); info++, variation_info++)
 		{
 			if (info->meta.size() != 0)
 			{
-				throw fnd::Exception(kModuleName, "Overriding ContentInfoMeta is not supported in format version 1");
+				throw tc::ArgumentException(kModuleName, "Overriding ContentInfoMeta is not supported in format version 1");
 			}
 
-			variation_info->firmware_variation_id = info->variation_id;
+			variation_info->firmware_variation_id.wrap(info->variation_id);
 		}
 	}
 	else if (mFormatVersion == 2)
@@ -62,7 +62,7 @@ void nn::hac::SystemUpdateMetaExtendedData::toBytes()
 
 		// include firmware_variation_id array
 		size_t firmware_variation_ids_offset = total_size;
-		total_size += sizeof(le_uint32_t) * mFirmwareVariationInfo.size();
+		total_size += sizeof(tc::bn::le32<uint32_t>) * mFirmwareVariationInfo.size();
 
 		// include firmare variation info array
 		size_t firmware_variation_info_offset = total_size;
@@ -75,26 +75,26 @@ void nn::hac::SystemUpdateMetaExtendedData::toBytes()
 			total_size += sizeof(sContentMetaInfo) * info->meta.size();
 		}
 
-		mRawBinary.alloc(total_size);
+		mRawBinary = tc::ByteData(total_size);
 
 		// get pointers to each section
 		sSystemUpdateMetaExtendedDataHeader* hdr_ptr = (sSystemUpdateMetaExtendedDataHeader*)(mRawBinary.data() + header_offset);
-		le_uint32_t* firmware_variation_ids_ptr = (le_uint32_t*)(mRawBinary.data() + firmware_variation_ids_offset);
+		tc::bn::le32<uint32_t>* firmware_variation_ids_ptr = (tc::bn::le32<uint32_t>*)(mRawBinary.data() + firmware_variation_ids_offset);
 		sFirmwareVariationInfo_v2* variation_info_ptr = (sFirmwareVariationInfo_v2*)(mRawBinary.data() + firmware_variation_info_offset);
 		sContentMetaInfo* meta_info_ptr = (sContentMetaInfo*)(mRawBinary.data() + content_info_meta_offset);
 
 		// write header
-		hdr_ptr->version = 2;
-		hdr_ptr->variation_count = (uint32_t)mFirmwareVariationInfo.size();
+		hdr_ptr->version.wrap(2);
+		hdr_ptr->variation_count.wrap((uint32_t)mFirmwareVariationInfo.size());
 
 		// write variation
 		for (auto variation_info_itr = mFirmwareVariationInfo.begin(); \
 			variation_info_itr != mFirmwareVariationInfo.end(); \
 			variation_info_itr++, firmware_variation_ids_ptr++, variation_info_ptr++)
 		{
-			*firmware_variation_ids_ptr = variation_info_itr->variation_id;
+			(*firmware_variation_ids_ptr).wrap(variation_info_itr->variation_id);
 			variation_info_ptr->refer_to_base = variation_info_itr->meta.size() == 0;
-			variation_info_ptr->meta_count = (uint32_t)variation_info_itr->meta.size();
+			variation_info_ptr->meta_count.wrap((uint32_t)variation_info_itr->meta.size());
 
 			for (auto meta_itr = variation_info_itr->meta.begin(); meta_itr != variation_info_itr->meta.end(); meta_itr++, meta_info_ptr++)
 			{
@@ -106,7 +106,7 @@ void nn::hac::SystemUpdateMetaExtendedData::toBytes()
 	}
 	else
 	{
-		throw fnd::Exception(kModuleName, "Unsupported format version");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Unsupported format version");
 	}
 	
 }
@@ -119,12 +119,12 @@ void nn::hac::SystemUpdateMetaExtendedData::fromBytes(const byte_t* bytes, size_
 
 	if (len < total_size)
 	{
-		throw fnd::Exception(kModuleName, "SystemUpdateMetaExtendedData too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "SystemUpdateMetaExtendedData too small");
 	}
 
 	const sSystemUpdateMetaExtendedDataHeader* hdr_ptr = (const sSystemUpdateMetaExtendedDataHeader*)bytes;
-	uint32_t format_version = hdr_ptr->version.get();
-	uint32_t variation_count = hdr_ptr->variation_count.get();
+	uint32_t format_version = hdr_ptr->version.unwrap();
+	uint32_t variation_count = hdr_ptr->variation_count.unwrap();
 
 	if (format_version == 1)
 	{
@@ -132,10 +132,10 @@ void nn::hac::SystemUpdateMetaExtendedData::fromBytes(const byte_t* bytes, size_
 
 		if (len < total_size)
 		{
-			throw fnd::Exception(kModuleName, "SystemUpdateMetaExtendedData too small");
+			throw tc::ArgumentOutOfRangeException(kModuleName, "SystemUpdateMetaExtendedData too small");
 		}
 
-		mRawBinary.alloc(total_size);
+		mRawBinary = tc::ByteData(total_size);
 		memcpy(mRawBinary.data(), bytes, mRawBinary.size());
 
 		hdr_ptr = (const sSystemUpdateMetaExtendedDataHeader*)(mRawBinary.data() + 0);
@@ -147,13 +147,13 @@ void nn::hac::SystemUpdateMetaExtendedData::fromBytes(const byte_t* bytes, size_
 		// save firmware variation info
 		for (size_t i = 0; i < variation_count; i++, firmware_variation_info_ptr++)
 		{
-			mFirmwareVariationInfo.push_back({firmware_variation_info_ptr->firmware_variation_id.get(), std::vector<ContentMetaInfo>()});
+			mFirmwareVariationInfo.push_back({firmware_variation_info_ptr->firmware_variation_id.unwrap(), std::vector<ContentMetaInfo>()});
 		}
 	}
 	else if (format_version == 2)
 	{
 		size_t firmware_variation_id_offset = 0;
-		const le_uint32_t* firmware_variation_id_ptr = nullptr;
+		const tc::bn::le32<uint32_t>* firmware_variation_id_ptr = nullptr;
 
 		size_t firmware_variation_info_offset = 0;
 		const sFirmwareVariationInfo_v2* firmware_variation_info_ptr = nullptr;
@@ -163,7 +163,7 @@ void nn::hac::SystemUpdateMetaExtendedData::fromBytes(const byte_t* bytes, size_
 
 
 		firmware_variation_id_offset = total_size;
-		total_size += sizeof(le_uint32_t) * variation_count;
+		total_size += sizeof(tc::bn::le32<uint32_t>) * variation_count;
 
 		firmware_variation_info_offset = total_size;
 		total_size += sizeof(sFirmwareVariationInfo_v2) * variation_count;
@@ -171,7 +171,7 @@ void nn::hac::SystemUpdateMetaExtendedData::fromBytes(const byte_t* bytes, size_
 		// check if data can contain extended data if no content meta info is present
 		if (len < total_size)
 		{
-			throw fnd::Exception(kModuleName, "SystemUpdateMetaExtendedData too small");
+			throw tc::ArgumentOutOfRangeException(kModuleName, "SystemUpdateMetaExtendedData too small");
 		}
 
 		content_meta_info_offset = total_size;
@@ -180,19 +180,19 @@ void nn::hac::SystemUpdateMetaExtendedData::fromBytes(const byte_t* bytes, size_
 		firmware_variation_info_ptr = (const sFirmwareVariationInfo_v2*)(bytes + firmware_variation_info_offset);
 		for (size_t i = 0; i < variation_count; i++)
 		{
-			total_size += sizeof(sContentMetaInfo) * firmware_variation_info_ptr[i].meta_count.get();
+			total_size += sizeof(sContentMetaInfo) * firmware_variation_info_ptr[i].meta_count.unwrap();
 		}
 
 		// check if data can contain extended data
 		if (len < total_size)
 		{
-			throw fnd::Exception(kModuleName, "SystemUpdateMetaExtendedData too small");
+			throw tc::ArgumentOutOfRangeException(kModuleName, "SystemUpdateMetaExtendedData too small");
 		}
 
-		mRawBinary.alloc(total_size);
+		mRawBinary = tc::ByteData(total_size);
 		memcpy(mRawBinary.data(), bytes, mRawBinary.size());
 
-		firmware_variation_id_ptr = (const le_uint32_t*)(mRawBinary.data() + firmware_variation_id_offset);
+		firmware_variation_id_ptr = (const tc::bn::le32<uint32_t>*)(mRawBinary.data() + firmware_variation_id_offset);
 		firmware_variation_info_ptr = (const sFirmwareVariationInfo_v2*)(mRawBinary.data() + firmware_variation_info_offset);
 		content_meta_info_ptr = (const sContentMetaInfo*)(mRawBinary.data() + content_meta_info_offset);
 
@@ -203,10 +203,10 @@ void nn::hac::SystemUpdateMetaExtendedData::fromBytes(const byte_t* bytes, size_
 		for (size_t i = 0; i < variation_count; i++, firmware_variation_id_ptr++, firmware_variation_info_ptr++)
 		{
 			FirmwareVariationInfo firmware_variation_info;
-			firmware_variation_info.variation_id = firmware_variation_id_ptr->get();
+			firmware_variation_info.variation_id = firmware_variation_id_ptr->unwrap();
 			if (firmware_variation_info_ptr->refer_to_base == false)
 			{
-				for (size_t j = 0; j < firmware_variation_info_ptr->meta_count.get(); j++)
+				for (size_t j = 0; j < firmware_variation_info_ptr->meta_count.unwrap(); j++)
 				{
 					ContentMetaInfo content_meta_info;
 					content_meta_info.fromBytes((const byte_t*)content_meta_info_ptr, sizeof(sContentMetaInfo));
@@ -218,18 +218,18 @@ void nn::hac::SystemUpdateMetaExtendedData::fromBytes(const byte_t* bytes, size_
 	}
 	else
 	{
-		throw fnd::Exception(kModuleName, "Unsupported format version");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Unsupported format version");
 	}
 }
 
-const fnd::Vec<byte_t>& nn::hac::SystemUpdateMetaExtendedData::getBytes() const
+const tc::ByteData& nn::hac::SystemUpdateMetaExtendedData::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::SystemUpdateMetaExtendedData::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mFormatVersion = 0;
 	mFirmwareVariationInfo.clear();
 }

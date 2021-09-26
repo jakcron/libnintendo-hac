@@ -47,22 +47,22 @@ namespace hac
 		bool operator!=(const MemoryMappingHandler& other) const;
 
 		// kernel capabilty list in/out
-		void importKernelCapabilityList(const fnd::List<KernelCapabilityEntry>& caps);
-		void exportKernelCapabilityList(fnd::List<KernelCapabilityEntry>& caps) const;
+		void importKernelCapabilityList(const std::vector<KernelCapabilityEntry>& caps);
+		void exportKernelCapabilityList(std::vector<KernelCapabilityEntry>& caps) const;
 		void clear();
 		bool isSet() const;
 
-		const fnd::List<sMemoryMapping>& getMemoryMaps() const;
-		const fnd::List<sMemoryMapping>& getIoMemoryMaps() const;
+		const std::vector<sMemoryMapping>& getMemoryMaps() const;
+		const std::vector<sMemoryMapping>& getIoMemoryMaps() const;
 
 	private:
 		const std::string kModuleName = "MEMORY_MAPPING_HANDLER";
-		static const uint32_t kMaxPageAddr = _BIT(24) - 1;
-		static const uint32_t kMaxPageNum = _BIT(20) - 1;
+		static const uint32_t kMaxPageAddr = (1 << 24) - 1;
+		static const uint32_t kMaxPageNum = (1 << 20) - 1;
 
 		bool mIsSet;
-		fnd::List<sMemoryMapping> mMemRange;
-		fnd::List<sMemoryMapping> mMemPage;
+		std::vector<sMemoryMapping> mMemRange;
+		std::vector<sMemoryMapping> mMemPage;
 	};
 }
 }

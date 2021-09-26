@@ -1,15 +1,11 @@
 #pragma once
-#include <string>
-#include <cstring>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/cnmt.h>
 
 namespace nn
 {
 namespace hac
 {
-	class ApplicationMetaExtendedHeader :
-		public fnd::IByteModel
+	class ApplicationMetaExtendedHeader
 	{
 	public:
 		ApplicationMetaExtendedHeader();
@@ -22,7 +18,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -39,7 +35,7 @@ namespace hac
 		const std::string kModuleName = "APPLICATION_META_EXTENDED_HEADER";
 
 		// binary blob
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		uint64_t mPatchId;

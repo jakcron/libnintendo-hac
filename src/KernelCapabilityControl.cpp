@@ -41,7 +41,7 @@ bool nn::hac::KernelCapabilityControl::operator!=(const KernelCapabilityControl 
 
 void nn::hac::KernelCapabilityControl::toBytes()
 {
-	fnd::List<KernelCapabilityEntry> caps;
+	std::vector<KernelCapabilityEntry> caps;
 
 	// get kernel capabiliteis
 	mThreadInfo.exportKernelCapabilityList(caps);
@@ -54,13 +54,13 @@ void nn::hac::KernelCapabilityControl::toBytes()
 	mMiscFlags.exportKernelCapabilityList(caps);
 
 	// allocate memory
-	mRawBinary.alloc(caps.size() * sizeof(uint32_t));
+	mRawBinary = tc::ByteData(caps.size() * sizeof(uint32_t));
 
 	// write to binary
-	uint32_t* raw_caps = (uint32_t*)mRawBinary.data();
+	tc::bn::le32<uint32_t>* raw_caps = (tc::bn::le32<uint32_t>*)mRawBinary.data();
 	for (size_t i = 0; i < caps.size(); i++)
 	{
-		raw_caps[i] = le_word(caps[i].getCap());
+		raw_caps[i].wrap(caps[i].getCap());
 	}
 }
 
@@ -68,54 +68,54 @@ void nn::hac::KernelCapabilityControl::fromBytes(const byte_t * data, size_t len
 {
 	if ((len % sizeof(uint32_t)) != 0)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry list must be aligned to 4 bytes");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry list must be aligned to 4 bytes");
 	}
 
 	// save copy of KernelCapabilityControl
-	mRawBinary.alloc(len);
+	mRawBinary = tc::ByteData(len);
 	memcpy(mRawBinary.data(), data, len);
 
-	fnd::List<KernelCapabilityEntry> threadInfoCaps;
-	fnd::List<KernelCapabilityEntry> systemCallCaps;
-	fnd::List<KernelCapabilityEntry> memoryMapCaps;
-	fnd::List<KernelCapabilityEntry> interuptCaps;
-	fnd::List<KernelCapabilityEntry> miscParamCaps;
-	fnd::List<KernelCapabilityEntry> kernelVersionCaps;
-	fnd::List<KernelCapabilityEntry> handleTableSizeCaps;
-	fnd::List<KernelCapabilityEntry> miscFlagsCaps;
+	std::vector<KernelCapabilityEntry> threadInfoCaps;
+	std::vector<KernelCapabilityEntry> systemCallCaps;
+	std::vector<KernelCapabilityEntry> memoryMapCaps;
+	std::vector<KernelCapabilityEntry> interuptCaps;
+	std::vector<KernelCapabilityEntry> miscParamCaps;
+	std::vector<KernelCapabilityEntry> kernelVersionCaps;
+	std::vector<KernelCapabilityEntry> handleTableSizeCaps;
+	std::vector<KernelCapabilityEntry> miscFlagsCaps;
 
-	const le_uint32_t* raw_caps = (const le_uint32_t*)mRawBinary.data();
+	const tc::bn::le32<uint32_t>* raw_caps = (const tc::bn::le32<uint32_t>*)mRawBinary.data();
 	size_t cap_num = mRawBinary.size() / sizeof(uint32_t);
 	KernelCapabilityEntry cap;
 	for (size_t i = 0; i < cap_num; i++)
 	{
-		cap.setCap(raw_caps[i].get());
+		cap.setCap(raw_caps[i].unwrap());
 		switch (cap.getType())
 		{
 			case (kc::KernelCapId::ThreadInfo) :
-				threadInfoCaps.addElement(cap);
+				threadInfoCaps.push_back(cap);
 				break;
 			case (kc::KernelCapId::EnableSystemCalls):
-				systemCallCaps.addElement(cap);
+				systemCallCaps.push_back(cap);
 				break;
 			case (kc::KernelCapId::MemoryMap):
 			case (kc::KernelCapId::IoMemoryMap):
-				memoryMapCaps.addElement(cap);
+				memoryMapCaps.push_back(cap);
 				break;
 			case (kc::KernelCapId::EnableInterrupts):
-				interuptCaps.addElement(cap);
+				interuptCaps.push_back(cap);
 				break;
 			case (kc::KernelCapId::MiscParams):
-				miscParamCaps.addElement(cap);
+				miscParamCaps.push_back(cap);
 				break;
 			case (kc::KernelCapId::KernelVersion):
-				kernelVersionCaps.addElement(cap);
+				kernelVersionCaps.push_back(cap);
 				break;
 			case (kc::KernelCapId::HandleTableSize):
-				handleTableSizeCaps.addElement(cap);
+				handleTableSizeCaps.push_back(cap);
 				break;
 			case (kc::KernelCapId::MiscFlags):
-				miscFlagsCaps.addElement(cap);
+				miscFlagsCaps.push_back(cap);
 				break;
 			case (kc::KernelCapId::Stubbed):
 				// ignore stubbed
@@ -135,14 +135,14 @@ void nn::hac::KernelCapabilityControl::fromBytes(const byte_t * data, size_t len
 	mMiscFlags.importKernelCapabilityList(miscFlagsCaps);
 }
 
-const fnd::Vec<byte_t>& nn::hac::KernelCapabilityControl::getBytes() const
+const tc::ByteData& nn::hac::KernelCapabilityControl::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::KernelCapabilityControl::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mThreadInfo.clear();
 	mSystemCalls.clear();
 	mMemoryMap.clear();

@@ -24,16 +24,16 @@ bool nn::hac::MemoryMappingHandler::operator!=(const MemoryMappingHandler & othe
 	return !(*this == other);
 }
 
-void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const fnd::List<KernelCapabilityEntry>& caps)
+void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const std::vector<KernelCapabilityEntry>& caps)
 {
 	if (caps.size() == 0)
 		return;
 
 	// get entry list
-	fnd::List<MemoryPageEntry> entries;
+	std::vector<MemoryPageEntry> entries;
 	for (size_t i = 0; i < caps.size(); i++)
 	{
-		entries.addElement(caps[i]);
+		entries.push_back(caps[i]);
 	}
 
 	mMemRange.clear();
@@ -46,23 +46,23 @@ void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const fnd::List<K
 			// this entry is the last one or the next one isn't a memory map
 			if ((i + 1) == entries.size() || entries[i+1].isMultiplePages() == false)
 			{
-				throw fnd::Exception(kModuleName, "No paired entry");
+				throw tc::ArgumentOutOfRangeException(kModuleName, "No paired entry");
 			}
 
 			// check valid page address
 			if (entries[i].getPage() > kMaxPageAddr)
 			{
-				throw fnd::Exception(kModuleName, "Illegal page address");
+				throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal page address");
 			}
 
 			// check valid page num
 			if (entries[i+1].getPage() > kMaxPageAddr)
 			{
-				throw fnd::Exception(kModuleName, "Illegal page num");
+				throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal page num");
 			}
 
 			// add to list
-			mMemRange.addElement({ entries[i].getPage(), entries[i+1].getPage(), entries[i].getFlag() ? kc::MemoryPermission::Ro : kc::MemoryPermission::Rw, entries[i+1].getFlag() ? kc::MappingType::Static : kc::MappingType::Io });
+			mMemRange.push_back({ entries[i].getPage(), entries[i+1].getPage(), entries[i].getFlag() ? kc::MemoryPermission::Ro : kc::MemoryPermission::Rw, entries[i+1].getFlag() ? kc::MappingType::Static : kc::MappingType::Io });
 
 			// increment i by two
 			i += 2;
@@ -73,11 +73,11 @@ void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const fnd::List<K
 			// check valid page address
 			if (entries[i].getPage() > kMaxPageAddr)
 			{
-				throw fnd::Exception(kModuleName, "Illegal page address");
+				throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal page address");
 			}
 
 			// add to list
-			mMemPage.addElement({ entries[i].getPage(), 1, kc::MemoryPermission::Rw, kc::MappingType::Io });
+			mMemPage.push_back({ entries[i].getPage(), 1, kc::MemoryPermission::Rw, kc::MappingType::Io });
 
 			// increment i by one
 			i += 1;
@@ -87,7 +87,7 @@ void nn::hac::MemoryMappingHandler::importKernelCapabilityList(const fnd::List<K
 	mIsSet = true;
 }
 
-void nn::hac::MemoryMappingHandler::exportKernelCapabilityList(fnd::List<KernelCapabilityEntry>& caps) const
+void nn::hac::MemoryMappingHandler::exportKernelCapabilityList(std::vector<KernelCapabilityEntry>& caps) const
 {
 	if (isSet() == false)
 		return;
@@ -100,11 +100,11 @@ void nn::hac::MemoryMappingHandler::exportKernelCapabilityList(fnd::List<KernelC
 	{
 		cap.setPage(mMemRange[i].addr & kMaxPageAddr);
 		cap.setFlag(mMemRange[i].perm == kc::MemoryPermission::Ro);
-		caps.addElement(cap.getKernelCapability());
+		caps.push_back(cap.getKernelCapability());
 
 		cap.setPage(mMemRange[i].size & kMaxPageNum);
 		cap.setFlag(mMemRange[i].type == kc::MappingType::Static);
-		caps.addElement(cap.getKernelCapability());
+		caps.push_back(cap.getKernelCapability());
 	}
 
 	// "io maps"
@@ -112,7 +112,7 @@ void nn::hac::MemoryMappingHandler::exportKernelCapabilityList(fnd::List<KernelC
 	for (size_t i = 0; i < mMemPage.size(); i++)
 	{
 		cap.setPage(mMemPage[i].addr & kMaxPageAddr);
-		caps.addElement(cap.getKernelCapability());
+		caps.push_back(cap.getKernelCapability());
 	}
 }
 
@@ -128,12 +128,12 @@ bool nn::hac::MemoryMappingHandler::isSet() const
 	return mIsSet;
 }
 
-const fnd::List<nn::hac::MemoryMappingHandler::sMemoryMapping>& nn::hac::MemoryMappingHandler::getMemoryMaps() const
+const std::vector<nn::hac::MemoryMappingHandler::sMemoryMapping>& nn::hac::MemoryMappingHandler::getMemoryMaps() const
 {
 	return mMemRange;
 }
 
-const fnd::List<nn::hac::MemoryMappingHandler::sMemoryMapping>& nn::hac::MemoryMappingHandler::getIoMemoryMaps() const
+const std::vector<nn::hac::MemoryMappingHandler::sMemoryMapping>& nn::hac::MemoryMappingHandler::getIoMemoryMaps() const
 {
 	return mMemPage;
 }

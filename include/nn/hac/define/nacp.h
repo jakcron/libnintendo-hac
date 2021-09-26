@@ -220,59 +220,61 @@ namespace hac
 	{
 		struct sTitle
 		{
-			char name[nacp::kNameLength]; // utf8
-			char publisher[nacp::kPublisherLength]; // utf8
-		} title[nacp::kMaxLanguageCount];
-		char isbn[nacp::kIsbnLength]; // utf8
+			tc::bn::string<nacp::kNameLength> name; // utf8
+			tc::bn::string<nacp::kPublisherLength> publisher; // utf8
+		};
+		
+		std::array<sTitle, nacp::kMaxLanguageCount> title;
+		tc::bn::string<nacp::kIsbnLength> isbn; // utf8
 		byte_t startup_user_account;
 		byte_t user_account_switch_lock;
 		byte_t add_on_content_registration_type; // default=1=OnDemand
-		le_uint32_t attribute_flag;
-		le_uint32_t supported_language_flag;
-		le_uint32_t parental_control_flag;
+		tc::bn::bitarray<sizeof(uint32_t)> attribute_flag;
+		tc::bn::bitarray<sizeof(uint32_t)> supported_language_flag;
+		tc::bn::bitarray<sizeof(uint32_t)> parental_control_flag;
 		byte_t screenshot;
 		byte_t video_capture; // default=2=Enable
 		byte_t data_loss_confirmation;
 		byte_t play_log_policy;
-		le_uint64_t presence_group_id;
-		int8_t rating_age[nacp::kRatingAgeCount];
-		char display_version[nacp::kDisplayVersionLength]; // utf8
-		le_uint64_t add_on_content_base_id;
-		le_uint64_t save_data_owner_id;
-		le_uint64_t user_account_save_data_size;
-		le_uint64_t user_account_save_data_journal_size;
-		le_uint64_t device_save_data_size;
-		le_uint64_t device_save_data_journal_size;
-		le_uint64_t bcat_delivery_cache_storage_size;
-		char application_error_code_category[nacp::kApplicationErrorCodeCategoryLength]; // utf8
-		le_uint64_t local_communication_id[nacp::kLocalCommunicationIdCount];
+		tc::bn::le64<uint64_t> presence_group_id;
+		std::array<int8_t, nacp::kRatingAgeCount> rating_age;
+		tc::bn::string<nacp::kDisplayVersionLength> display_version; // utf8
+		tc::bn::le64<uint64_t> add_on_content_base_id;
+		tc::bn::le64<uint64_t> save_data_owner_id;
+		tc::bn::le64<uint64_t> user_account_save_data_size;
+		tc::bn::le64<uint64_t> user_account_save_data_journal_size;
+		tc::bn::le64<uint64_t> device_save_data_size;
+		tc::bn::le64<uint64_t> device_save_data_journal_size;
+		tc::bn::le64<uint64_t> bcat_delivery_cache_storage_size;
+		tc::bn::string<nacp::kApplicationErrorCodeCategoryLength> application_error_code_category; // utf8
+		std::array<tc::bn::le64<uint64_t>, nacp::kLocalCommunicationIdCount> local_communication_id;
 		byte_t logo_type;
 		byte_t logo_handling;
 		byte_t runtime_add_on_content_install;
 		byte_t runtime_parameter_delivery;
-		byte_t reserved_00[2];
+		std::array<byte_t, 0x2> reserved_00;
 		byte_t crash_report; // default=1=Allow
 		byte_t hdcp;
-		le_uint64_t seed_for_pseudo_device_id;
-		char bcat_passphrase[nacp::kBcatPassphraseLength]; // utf8
-		byte_t startup_user_account_option;
-		byte_t reserved_for_user_account_save_data_operation[6];
-		le_uint64_t user_account_save_data_size_max;
-		le_uint64_t user_account_save_data_journal_size_max;
-		le_uint64_t device_save_data_size_max;
-		le_uint64_t device_save_data_journal_size_max;
-		le_uint64_t temporary_storage_size;
-		le_uint64_t cache_storage_size;
-		le_uint64_t cache_storage_journal_size;
-		le_uint64_t cache_storage_data_and_journal_size_max;
-		le_uint16_t cache_storage_index_max;
-		byte_t reserved_01[6]; // alignment to 0x8 bytes
-		le_uint64_t play_log_queryable_application_id[nacp::kPlayLogQueryableApplicationIdCount];
+		tc::bn::le64<uint64_t> seed_for_pseudo_device_id;
+		tc::bn::string<nacp::kBcatPassphraseLength> bcat_passphrase; // utf8
+		tc::bn::bitarray<sizeof(byte_t)> startup_user_account_option;
+		std::array<byte_t, 0x6> reserved_for_user_account_save_data_operation;
+		tc::bn::le64<uint64_t> user_account_save_data_size_max;
+		tc::bn::le64<uint64_t> user_account_save_data_journal_size_max;
+		tc::bn::le64<uint64_t> device_save_data_size_max;
+		tc::bn::le64<uint64_t> device_save_data_journal_size_max;
+		tc::bn::le64<uint64_t> temporary_storage_size;
+		tc::bn::le64<uint64_t> cache_storage_size;
+		tc::bn::le64<uint64_t> cache_storage_journal_size;
+		tc::bn::le64<uint64_t> cache_storage_data_and_journal_size_max;
+		tc::bn::le16<uint16_t> cache_storage_index_max;
+		std::array<byte_t, 0x6> reserved_01; // alignment to 0x8 bytes
+		std::array<tc::bn::le64<uint64_t>, nacp::kPlayLogQueryableApplicationIdCount> play_log_queryable_application_id;
 		byte_t play_log_query_capability;
-		byte_t repair_flag;
+		tc::bn::bitarray<sizeof(byte_t)> repair_flag;
 		byte_t program_index; // last byte of programId, (programId - programIndex) is used as default values for PresenceGroupId, SaveDataOwnerId, LocalCommunicationId
-		byte_t required_network_service_license_on_launch_flag;
-		byte_t reserved_02[0x4];
+		tc::bn::bitarray<sizeof(byte_t)> required_network_service_license_on_launch_flag;
+		std::array<byte_t, 0x4> reserved_02;
 		struct sNeighborDetectionClientConfiguration
 		{
 			// note that group config is empty if both group_id and key are 0/nulls
@@ -280,28 +282,28 @@ namespace hac
 			// otherwise group config is invalid
 			struct sGroupConfiguration
 			{
-				le_uint64_t group_id;
-				byte_t key[nacp::kNeighborDetectionGroupConfigurationKeyLength];
+				tc::bn::le64<uint64_t> group_id;
+				std::array<byte_t, nacp::kNeighborDetectionGroupConfigurationKeyLength> key;
 			};
 
 			sGroupConfiguration send_group_configuration;
-			sGroupConfiguration receivable_group_configuration[nacp::kReceivableGroupConfigurationCount];
+			std::array<sGroupConfiguration, nacp::kReceivableGroupConfigurationCount> receivable_group_configuration;
 		} neighbour_detection_client_configuration;
 		struct sJitConfiguration 
 		{
-			le_uint64_t jit_configuration_flag;
-			le_uint64_t memory_size;
+			tc::bn::bitarray<sizeof(uint64_t)> jit_configuration_flag;
+			tc::bn::le64<uint64_t> memory_size;
 		} jit_configuration;
-		le_uint16_t required_add_on_contents_set[nacp::kRequiredAddOnContentsSetCount]; // this is a collection of arrays of AddOnContent Indexes (valid values: 1-2000). Bit 0-14: AddOnContentIndex, Bit 15: If set, this array continues with next value, if not set, this array ends with this value
+		std::array<tc::bn::le16<uint16_t>, nacp::kRequiredAddOnContentsSetCount> required_add_on_contents_set; // this is a collection of arrays of AddOnContent Indexes (valid values: 1-2000). Bit 0-14: AddOnContentIndex, Bit 15: If set, this array continues with next value, if not set, this array ends with this value
 		byte_t play_report_permission;
 		byte_t crash_screenshot_for_prod;
 		byte_t crash_screenshot_for_dev;
-		byte_t reserved_03[0x5];
+		std::array<byte_t, 0x5> reserved_03;
 		struct sAccessibleLaunchRequiredVersion
 		{
-			le_uint64_t application_id[nacp::kMaxAccessibleLaunchRequiredVersionApplicationIdCount];
+			std::array<tc::bn::le64<uint64_t>, nacp::kMaxAccessibleLaunchRequiredVersionApplicationIdCount> application_id;
 		} accessible_launch_required_verison;
-		byte_t _pad_to_0x4000[3000];
+		std::array<byte_t, 3000> _pad_to_0x4000;
 	};
 	static_assert(sizeof(sApplicationControlProperty) == 0x4000, "sApplicationControlProperty size.");
 

@@ -52,7 +52,7 @@ namespace hac
 			FullPermission = 63,
 		};
 
-		using FsAccess = std::bitset<64>;
+		using fs_access_t = tc::bn::bitarray<sizeof(uint64_t)>;
 
 		enum class SaveDataOwnerIdAccessType
 		{
@@ -65,12 +65,12 @@ namespace hac
 #pragma pack(push,1)
 	struct sFacHeader
 	{
-		le_uint32_t version; // default 1
-		le_uint64_t fac_flags;
+		tc::bn::le32<uint32_t> version; // default 1
+		fac::fs_access_t fac_flags;
 		struct sFacSection
 		{
-			le_uint32_t offset;
-			le_uint32_t size;
+			tc::bn::le32<uint32_t> offset;
+			tc::bn::le32<uint32_t> size;
 		} content_owner_ids, save_data_owner_ids; // the data for these follow later in binary. start/end relative to base of FacData instance
 	};
 	static_assert(sizeof(sFacHeader) == 0x1C, "sFacHeader size.");

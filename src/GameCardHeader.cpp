@@ -39,7 +39,7 @@ void nn::hac::GameCardHeader::operator=(const GameCardHeader& other)
 	mFwMode = other.mFwMode;
 	mUppVersion = other.mUppVersion;
 	mCompatibilityType = other.mCompatibilityType;
-	memcpy(mUppHash, other.mUppHash, gc::kUppHashLen);
+	mUppHash = other.mUppHash;
 	mUppId = other.mUppId;
 }
 
@@ -72,7 +72,7 @@ bool nn::hac::GameCardHeader::operator==(const GameCardHeader& other) const
 		&&	(mFwMode == other.mFwMode)
 		&&	(mUppVersion == other.mUppVersion)
 		&&  (mCompatibilityType == other.mCompatibilityType)
-		&&	(memcmp(mUppHash, other.mUppHash, gc::kUppHashLen) == 0)
+		&&	(mUppHash == other.mUppHash)
 		&&	(mUppId == other.mUppId);
 }
 
@@ -83,7 +83,7 @@ bool nn::hac::GameCardHeader::operator!=(const GameCardHeader& other) const
 
 void nn::hac::GameCardHeader::toBytes()
 {
-	fnd::Exception(kModuleName, "toBytes() not implemented");
+	tc::NotImplementedException(kModuleName, "toBytes() not implemented");
 }
 
 void nn::hac::GameCardHeader::fromBytes(const byte_t* data, size_t len)
@@ -91,61 +91,59 @@ void nn::hac::GameCardHeader::fromBytes(const byte_t* data, size_t len)
 	// check input data size
 	if (len < sizeof(sGcHeader))
 	{
-		throw fnd::Exception(kModuleName, "GameCardImage header size is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "GameCardImage header size is too small");
 	}
 
 	// clear internal members
 	clear();
 
 	// allocate internal local binary copy
-	mRawBinary.alloc(sizeof(sGcHeader));
+	mRawBinary = tc::ByteData(sizeof(sGcHeader));
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	// get sGcHeader ptr
 	const nn::hac::sGcHeader* hdr = (const nn::hac::sGcHeader*)mRawBinary.data();
 	
 	// check GameCardImage signature
-	if (hdr->st_magic.get() != gc::kGcHeaderStructMagic)
+	if (hdr->st_magic.unwrap() != gc::kGcHeaderStructMagic)
 	{
-		throw fnd::Exception(kModuleName, "GameCardImage header corrupt");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "GameCardImage header corrupt");
 	}
 
-	mRomAreaStartPage = hdr->rom_area_start_page.get();
-	mBackupAreaStartPage = hdr->backup_area_start_page.get();
+	mRomAreaStartPage = hdr->rom_area_start_page.unwrap();
+	mBackupAreaStartPage = hdr->backup_area_start_page.unwrap();
 	mKekIndex = hdr->key_flag & 7;
 	mTitleKeyDecIndex = (hdr->key_flag >> 4) & 7;
 	mRomSize = hdr->rom_size;
 	mCardHeaderVersion = hdr->card_header_version;
 	mFlags = hdr->flags;
-	mPackageId = hdr->package_id.get();
-	mValidDataEndPage = hdr->valid_data_end_page.get();
-	for (size_t i = 0; i < fnd::aes::kAesBlockSize; i++)
-		mAesCbcIv.iv[i] = hdr->aescbc_iv.iv[15-i];
-	mPartitionFsHeaderAddress = hdr->partition_fs_header_address.get();
-	mPartitionFsHeaderSize = hdr->partition_fs_header_size.get();
+	mPackageId = hdr->package_id.unwrap();
+	mValidDataEndPage = hdr->valid_data_end_page.unwrap();
+	for (size_t i = 0; i < mAesCbcIv.size(); i++)
+		mAesCbcIv[i] = hdr->aescbc_iv[15-i];
+	mPartitionFsHeaderAddress = hdr->partition_fs_header_address.unwrap();
+	mPartitionFsHeaderSize = hdr->partition_fs_header_size.unwrap();
 	mPartitionFsHeaderHash = hdr->partition_fs_header_hash;
 	mInitialDataHash = hdr->initial_data_hash;
-	mSelSec = hdr->sel_sec.get();
-	mSelT1Key = hdr->sel_t1_key.get();
-	mSelKey = hdr->sel_key.get();
-	mLimAreaPage = hdr->lim_area.get();
+	mSelSec = hdr->sel_sec.unwrap();
+	mSelT1Key = hdr->sel_t1_key.unwrap();
+	mSelKey = hdr->sel_key.unwrap();
+	mLimAreaPage = hdr->lim_area.unwrap();
 
-	
-	mFwVersion = hdr->extended_header.fw_version.get();
-	mAccCtrl1 = hdr->extended_header.acc_ctrl_1.get();
-	mWait1TimeRead = hdr->extended_header.wait_1_time_read.get();
-	mWait2TimeRead = hdr->extended_header.wait_2_time_read.get();
-	mWait1TimeWrite = hdr->extended_header.wait_1_time_write.get();
-	mWait2TimeWrite = hdr->extended_header.wait_2_time_write.get();
-	mFwMode = hdr->extended_header.fw_mode.get();
-	mUppVersion = hdr->extended_header.upp_version.get();
+	mFwVersion = hdr->extended_header.fw_version.unwrap();
+	mAccCtrl1 = hdr->extended_header.acc_ctrl_1.unwrap();
+	mWait1TimeRead = hdr->extended_header.wait_1_time_read.unwrap();
+	mWait2TimeRead = hdr->extended_header.wait_2_time_read.unwrap();
+	mWait1TimeWrite = hdr->extended_header.wait_1_time_write.unwrap();
+	mWait2TimeWrite = hdr->extended_header.wait_2_time_write.unwrap();
+	mFwMode = hdr->extended_header.fw_mode.unwrap();
+	mUppVersion = hdr->extended_header.upp_version.unwrap();
 	mCompatibilityType = hdr->extended_header.region_compatibility;
-	memcpy(mUppHash, hdr->extended_header.upp_hash, gc::kUppHashLen);
-	mUppId = hdr->extended_header.upp_id.get();
-
+	mUppHash = hdr->extended_header.upp_hash;
+	mUppId = hdr->extended_header.upp_id.unwrap();
 }
 
-const fnd::Vec<byte_t>& nn::hac::GameCardHeader::getBytes() const
+const tc::ByteData& nn::hac::GameCardHeader::getBytes() const
 {
 	return mRawBinary;
 }
@@ -162,11 +160,11 @@ void nn::hac::GameCardHeader::clear()
 	mFlags = 0;
 	mPackageId = 0;
 	mValidDataEndPage = 0;
-	memset(mAesCbcIv.iv, 0, sizeof(mAesCbcIv));
+	memset(mAesCbcIv.data(), 0, mAesCbcIv.size());
 	mPartitionFsHeaderAddress = 0;
 	mPartitionFsHeaderSize = 0;
-	memset(mPartitionFsHeaderHash.bytes, 0, sizeof(mPartitionFsHeaderHash));
-	memset(mInitialDataHash.bytes, 0, sizeof(mInitialDataHash));
+	memset(mPartitionFsHeaderHash.data(), 0, mPartitionFsHeaderHash.size());
+	memset(mInitialDataHash.data(), 0, mInitialDataHash.size());
 	mSelSec = 0;
 	mSelT1Key = 0;
 	mSelKey = 0;
@@ -180,7 +178,7 @@ void nn::hac::GameCardHeader::clear()
 	mFwMode = 0;
 	mUppVersion = 0;
 	mCompatibilityType = 0;
-	memset(mUppHash, 0, gc::kUppHashLen);
+	memset(mUppHash.data(), 0, mUppHash.size());
 	mUppId = 0;
 }
 
@@ -274,12 +272,12 @@ void nn::hac::GameCardHeader::setValidDataEndPage(uint32_t page)
 	mValidDataEndPage = page;
 }
 
-const fnd::aes::sAesIvCtr& nn::hac::GameCardHeader::getAesCbcIv() const
+const nn::hac::detail::aes_iv_t& nn::hac::GameCardHeader::getAesCbcIv() const
 {
 	return mAesCbcIv;
 }
 
-void nn::hac::GameCardHeader::setAesCbcIv(const fnd::aes::sAesIvCtr& iv)
+void nn::hac::GameCardHeader::setAesCbcIv(const nn::hac::detail::aes_iv_t& iv)
 {
 	mAesCbcIv = iv;
 }
@@ -304,22 +302,22 @@ void nn::hac::GameCardHeader::setPartitionFsSize(uint64_t size)
 	mPartitionFsHeaderSize = size;
 }
 
-const fnd::sha::sSha256Hash& nn::hac::GameCardHeader::getPartitionFsHash() const
+const nn::hac::detail::sha256_hash_t& nn::hac::GameCardHeader::getPartitionFsHash() const
 {
 	return mPartitionFsHeaderHash;
 }
 
-void nn::hac::GameCardHeader::setPartitionFsHash(const fnd::sha::sSha256Hash& hash)
+void nn::hac::GameCardHeader::setPartitionFsHash(const nn::hac::detail::sha256_hash_t& hash)
 {
 	mPartitionFsHeaderHash = hash;
 }
 
-const fnd::sha::sSha256Hash& nn::hac::GameCardHeader::getInitialDataHash() const
+const nn::hac::detail::sha256_hash_t& nn::hac::GameCardHeader::getInitialDataHash() const
 {
 	return mInitialDataHash;
 }
 
-void nn::hac::GameCardHeader::setInitialDataHash(const fnd::sha::sSha256Hash& hash)
+void nn::hac::GameCardHeader::setInitialDataHash(const nn::hac::detail::sha256_hash_t& hash)
 {
 	mInitialDataHash = hash;
 }
@@ -455,14 +453,14 @@ void nn::hac::GameCardHeader::setFlags(byte_t flags)
 	mFlags = flags;
 }
 
-const byte_t* nn::hac::GameCardHeader::getUppHash() const
+const nn::hac::gc::upp_hash_t& nn::hac::GameCardHeader::getUppHash() const
 {
 	return mUppHash;
 }
 
-void nn::hac::GameCardHeader::setUppHash(const byte_t* hash)
+void nn::hac::GameCardHeader::setUppHash(const nn::hac::gc::upp_hash_t& hash)
 {
-	memcpy(mUppHash, hash, gc::kUppHashLen);
+	mUppHash = hash;
 }
 
 uint64_t nn::hac::GameCardHeader::getUppId() const

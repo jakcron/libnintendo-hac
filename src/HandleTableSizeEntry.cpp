@@ -45,7 +45,7 @@ void nn::hac::HandleTableSizeEntry::setKernelCapability(const KernelCapabilityEn
 {
 	if (kernel_cap.getType() != kCapId)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'HandleTableSize'");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry is not type 'HandleTableSize'");
 	}
 
 	mCap = kernel_cap;
@@ -61,7 +61,7 @@ void nn::hac::HandleTableSizeEntry::setHandleTableSize(uint16_t size)
 {
 	if (size > kMaxHandleTableSize)
 	{
-		throw fnd::Exception(kModuleName, "Illegal HandleTableSize. (range: 0-1023 inclusive)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal HandleTableSize. (range: 0-1023 inclusive)");
 	}
 
 	mHandleTableSize = size;

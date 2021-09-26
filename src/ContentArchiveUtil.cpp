@@ -2,22 +2,21 @@
 #include <sstream>
 #include <iomanip>
 
-void nn::hac::ContentArchiveUtil::decryptContentArchiveHeader(const byte_t* src, byte_t* dst, const fnd::aes::sAesXts128Key& key)
+void nn::hac::ContentArchiveUtil::decryptContentArchiveHeader(const byte_t* src, byte_t* dst, const detail::aes128_xtskey_t& key)
 {
-	byte_t tweak[fnd::aes::kAesBlockSize];
+	// init aes-xts
+	tc::crypto::Aes128XtsEncryptor enc;
+	enc.initialize(key[0].data(), key[0].size(), key[1].data(), key[1].size(), nn::hac::nca::kSectorSize, true);
 
 	// decrypt main header
 	byte_t raw_hdr[nn::hac::nca::kSectorSize];
-	fnd::aes::AesXtsMakeTweak(tweak, 1);
-	fnd::aes::AesXtsDecryptSector(src + sectorToOffset(1), nn::hac::nca::kSectorSize, key.key[0], key.key[1], tweak, raw_hdr);
-
-	bool useNca2SectorIndex = ((nn::hac::sContentArchiveHeader*)(raw_hdr))->st_magic.get() == nn::hac::nca::kNca2StructMagic;
+	enc.decrypt(raw_hdr, src + sectorToOffset(1), nn::hac::nca::kSectorSize, 1);
+	bool useNca2SectorIndex = ((nn::hac::sContentArchiveHeader*)(raw_hdr))->st_magic.unwrap() == nn::hac::nca::kNca2StructMagic;
 
 	// decrypt whole header
 	for (size_t i = 0; i < nn::hac::nca::kHeaderSectorNum; i++)
 	{
-		fnd::aes::AesXtsMakeTweak(tweak, (i > 1 && useNca2SectorIndex)? 0 : i);
-		fnd::aes::AesXtsDecryptSector(src + sectorToOffset(i), nn::hac::nca::kSectorSize, key.key[0], key.key[1], tweak, dst + sectorToOffset(i));
+		enc.decrypt(dst + sectorToOffset(i), src + sectorToOffset(i), nn::hac::nca::kSectorSize, (i > 1 && useNca2SectorIndex)? 0 : i);
 	}
 }
 
@@ -52,7 +51,7 @@ byte_t nn::hac::ContentArchiveUtil::getMasterKeyRevisionFromKeyGeneration(byte_t
 
 void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(const nn::hac::sContentArchiveFsHeader* hdr, byte_t* aes_ctr)
 {
-	getNcaPartitionAesCtr(hdr->generation.get(), hdr->secure_value.get(), aes_ctr);
+	getNcaPartitionAesCtr(hdr->generation.unwrap(), hdr->secure_value.unwrap(), aes_ctr);
 }
 
 void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(uint32_t generation, uint32_t secure_value, byte_t* aes_ctr)
@@ -67,11 +66,11 @@ void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(uint32_t generation, uin
 	// hdr->aes_ctr_upper = 00 01 02 03 04 05 06 07
 	// output             = 07 06 05 04 03 02 01 00 
 	// generation = 03020100, secure_value = 07060504
-	be_uint32_t* aes_ctr_words = (be_uint32_t*)aes_ctr;
-	aes_ctr_words[0] = secure_value;
-	aes_ctr_words[1] = generation;
-	aes_ctr_words[2] = 0;
-	aes_ctr_words[3] = 0;
+	tc::bn::be32<uint32_t>* aes_ctr_words = (tc::bn::be32<uint32_t>*)aes_ctr;
+	aes_ctr_words[0].wrap(secure_value);
+	aes_ctr_words[1].wrap(generation);
+	aes_ctr_words[2].wrap(0);
+	aes_ctr_words[3].wrap(0);
 }
 
 

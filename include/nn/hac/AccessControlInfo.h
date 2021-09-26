@@ -1,7 +1,4 @@
 #pragma once
-#include <string>
-#include <nn/hac/define/types.h>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/aci.h>
 #include <nn/hac/FileSystemAccessControl.h>
 #include <nn/hac/ServiceAccessControl.h>
@@ -11,8 +8,7 @@ namespace nn
 {
 namespace hac
 {
-	class AccessControlInfo :
-		public fnd::IByteModel
+	class AccessControlInfo
 	{
 	public:
 		AccessControlInfo();
@@ -25,7 +21,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* data, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -45,7 +41,7 @@ namespace hac
 		const std::string kModuleName = "ACCESS_CONTROL_INFO_BINARY";
 
 		// raw data
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		uint64_t mProgramId;

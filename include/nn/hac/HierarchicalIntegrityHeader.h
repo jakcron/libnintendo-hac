@@ -1,15 +1,13 @@
 #pragma once
 #include <nn/hac/define/hierarchicalintegrity.h>
-#include <fnd/IByteModel.h>
-#include <fnd/List.h>
-#include <fnd/sha.h>
+
+#include <tc/NotImplementedException.h>
 
 namespace nn
 {
 namespace hac
 {
-	class HierarchicalIntegrityHeader :
-		public fnd::IByteModel
+	class HierarchicalIntegrityHeader
 	{
 	public:
 		struct sLayer
@@ -46,25 +44,25 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
 
-		const fnd::List<sLayer>& getLayerInfo() const;
-		void setLayerInfo(const fnd::List<sLayer>& layer_info);
+		const std::vector<sLayer>& getLayerInfo() const;
+		void setLayerInfo(const std::vector<sLayer>& layer_info);
 
-		const fnd::List<fnd::sha::sSha256Hash>& getMasterHashList() const;
-		void setMasterHashList(const fnd::List<fnd::sha::sSha256Hash>& master_hash_list);
+		const std::vector<nn::hac::detail::sha256_hash_t>& getMasterHashList() const;
+		void setMasterHashList(const std::vector<nn::hac::detail::sha256_hash_t>& master_hash_list);
 	private:
 		const std::string kModuleName = "HIERARCHICAL_INTEGRITY_HEADER";
 
 		// binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// data
-		fnd::List<sLayer> mLayerInfo;
-		fnd::List<fnd::sha::sSha256Hash> mMasterHashList;
+		std::vector<sLayer> mLayerInfo;
+		std::vector<nn::hac::detail::sha256_hash_t> mMasterHashList;
 	};
 }
 }

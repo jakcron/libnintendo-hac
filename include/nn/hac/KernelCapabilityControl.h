@@ -16,8 +16,7 @@ namespace nn
 {
 namespace hac
 {
-	class KernelCapabilityControl :
-		public fnd::IByteModel
+	class KernelCapabilityControl
 	{
 	public:
 		KernelCapabilityControl();
@@ -30,7 +29,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		virtual const fnd::Vec<byte_t>& getBytes() const;
+		virtual const tc::ByteData& getBytes() const;
 
 		// variables (consider further abstraction?)
 		void clear();
@@ -62,7 +61,7 @@ namespace hac
 		const std::string kModuleName = "KERNEL_CAPABILITY_CONTROL";
 
 		// raw binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		ThreadInfoHandler mThreadInfo;

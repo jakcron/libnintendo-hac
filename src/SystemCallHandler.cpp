@@ -23,7 +23,7 @@ bool nn::hac::SystemCallHandler::operator!=(const SystemCallHandler & other) con
 	return !(*this == other);
 }
 
-void nn::hac::SystemCallHandler::importKernelCapabilityList(const fnd::List<KernelCapabilityEntry>& caps)
+void nn::hac::SystemCallHandler::importKernelCapabilityList(const std::vector<KernelCapabilityEntry>& caps)
 {
 	if (caps.size() == 0)
 		return;
@@ -49,7 +49,7 @@ void nn::hac::SystemCallHandler::importKernelCapabilityList(const fnd::List<Kern
 	mIsSet = true;
 }
 
-void nn::hac::SystemCallHandler::exportKernelCapabilityList(fnd::List<KernelCapabilityEntry>& caps) const
+void nn::hac::SystemCallHandler::exportKernelCapabilityList(std::vector<KernelCapabilityEntry>& caps) const
 {
 	if (isSet() == false)
 		return;
@@ -66,14 +66,14 @@ void nn::hac::SystemCallHandler::exportKernelCapabilityList(fnd::List<KernelCapa
 		if (mSystemCallIds.test(syscall_id) == false)
 			continue;
 
-		entries[syscall_id / kEntrySyscallCount].setSystemCallLowerBits(entries[syscall_id / kEntrySyscallCount].getSystemCallLowerBits() | _BIT(syscall_id % kEntrySyscallCount));
+		entries[syscall_id / kEntrySyscallCount].setSystemCallLowerBits(entries[syscall_id / kEntrySyscallCount].getSystemCallLowerBits() | (1 << syscall_id % kEntrySyscallCount));
 	}
 
 	for (size_t i = 0; i < kSyscallTotalEntryNum; i++)
 	{
 		if (entries[i].getSystemCallLowerBits() != 0)
 		{
-			caps.addElement(entries[i].getKernelCapability());
+			caps.push_back(entries[i].getKernelCapability());
 		}
 	}
 }

@@ -35,42 +35,51 @@ bool nn::hac::ContentMetaInfo::operator!=(const ContentMetaInfo& other) const
 
 void nn::hac::ContentMetaInfo::toBytes()
 {
-	mRawBinary.alloc(sizeof(sContentMetaInfo));
+	mRawBinary = tc::ByteData(sizeof(sContentMetaInfo));
 	sContentMetaInfo* info = (sContentMetaInfo*)mRawBinary.data();
 
-	info->id = mTitleId;
-	info->version = mTitleVersion;
+	info->id.wrap(mTitleId);
+	info->version.wrap(mTitleVersion);
 	info->type = (byte_t)mType;
-	info->attributes = (byte_t)mAttribute.to_ulong();
+	for (size_t i = 0; i < mAttribute.size(); i++)
+	{
+		info->attributes.set((size_t)mAttribute[i]);
+	}
 }
 
 void nn::hac::ContentMetaInfo::fromBytes(const byte_t* bytes, size_t len)
 {
 	if (len < sizeof(sContentMetaInfo))
 	{
-		throw fnd::Exception(kModuleName, "ContentMetaInfo too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "ContentMetaInfo too small");
 	}
 
 	const sContentMetaInfo* info = (const sContentMetaInfo*)bytes;
 
-	mTitleId = info->id.get();
-	mTitleVersion = info->version.get();
+	mTitleId = info->id.unwrap();
+	mTitleVersion = info->version.unwrap();
 	mType = (cnmt::ContentMetaType)info->type;
-	mAttribute = info->attributes;
+	for (size_t i = 0; i < info->attributes.bit_size(); i++)
+	{
+		if (info->attributes.test(i))
+		{
+			mAttribute.push_back((cnmt::ContentMetaAttributeFlag)i);
+		}
+	}
 }
 
-const fnd::Vec<byte_t>& nn::hac::ContentMetaInfo::getBytes() const
+const tc::ByteData& nn::hac::ContentMetaInfo::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::ContentMetaInfo::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mTitleId = 0;
 	mTitleVersion = 0;
 	mType = cnmt::ContentMetaType::Application;
-	mAttribute = 0;
+	mAttribute.clear();
 }
 
 uint64_t nn::hac::ContentMetaInfo::getTitleId() const
@@ -98,17 +107,17 @@ nn::hac::cnmt::ContentMetaType nn::hac::ContentMetaInfo::getContentMetaType() co
 	return mType;
 }
 
-void nn::hac::ContentMetaInfo::setContentMetaType(cnmt::ContentMetaType type)
+void nn::hac::ContentMetaInfo::setContentMetaType(nn::hac::cnmt::ContentMetaType type)
 {
 	mType = type;
 }	
 
-const nn::hac::cnmt::ContentMetaAttribute& nn::hac::ContentMetaInfo::getAttribute() const
+const std::vector<nn::hac::cnmt::ContentMetaAttributeFlag>& nn::hac::ContentMetaInfo::getAttribute() const
 {
 	return mAttribute;
 }
 
-void nn::hac::ContentMetaInfo::setAttribute(const nn::hac::cnmt::ContentMetaAttribute& attr)
+void nn::hac::ContentMetaInfo::setAttribute(const std::vector<nn::hac::cnmt::ContentMetaAttributeFlag>& attr)
 {
 	mAttribute = attr;
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include <nn/hac/define/types.h>
-#include <fnd/sha.h>
 
 namespace nn
 {
@@ -15,13 +14,13 @@ namespace hac
 #pragma pack(push,1)
 	struct sHierarchicalSha256Header
 	{
-		fnd::sha::sSha256Hash master_hash;
-		le_uint32_t hash_block_size;
-		le_uint32_t layer_num;
+		detail::sha256_hash_t master_hash;
+		tc::bn::le32<uint32_t> hash_block_size;
+		tc::bn::le32<uint32_t> layer_num;
 		struct sLayer
 		{
-			le_uint64_t offset;
-			le_uint64_t size;
+			tc::bn::le64<uint64_t> offset;
+			tc::bn::le64<uint64_t> size;
 		} layer[hierarchicalsha256::kMaxLayerNum];
 	};
 	static_assert(sizeof(sHierarchicalSha256Header) == 0x48, "sHierarchicalSha256Header size.");

@@ -1,18 +1,12 @@
 #pragma once
-#include <string>
-#include <cstring>
-#include <vector>
-#include <fnd/IByteModel.h>
 #include <nn/hac/define/cnmt.h>
 #include <nn/hac/ContentMetaInfo.h>
-
 
 namespace nn
 {
 namespace hac
 {
-	class SystemUpdateMetaExtendedData : 
-		public fnd::IByteModel
+	class SystemUpdateMetaExtendedData
 	{
 	public:
 		struct FirmwareVariationInfo
@@ -42,7 +36,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -56,7 +50,7 @@ namespace hac
 		const std::string kModuleName = "SYSTEM_UPDATE_META_EXTENDED_DATA";
 
 		// byte model
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// variables
 		uint32_t mFormatVersion;

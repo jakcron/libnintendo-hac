@@ -1,14 +1,11 @@
 #pragma once
 #include <nn/hac/define/nca.h>
-#include <fnd/IByteModel.h>
-#include <fnd/List.h>
 
 namespace nn
 {
 namespace hac
 {
-	class ContentArchiveHeader :
-		public fnd::IByteModel
+	class ContentArchiveHeader
 	{
 	public:
 		struct sPartitionEntry
@@ -16,7 +13,7 @@ namespace hac
 			byte_t header_index;
 			uint64_t offset;
 			uint64_t size;
-			fnd::sha::sSha256Hash fs_header_hash;
+			detail::sha256_hash_t fs_header_hash;
 
 			const sPartitionEntry& operator=(const sPartitionEntry& other)
 			{
@@ -52,7 +49,7 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>& getBytes() const;
+		const tc::ByteData& getBytes() const;
 
 		// variables
 		void clear();
@@ -88,11 +85,11 @@ namespace hac
 		void setSdkAddonVersion(uint32_t version);
 		
 		bool hasRightsId() const;
-		const byte_t* getRightsId() const;
-		void setRightsId(const byte_t* rights_id);
+		const nn::hac::detail::rights_id_t& getRightsId() const;
+		void setRightsId(const nn::hac::detail::rights_id_t& rights_id);
 
-		const fnd::List<sPartitionEntry>& getPartitionEntryList() const;
-		void setPartitionEntryList(const fnd::List<sPartitionEntry>& partition_entry_list);
+		const std::vector<sPartitionEntry>& getPartitionEntryList() const;
+		void setPartitionEntryList(const std::vector<sPartitionEntry>& partition_entry_list);
 		
 		const byte_t* getKeyArea() const;
 		void setKeyArea(const byte_t* key_area);
@@ -101,7 +98,7 @@ namespace hac
 		const std::string kModuleName = "CONTENT_ARCHIVE_HEADER";
 
 		// binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// data
 		byte_t mFormatVersion;
@@ -114,9 +111,9 @@ namespace hac
 		uint64_t mProgramId;
 		uint32_t mContentIndex;
 		uint32_t mSdkAddonVersion;
-		fnd::Vec<byte_t> mRightsId;
-		fnd::List<sPartitionEntry> mPartitionEntryList;
-		fnd::Vec<byte_t> mKeyArea;
+		nn::hac::detail::rights_id_t mRightsId;
+		std::vector<sPartitionEntry> mPartitionEntryList;
+		tc::ByteData mKeyArea;
 
 		uint64_t blockNumToSize(uint32_t block_num) const;
 		uint32_t sizeToBlockNum(uint64_t real_size) const;

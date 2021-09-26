@@ -52,7 +52,7 @@ void nn::hac::SystemCallEntry::setKernelCapability(const KernelCapabilityEntry &
 {
 	if (kernel_cap.getType() != kCapId)
 	{
-		throw fnd::Exception(kModuleName, "KernelCapabilityEntry is not type 'EnableSystemCalls'");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "KernelCapabilityEntry is not type 'EnableSystemCalls'");
 	}
 
 	mCap = kernel_cap;
@@ -68,7 +68,7 @@ void nn::hac::SystemCallEntry::setSystemCallUpperBits(uint32_t upper_bits)
 {
 	if (upper_bits > kSysCallUpperMax)
 	{
-		throw fnd::Exception(kModuleName, "Illegal SystemCall upper bits.");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal SystemCall upper bits.");
 	}
 
 	mSystemCallUpper = upper_bits;
@@ -84,7 +84,7 @@ void nn::hac::SystemCallEntry::setSystemCallLowerBits(uint32_t lower_bits)
 {
 	if (lower_bits > kSysCallLowerMax)
 	{
-		throw fnd::Exception(kModuleName, "Illegal SystemCall upper bits.");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal SystemCall upper bits.");
 	}
 
 	mSystemCallLower = lower_bits;

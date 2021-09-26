@@ -1,6 +1,5 @@
 #pragma once
 #include <nn/hac/define/aci.h>
-#include <string>
 
 namespace nn
 {

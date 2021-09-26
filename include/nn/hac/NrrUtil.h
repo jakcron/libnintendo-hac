@@ -1,6 +1,5 @@
 #pragma once
 #include <nn/hac/define/nrr.h>
-#include <string>
 
 namespace nn
 {

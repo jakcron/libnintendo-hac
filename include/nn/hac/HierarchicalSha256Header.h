@@ -1,14 +1,13 @@
 #pragma once
 #include <nn/hac/define/hierarchicalsha256.h>
-#include <fnd/IByteModel.h>
-#include <fnd/List.h>
+
+#include <tc/NotImplementedException.h>
 
 namespace nn
 {
 namespace hac
 {
-	class HierarchicalSha256Header :
-		public fnd::IByteModel
+	class HierarchicalSha256Header
 	{
 	public:
 		struct sLayer
@@ -43,29 +42,29 @@ namespace hac
 		// IByteModel
 		void toBytes();
 		void fromBytes(const byte_t* bytes, size_t len);
-		const fnd::Vec<byte_t>&  getBytes() const;
+		const tc::ByteData&  getBytes() const;
 
 		// variables
 		void clear();
 
-		const fnd::sha::sSha256Hash& getMasterHash() const;
-		void setMasterHash(const fnd::sha::sSha256Hash& master_hash);
+		const nn::hac::detail::sha256_hash_t& getMasterHash() const;
+		void setMasterHash(const nn::hac::detail::sha256_hash_t& master_hash);
 
 		size_t getHashBlockSize() const;
 		void setHashBlockSize(size_t hash_block_size);
 
-		const fnd::List<sLayer>& getLayerInfo() const;
-		void setLayerInfo(const fnd::List<sLayer>& layer_info);
+		const std::vector<sLayer>& getLayerInfo() const;
+		void setLayerInfo(const std::vector<sLayer>& layer_info);
 	private:
 		const std::string kModuleName = "HIERARCHICAL_SHA256_HEADER";
 
 		// binary
-		fnd::Vec<byte_t> mRawBinary;
+		tc::ByteData mRawBinary;
 
 		// data
-		fnd::sha::sSha256Hash mMasterHash;
+		nn::hac::detail::sha256_hash_t mMasterHash;
 		size_t mHashBlockSize;
-		fnd::List<sLayer> mLayerInfo;
+		std::vector<sLayer> mLayerInfo;
 	};
 }
 }

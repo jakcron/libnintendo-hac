@@ -50,50 +50,50 @@ bool nn::hac::NroHeader::operator!=(const NroHeader& other) const
 
 void nn::hac::NroHeader::toBytes()
 {
-	mRawBinary.alloc(sizeof(sNroHeader));
+	mRawBinary = tc::ByteData(sizeof(sNroHeader));
 	nn::hac::sNroHeader* hdr = (nn::hac::sNroHeader*)mRawBinary.data();
 
 	// set header identifers
-	hdr->st_magic = nro::kNroStructMagic;
-	hdr->format_version = nro::kDefaultFormatVersion;
-	hdr->flags = 0;
+	hdr->st_magic.wrap(nro::kNroStructMagic);
+	hdr->format_version.wrap(nro::kDefaultFormatVersion);
+	hdr->flags.wrap(0);
 
 	// set ro crt
-	hdr->ro_crt.entry_point_insn = mRoCrtEntryPoint;
-	hdr->ro_crt.mod_offset = mRoCrtModOffset;
+	hdr->ro_crt.entry_point_insn.wrap(mRoCrtEntryPoint);
+	hdr->ro_crt.mod_offset.wrap(mRoCrtModOffset);
 
 	// set nro size
-	hdr->size = mNroSize;
+	hdr->size.wrap(mNroSize);
 
 	// set text section
-	hdr->text.memory_offset = mTextInfo.memory_offset;
-	hdr->text.size = mTextInfo.size;
+	hdr->text.memory_offset.wrap(mTextInfo.memory_offset);
+	hdr->text.size.wrap(mTextInfo.size);
 
 	// set ro section
-	hdr->ro.memory_offset = mRoInfo.memory_offset;
-	hdr->ro.size = mRoInfo.size;
+	hdr->ro.memory_offset.wrap(mRoInfo.memory_offset);
+	hdr->ro.size.wrap(mRoInfo.size);
 
 	// set data section
-	hdr->data.memory_offset = mDataInfo.memory_offset;
-	hdr->data.size = mDataInfo.size;
+	hdr->data.memory_offset.wrap(mDataInfo.memory_offset);
+	hdr->data.size.wrap(mDataInfo.size);
 
 	// set bss size
-	hdr->bss_size = mBssSize;
+	hdr->bss_size.wrap(mBssSize);
 
 	// set moduleid
-	memcpy(hdr->module_id, mModuleId.data, nro::kModuleIdSize);
+	hdr->module_id = mModuleId;
 
 	// set ro embedded info
-	hdr->embedded.memory_offset = mRoEmbeddedInfo.memory_offset;
-	hdr->embedded.size = mRoEmbeddedInfo.size;
+	hdr->embedded.memory_offset.wrap(mRoEmbeddedInfo.memory_offset);
+	hdr->embedded.size.wrap(mRoEmbeddedInfo.size);
 
 	// set ro dyn str info
-	hdr->dyn_str.memory_offset = mRoDynStrInfo.memory_offset;
-	hdr->dyn_str.size = mRoDynStrInfo.size;
+	hdr->dyn_str.memory_offset.wrap(mRoDynStrInfo.memory_offset);
+	hdr->dyn_str.size.wrap(mRoDynStrInfo.size);
 
 	// set ro dyn sym info
-	hdr->dyn_sym.memory_offset = mRoDynSymInfo.memory_offset;
-	hdr->dyn_sym.size = mRoDynSymInfo.size;
+	hdr->dyn_sym.memory_offset.wrap(mRoDynSymInfo.memory_offset);
+	hdr->dyn_sym.size.wrap(mRoDynSymInfo.size);
 }
 
 void nn::hac::NroHeader::fromBytes(const byte_t* data, size_t len)
@@ -101,67 +101,67 @@ void nn::hac::NroHeader::fromBytes(const byte_t* data, size_t len)
 	// check input data size
 	if (len < sizeof(sNroHeader))
 	{
-		throw fnd::Exception(kModuleName, "NRO header size is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "NRO header size is too small");
 	}
 
 	// clear internal members
 	clear();
 
 	// allocate internal local binary copy
-	mRawBinary.alloc(sizeof(sNroHeader));
+	mRawBinary = tc::ByteData(sizeof(sNroHeader));
 	memcpy(mRawBinary.data(), data, mRawBinary.size());
 
 	// get sNroHeader ptr
 	const nn::hac::sNroHeader* hdr = (const nn::hac::sNroHeader*)mRawBinary.data();
 	
 	// check NRO signature
-	if (hdr->st_magic.get() != nro::kNroStructMagic)
+	if (hdr->st_magic.unwrap() != nro::kNroStructMagic)
 	{
-		throw fnd::Exception(kModuleName, "NRO header corrupt (unrecognised header signature)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "NRO header corrupt (unrecognised header signature)");
 	}
 
 	// check NRO format version
-	if (hdr->format_version.get() != nro::kDefaultFormatVersion)
+	if (hdr->format_version.unwrap() != nro::kDefaultFormatVersion)
 	{
-		throw fnd::Exception(kModuleName, "NRO header corrupt (unsupported format version)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "NRO header corrupt (unsupported format version)");
 	}
 
 	// check NRO flags
-	if (hdr->flags.get() != 0)
+	if (hdr->flags.unwrap() != 0)
 	{
-		throw fnd::Exception(kModuleName, "NRO header corrupt (unsupported flag)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "NRO header corrupt (unsupported flag)");
 	}
 
-	mRoCrtEntryPoint = hdr->ro_crt.entry_point_insn.get();
-	mRoCrtModOffset = hdr->ro_crt.mod_offset.get();
-	mNroSize = hdr->size.get();
-	mTextInfo.memory_offset = hdr->text.memory_offset.get();
-	mTextInfo.size = hdr->text.size.get();
-	mRoInfo.memory_offset = hdr->ro.memory_offset.get();
-	mRoInfo.size = hdr->ro.size.get();
-	mDataInfo.memory_offset = hdr->data.memory_offset.get();
-	mDataInfo.size = hdr->data.size.get();
-	mBssSize = hdr->bss_size.get();
-	memcpy(mModuleId.data, hdr->module_id, nro::kModuleIdSize);
+	mRoCrtEntryPoint = hdr->ro_crt.entry_point_insn.unwrap();
+	mRoCrtModOffset = hdr->ro_crt.mod_offset.unwrap();
+	mNroSize = hdr->size.unwrap();
+	mTextInfo.memory_offset = hdr->text.memory_offset.unwrap();
+	mTextInfo.size = hdr->text.size.unwrap();
+	mRoInfo.memory_offset = hdr->ro.memory_offset.unwrap();
+	mRoInfo.size = hdr->ro.size.unwrap();
+	mDataInfo.memory_offset = hdr->data.memory_offset.unwrap();
+	mDataInfo.size = hdr->data.size.unwrap();
+	mBssSize = hdr->bss_size.unwrap();
+	mModuleId = hdr->module_id;
 
-	mRoEmbeddedInfo.memory_offset = hdr->embedded.memory_offset.get();
-	mRoEmbeddedInfo.size = hdr->embedded.size.get();
+	mRoEmbeddedInfo.memory_offset = hdr->embedded.memory_offset.unwrap();
+	mRoEmbeddedInfo.size = hdr->embedded.size.unwrap();
 
-	mRoDynStrInfo.memory_offset = hdr->dyn_str.memory_offset.get();
-	mRoDynStrInfo.size = hdr->dyn_str.size.get();
+	mRoDynStrInfo.memory_offset = hdr->dyn_str.memory_offset.unwrap();
+	mRoDynStrInfo.size = hdr->dyn_str.size.unwrap();
 
-	mRoDynSymInfo.memory_offset = hdr->dyn_sym.memory_offset.get();
-	mRoDynSymInfo.size = hdr->dyn_sym.size.get();
+	mRoDynSymInfo.memory_offset = hdr->dyn_sym.memory_offset.unwrap();
+	mRoDynSymInfo.size = hdr->dyn_sym.size.unwrap();
 }
 
-const fnd::Vec<byte_t>& nn::hac::NroHeader::getBytes() const
+const tc::ByteData& nn::hac::NroHeader::getBytes() const
 {
 	return mRawBinary;
 }
 
 void nn::hac::NroHeader::clear()
 {
-	mRawBinary.clear();
+	mRawBinary = tc::ByteData();
 	mRoCrtEntryPoint = 0;
 	mRoCrtModOffset = 0;
 	memset(&mTextInfo, 0, sizeof(mTextInfo));
@@ -244,12 +244,12 @@ void nn::hac::NroHeader::setBssSize(uint32_t size)
 	mBssSize = size;
 }
 
-const nn::hac::NroHeader::sModuleId& nn::hac::NroHeader::getModuleId() const
+const nn::hac::nro::module_id_t& nn::hac::NroHeader::getModuleId() const
 {
 	return mModuleId;
 }
 
-void nn::hac::NroHeader::setModuleId(const sModuleId& id)
+void nn::hac::NroHeader::setModuleId(const nn::hac::nro::module_id_t& id)
 {
 	mModuleId = id;
 }
