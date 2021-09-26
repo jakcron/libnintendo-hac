@@ -121,7 +121,7 @@ void nn::hac::KernelCapabilityControl::fromBytes(const byte_t * data, size_t len
 				// ignore stubbed
 				break;
 			default:
-				throw fnd::Exception(kModuleName, "Unsupported kernel capability type");
+				throw tc::ArgumentOutOfRangeException(kModuleName, "Unsupported kernel capability type");
 		}
 	}
 

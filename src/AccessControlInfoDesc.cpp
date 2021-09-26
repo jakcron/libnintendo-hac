@@ -185,7 +185,7 @@ void nn::hac::AccessControlInfoDesc::generateSignature(const tc::crypto::RsaKey&
 void nn::hac::AccessControlInfoDesc::validateSignature(const tc::crypto::RsaKey& key) const
 {
 	if (mRawBinary.size() == 0)
-		throw fnd::Exception(kModuleName, "No Access Control Info Desc binary exists to verify");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "No Access Control Info Desc binary exists to verify");
 
 	detail::sha256_hash_t hash;
 	tc::crypto::GenerateSha256Hash(hash.data(), mRawBinary.data() + sizeof(detail::rsa2048_signature_t), mRawBinary.size() - sizeof(detail::rsa2048_signature_t));

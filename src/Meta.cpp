@@ -1,7 +1,5 @@
 #include <nn/hac/Meta.h>
 
-#include <fnd/SimpleTextOutput.h>
-
 nn::hac::Meta::Meta()
 {
 	clear();
@@ -67,9 +65,9 @@ void nn::hac::Meta::toBytes()
 		uint32_t offset, size;
 	} acid, aci;
 
-	acid.offset = (uint32_t)align(sizeof(sMetaHeader), meta::kSectionAlignSize);
+	acid.offset = (uint32_t)align<size_t>(sizeof(sMetaHeader), meta::kSectionAlignSize);
 	acid.size = (uint32_t)mAccessControlInfoDesc.getBytes().size();
-	aci.offset = (uint32_t)(acid.offset + align(acid.size, meta::kSectionAlignSize));
+	aci.offset = (uint32_t)(acid.offset + align<uint32_t>(acid.size, (uint32_t)meta::kSectionAlignSize));
 	aci.size = (uint32_t)mAccessControlInfo.getBytes().size();
 	
 
@@ -117,7 +115,7 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	// check size
 	if (len < sizeof(sMetaHeader))
 	{
-		throw fnd::Exception(kModuleName, "META binary is too small");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "META binary is too small");
 	}
 	
 	// clear variables
@@ -242,7 +240,7 @@ void nn::hac::Meta::setMainThreadPriority(byte_t priority)
 {
 	if (priority > meta::kMaxPriority)
 	{
-		throw fnd::Exception(kModuleName, "Illegal main thread priority (range 0-63)");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Illegal main thread priority (range 0-63)");
 	}
 
 	mMainThreadPriority = priority;
@@ -297,7 +295,7 @@ void nn::hac::Meta::setName(const std::string & name)
 {
 	if (name.length() > meta::kNameMaxLen)
 	{
-		throw fnd::Exception(kModuleName, "Name is too long");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Name is too long");
 	}
 
 	mName = name;
@@ -312,7 +310,7 @@ void nn::hac::Meta::setProductCode(const std::string & product_code)
 {
 	if (product_code.length() > meta::kProductCodeMaxLen)
 	{
-		throw fnd::Exception(kModuleName, "Product Code is too long");
+		throw tc::ArgumentOutOfRangeException(kModuleName, "Product Code is too long");
 	}
 
 	mProductCode = product_code;

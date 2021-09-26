@@ -342,5 +342,5 @@ uint64_t nn::hac::ContentArchiveHeader::blockNumToSize(uint32_t block_num) const
 
 uint32_t nn::hac::ContentArchiveHeader::sizeToBlockNum(uint64_t real_size) const
 {
-	return (uint32_t)(align(real_size, nca::kSectorSize) / nca::kSectorSize);
+	return (uint32_t)(align<uint64_t>(real_size, (uint64_t)nca::kSectorSize) / (uint64_t)nca::kSectorSize);
 }

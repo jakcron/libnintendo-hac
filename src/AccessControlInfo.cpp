@@ -52,7 +52,7 @@ void nn::hac::AccessControlInfo::toBytes()
 	kc.size = (uint32_t)mKernelCapabilities.getBytes().size();
 
 	// get total size
-	size_t total_size = _MAX(_MAX(fac.offset + fac.size, sac.offset + sac.size), kc.offset + kc.size); 
+	size_t total_size = (size_t)std::max<uint32_t>(std::max<uint32_t>(fac.offset + fac.size, sac.offset + sac.size), kc.offset + kc.size); 
 
 	mRawBinary = tc::ByteData(total_size);
 	sAciHeader* hdr = (sAciHeader*)mRawBinary.data();
