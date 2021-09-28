@@ -6,7 +6,7 @@ void nn::hac::ContentArchiveUtil::decryptContentArchiveHeader(const byte_t* src,
 {
 	// init aes-xts
 	tc::crypto::Aes128XtsEncryptor enc;
-	enc.initialize(key[0].data(), key[0].size(), key[1].data(), key[1].size(), nn::hac::nca::kSectorSize, true);
+	enc.initialize(key[0].data(), key[0].size(), key[1].data(), key[1].size(), nn::hac::nca::kSectorSize, false);
 
 	// decrypt main header
 	byte_t raw_hdr[nn::hac::nca::kSectorSize];
@@ -16,7 +16,7 @@ void nn::hac::ContentArchiveUtil::decryptContentArchiveHeader(const byte_t* src,
 	// decrypt whole header
 	for (size_t i = 0; i < nn::hac::nca::kHeaderSectorNum; i++)
 	{
-		enc.decrypt(dst + sectorToOffset(i), src + sectorToOffset(i), nn::hac::nca::kSectorSize, (i > 1 && useNca2SectorIndex)? 0 : i);
+		enc.decrypt(dst + sectorToOffset(i), src + sectorToOffset(i), nn::hac::nca::kSectorSize, (i >= 2 && useNca2SectorIndex)? 0 : i);
 	}
 }
 
