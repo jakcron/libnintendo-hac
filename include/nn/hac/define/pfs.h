@@ -24,8 +24,8 @@ namespace hac
 
 	struct sPfsFile
 	{
-		tc::bn::le64<uint64_t> data_offset;
-		tc::bn::le64<uint64_t> size;
+		tc::bn::le64<int64_t> data_offset;
+		tc::bn::le64<int64_t> size;
 		tc::bn::le32<uint32_t> name_offset;
 		std::array<byte_t, 0x04> padding;
 	};
@@ -33,8 +33,8 @@ namespace hac
 
 	struct sHashedPfsFile
 	{
-		tc::bn::le64<uint64_t> data_offset;
-		tc::bn::le64<uint64_t> size;
+		tc::bn::le64<int64_t> data_offset;
+		tc::bn::le64<int64_t> size;
 		tc::bn::le32<uint32_t> name_offset;
 		tc::bn::le32<uint32_t> hash_protected_size;
 		std::array<byte_t, 0x08> padding;

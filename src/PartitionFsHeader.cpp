@@ -1,4 +1,7 @@
+#include <limits>
 #include <nn/hac/PartitionFsHeader.h>
+
+#include <tc/io/IOUtil.h>
 
 nn::hac::PartitionFsHeader::PartitionFsHeader()
 {
@@ -44,19 +47,24 @@ const tc::ByteData& nn::hac::PartitionFsHeader::getBytes() const
 void nn::hac::PartitionFsHeader::toBytes()
 {
 	// calculate name table size
-	size_t name_table_size = 0;
+	int64_t name_table_size = 0;
 	for (size_t i = 0; i < mFileList.size(); i++)
 	{
-		name_table_size += mFileList[i].name.length() + 1;
+		name_table_size += tc::io::IOUtil::castSizeToInt64(mFileList[i].name.length() + 1);
 	}
 
-	size_t pfs_header_size = align<size_t>(sizeof(sPfsHeader) + getFileEntrySize(mFsType) * mFileList.size() + name_table_size, pfs::kHeaderAlign);
+	int64_t pfs_header_size = align<int64_t>(tc::io::IOUtil::castSizeToInt64(sizeof(sPfsHeader)) + tc::io::IOUtil::castSizeToInt64(getFileEntrySize(mFsType) * mFileList.size()) + name_table_size, tc::io::IOUtil::castSizeToInt64(pfs::kHeaderAlign));
 	
 	// align name_table_size
 	name_table_size = pfs_header_size - (sizeof(sPfsHeader) + getFileEntrySize(mFsType) * mFileList.size());
 
+	if (tc::io::IOUtil::castSizeToInt64(tc::io::IOUtil::castInt64ToSize(pfs_header_size)) != pfs_header_size)
+	{
+		throw tc::InvalidOperationException(kModuleName, "PfsHeader too large to serialise.");
+	}
+
 	// allocate pfs header binary
-	mRawBinary = tc::ByteData(pfs_header_size);
+	mRawBinary = tc::ByteData(tc::io::IOUtil::castInt64ToSize(pfs_header_size));
 	sPfsHeader* hdr = (sPfsHeader*)mRawBinary.data();
 
 	// set header fields
@@ -80,12 +88,17 @@ void nn::hac::PartitionFsHeader::toBytes()
 		char* raw_name_table = (char*)(mRawBinary.data() + sizeof(sPfsHeader) + sizeof(sPfsFile) * mFileList.size());
 		size_t raw_name_table_pos = 0;
 
-		calculateOffsets(pfs_header_size);
+		calculateOffsets(tc::io::IOUtil::castSizeToInt64(pfs_header_size));
 		for (size_t i = 0; i < mFileList.size(); i++)
 		{
-			raw_files[i].data_offset.wrap(mFileList[i].offset - pfs_header_size);
+			if (raw_name_table_pos >= size_t(std::numeric_limits<uint32_t>::max()))
+			{
+				throw tc::Exception(kModuleName, "raw_name_table_pos could not be safely serialised as it was too large.")
+			}
+
+			raw_files[i].data_offset.wrap(mFileList[i].offset - tc::io::IOUtil::castSizeToInt64(pfs_header_size));
 			raw_files[i].size.wrap(mFileList[i].size);
-			raw_files[i].name_offset.wrap((uint32_t)raw_name_table_pos);
+			raw_files[i].name_offset.wrap(uint32_t(raw_name_table_pos));
 
 			strcpy(raw_name_table + raw_name_table_pos, mFileList[i].name.c_str());
 			raw_name_table_pos += (uint32_t)(mFileList[i].name.length() + 1);
@@ -97,13 +110,23 @@ void nn::hac::PartitionFsHeader::toBytes()
 		char* raw_name_table = (char*)(mRawBinary.data() + sizeof(sPfsHeader) + sizeof(sHashedPfsFile) * mFileList.size());
 		size_t raw_name_table_pos = 0;
 
-		calculateOffsets(pfs_header_size);
+		calculateOffsets(tc::io::IOUtil::castSizeToInt64(pfs_header_size));
 		for (size_t i = 0; i < mFileList.size(); i++)
 		{
-			raw_files[i].data_offset.wrap(mFileList[i].offset - pfs_header_size);
+			if (raw_name_table_pos >= size_t(std::numeric_limits<uint32_t>::max()))
+			{
+				throw tc::Exception(kModuleName, "raw_name_table_pos could not be safely serialised as it was too large.")
+			}
+
+			if (mFileList[i].hash_protected_size >= size_t(std::numeric_limits<uint32_t>::max()))
+			{
+				throw tc::Exception(kModuleName, "hash_protected_size could not be safely serialised as it was too large.")
+			}
+
+			raw_files[i].data_offset.wrap(mFileList[i].offset - tc::io::IOUtil::castSizeToInt64(pfs_header_size));
 			raw_files[i].size.wrap(mFileList[i].size);
-			raw_files[i].name_offset.wrap((uint32_t)raw_name_table_pos);
-			raw_files[i].hash_protected_size.wrap((uint32_t)mFileList[i].hash_protected_size);
+			raw_files[i].name_offset.wrap(uint32_t(raw_name_table_pos));
+			raw_files[i].hash_protected_size.wrap(uint32_t(mFileList[i].hash_protected_size));
 			raw_files[i].hash = mFileList[i].hash;
 
 			strcpy(raw_name_table + raw_name_table_pos, mFileList[i].name.c_str());
@@ -169,7 +192,7 @@ void nn::hac::PartitionFsHeader::fromBytes(const byte_t* data, size_t len)
 		{
 			mFileList.push_back({ 
 				std::string(raw_name_table + raw_files[i].name_offset.unwrap()), 
-				raw_files[i].data_offset.unwrap() + pfs_full_header_size, 
+				raw_files[i].data_offset.unwrap() + tc::io::IOUtil::castSizeToInt64(pfs_full_header_size), 
 				raw_files[i].size.unwrap() 
 				});
 		}
@@ -185,9 +208,9 @@ void nn::hac::PartitionFsHeader::fromBytes(const byte_t* data, size_t len)
 		{
 			mFileList.push_back({
 				std::string(raw_name_table + raw_files[i].name_offset.unwrap()), 
-				raw_files[i].data_offset.unwrap() + pfs_full_header_size, 
+				raw_files[i].data_offset.unwrap() + tc::io::IOUtil::castSizeToInt64(pfs_full_header_size), 
 				raw_files[i].size.unwrap(),
-				raw_files[i].hash_protected_size.unwrap(),
+				int64_t(raw_files[i].hash_protected_size.unwrap()),
 				raw_files[i].hash 
 				});
 		}
@@ -217,13 +240,18 @@ const std::vector<nn::hac::PartitionFsHeader::sFile>& nn::hac::PartitionFsHeader
 	return mFileList;
 }
 
-void nn::hac::PartitionFsHeader::addFile(const std::string & name, size_t size)
+void nn::hac::PartitionFsHeader::addFile(const std::string & name, int64_t size)
 {
 	mFileList.push_back({ name, 0, size, 0 });
 }
 
-void nn::hac::PartitionFsHeader::addFile(const std::string & name, size_t size, size_t hash_protected_size, const nn::hac::detail::sha256_hash_t& hash)
+void nn::hac::PartitionFsHeader::addFile(const std::string & name, int64_t size, int64_t hash_protected_size, const nn::hac::detail::sha256_hash_t& hash)
 {
+	if (hash_protected_size >= int64_t(std::numeric_limits<uint32_t>::max())
+	{
+		throw tc::ArgumentOutOfRangeException(kModuleName+"::addFile()", "hash_protected_size cannot exceed 0xffffffff (max for uint32_t)");
+	}
+
 	mFileList.push_back({ name, 0, size, hash_protected_size, hash });
 }
 
@@ -244,7 +272,7 @@ size_t nn::hac::PartitionFsHeader::getFileEntrySize(FsType fs_type)
 	return size;
 }
 
-void nn::hac::PartitionFsHeader::calculateOffsets(size_t data_offset)
+void nn::hac::PartitionFsHeader::calculateOffsets(int64_t data_offset)
 {
 	for (size_t i = 0; i < mFileList.size(); i++)
 	{

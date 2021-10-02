@@ -17,9 +17,9 @@ namespace hac
 		struct sFile
 		{
 			std::string name;
-			size_t offset;
-			size_t size;
-			size_t hash_protected_size;
+			int64_t offset;
+			int64_t size;
+			int64_t hash_protected_size;
 			detail::sha256_hash_t hash;
 
 			sFile& operator=(const sFile& other)
@@ -75,8 +75,8 @@ namespace hac
 		FsType getFsType() const;
 		void setFsType(FsType type);
 		const std::vector<sFile>& getFileList() const;
-		void addFile(const std::string& name, size_t size);
-		void addFile(const std::string& name, size_t size, size_t hash_protected_size, const nn::hac::detail::sha256_hash_t& hash);
+		void addFile(const std::string& name, int64_t size);
+		void addFile(const std::string& name, int64_t size, int64_t hash_protected_size, const nn::hac::detail::sha256_hash_t& hash);
 
 	private:
 		const std::string kModuleName = "PARTITIONFS_HEADER";
@@ -89,7 +89,7 @@ namespace hac
 		std::vector<sFile> mFileList;
 
 		size_t getFileEntrySize(FsType fs_type);
-		void calculateOffsets(size_t data_offset);
+		void calculateOffsets(int64_t data_offset);
 	};
 }
 }
