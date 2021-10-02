@@ -93,7 +93,7 @@ void nn::hac::PartitionFsHeader::toBytes()
 		{
 			if (raw_name_table_pos >= size_t(std::numeric_limits<uint32_t>::max()))
 			{
-				throw tc::Exception(kModuleName, "raw_name_table_pos could not be safely serialised as it was too large.")
+				throw tc::Exception(kModuleName, "raw_name_table_pos could not be safely serialised as it was too large.");
 			}
 
 			raw_files[i].data_offset.wrap(mFileList[i].offset - tc::io::IOUtil::castSizeToInt64(pfs_header_size));
@@ -115,12 +115,12 @@ void nn::hac::PartitionFsHeader::toBytes()
 		{
 			if (raw_name_table_pos >= size_t(std::numeric_limits<uint32_t>::max()))
 			{
-				throw tc::Exception(kModuleName, "raw_name_table_pos could not be safely serialised as it was too large.")
+				throw tc::Exception(kModuleName, "raw_name_table_pos could not be safely serialised as it was too large.");
 			}
 
 			if (mFileList[i].hash_protected_size >= size_t(std::numeric_limits<uint32_t>::max()))
 			{
-				throw tc::Exception(kModuleName, "hash_protected_size could not be safely serialised as it was too large.")
+				throw tc::Exception(kModuleName, "hash_protected_size could not be safely serialised as it was too large.");
 			}
 
 			raw_files[i].data_offset.wrap(mFileList[i].offset - tc::io::IOUtil::castSizeToInt64(pfs_header_size));
@@ -247,7 +247,7 @@ void nn::hac::PartitionFsHeader::addFile(const std::string & name, int64_t size)
 
 void nn::hac::PartitionFsHeader::addFile(const std::string & name, int64_t size, int64_t hash_protected_size, const nn::hac::detail::sha256_hash_t& hash)
 {
-	if (hash_protected_size >= int64_t(std::numeric_limits<uint32_t>::max())
+	if (hash_protected_size >= int64_t(std::numeric_limits<uint32_t>::max()))
 	{
 		throw tc::ArgumentOutOfRangeException(kModuleName+"::addFile()", "hash_protected_size cannot exceed 0xffffffff (max for uint32_t)");
 	}
