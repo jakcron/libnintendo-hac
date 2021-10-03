@@ -50,7 +50,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 
 
 	if (hdr.header_size.unwrap() != sizeof(nn::hac::sRomfsHeader) ||
-	    hdr.dir_hash_bucket.offset.unwrap() != sizeof(nn::hac::sRomfsHeader) ||
+	    hdr.dir_entry.offset.unwrap() != (hdr.dir_hash_bucket.offset.unwrap() + hdr.dir_hash_bucket.size.unwrap()) ||
 	    hdr.data_offset.unwrap() != align<int64_t>(hdr.header_size.unwrap(), nn::hac::romfs::kRomfsHeaderAlign))
 	{
 		throw tc::ArgumentOutOfRangeException("nn::hac::RomFsMetaGenerator", "RomFsHeader is corrupted.");
