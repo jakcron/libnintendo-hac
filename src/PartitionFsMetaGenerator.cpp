@@ -105,10 +105,11 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 		{
 			nn::hac::sHashedPfsFile& file_entry = ((nn::hac::sHashedPfsFile*)file_entry_table_raw.data())[i];
 
-			if (file_entry.data_offset.unwrap() != pos)
-			{
-				throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsMetaGenerator", "sHashedPfsFile entry had unexpected data offset.");
-			}
+			// HFS partitions do not strictly follow each other as the secure partition offset also has to lie on the beginning of a page.
+			//if (file_entry.data_offset.unwrap() != pos)
+			//{
+			//	throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsMetaGenerator", "sHashedPfsFile entry had unexpected data offset.");
+			//}
 
 			tmp.name = std::string((char*)name_table_raw.data() + file_entry.name_offset.unwrap());
 			tmp.offset = file_entry.data_offset.unwrap() + tc::io::IOUtil::castSizeToInt64(pfs_full_header_size);
@@ -158,7 +159,12 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 				}
 			}
 			
-			tmp.stream = std::make_shared<tc::io::SubStream>(tc::io::SubStream(stream, section[i].offset, section[i].size));
+			try {
+				tmp.stream = std::make_shared<tc::io::SubStream>(tc::io::SubStream(stream, section[i].offset, section[i].size));
+			} catch (tc::Exception& e) {
+				fmt::print("[WARNING] Failed to add file \"{:s}\". ({:s})\n", section[i].name, e.error());
+			}
+			
 			
 
 			// create file path
