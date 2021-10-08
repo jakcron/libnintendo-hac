@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)..\..\deps\libtoolchain\build\visualstudio\libtoolchain\libtoolchain.vcxproj">
+      <Project>{e194e4b8-1482-40a2-901b-75d4387822e9}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\..\..\include\nn\hac\AccessControlInfo.h" />
     <ClInclude Include="..\..\..\include\nn\hac\AccessControlInfoDesc.h" />
     <ClInclude Include="..\..\..\include\nn\hac\AccessControlInfoUtil.h" />
@@ -34,7 +39,9 @@
     <ClInclude Include="..\..\..\include\nn\hac\ContentMetaInfo.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentMetaUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\aci.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\define\bktr.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\cnmt.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\define\compression.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\delta.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\fac.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\gc.h" />
@@ -43,7 +50,6 @@
     <ClInclude Include="..\..\..\include\nn\hac\define\ini.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\kc.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\kip.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\define\macro.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\meta.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\nacp.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\nca.h" />
@@ -56,6 +62,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\DeltaMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessControl.h" />
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessUtil.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\GameCardFsMetaGenerator.h" />
     <ClInclude Include="..\..\..\include\nn\hac\GameCardHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\GameCardUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HandleTableSizeEntry.h" />
@@ -85,9 +92,11 @@
     <ClInclude Include="..\..\..\include\nn\hac\NrrUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\NsoHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsHeader.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\PartitionFsMetaGenerator.h" />
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\PatchMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\Result.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\RomFsMetaGenerator.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControl.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControlEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\SystemCallEntry.h" />
@@ -115,6 +124,7 @@
     <ClCompile Include="..\..\..\src\DeltaMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\FileSystemAccessControl.cpp" />
     <ClCompile Include="..\..\..\src\FileSystemAccessUtil.cpp" />
+    <ClCompile Include="..\..\..\src\GameCardFsMetaGenerator.cpp" />
     <ClCompile Include="..\..\..\src\GameCardHeader.cpp" />
     <ClCompile Include="..\..\..\src\GameCardUtil.cpp" />
     <ClCompile Include="..\..\..\src\HandleTableSizeEntry.cpp" />
@@ -143,9 +153,11 @@
     <ClCompile Include="..\..\..\src\NrrUtil.cpp" />
     <ClCompile Include="..\..\..\src\NsoHeader.cpp" />
     <ClCompile Include="..\..\..\src\PartitionFsHeader.cpp" />
+    <ClCompile Include="..\..\..\src\PartitionFsMetaGenerator.cpp" />
     <ClCompile Include="..\..\..\src\PartitionFsUtil.cpp" />
     <ClCompile Include="..\..\..\src\PatchMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\Result.cpp" />
+    <ClCompile Include="..\..\..\src\RomFsMetaGenerator.cpp" />
     <ClCompile Include="..\..\..\src\ServiceAccessControl.cpp" />
     <ClCompile Include="..\..\..\src\ServiceAccessControlEntry.cpp" />
     <ClCompile Include="..\..\..\src\SystemCallEntry.cpp" />
@@ -154,11 +166,6 @@
     <ClCompile Include="..\..\..\src\SystemUpdateMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\ThreadInfoEntry.cpp" />
     <ClCompile Include="..\..\..\src\ThreadInfoHandler.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)..\..\deps\libtoolchain\build\visualstudio\libtoolchain\libtoolchain.vcxproj">
-      <Project>{e194e4b8-1482-40a2-901b-75d4387822e9}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

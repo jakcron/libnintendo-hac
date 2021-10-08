@@ -34,7 +34,7 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 	nn::hac::PartitionFsHeader root_header;
 	try {
 		root_header.fromBytes(root_header_raw.data(), root_header_raw.size());
-	} catch (tc::Exception& e) {
+	} catch (tc::Exception&) {
 		throw tc::Exception("nn::hac::GameCardFsMetaGenerator", "Failed to process root HFS0 header.");
 	}
 	
@@ -100,7 +100,7 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 		nn::hac::PartitionFsHeader part_header;
 		try {
 			part_header.fromBytes(part_header_raw.data(), part_header_raw.size());
-		} catch (tc::Exception& e) {
+		} catch (tc::Exception&) {
 			throw tc::Exception("nn::hac::GameCardFsMetaGenerator", "Failed to process partition HFS0 header.");
 		}
 		

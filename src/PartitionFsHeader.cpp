@@ -118,7 +118,7 @@ void nn::hac::PartitionFsHeader::toBytes()
 				throw tc::Exception(kModuleName, "raw_name_table_pos could not be safely serialised as it was too large.");
 			}
 
-			if (mFileList[i].hash_protected_size >= size_t(std::numeric_limits<uint32_t>::max()))
+			if (mFileList[i].hash_protected_size >= int64_t(std::numeric_limits<uint32_t>::max()))
 			{
 				throw tc::Exception(kModuleName, "hash_protected_size could not be safely serialised as it was too large.");
 			}

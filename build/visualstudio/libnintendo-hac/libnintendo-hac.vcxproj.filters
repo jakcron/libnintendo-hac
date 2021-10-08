@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Header Files\define">
-      <UniqueIdentifier>{847ee39a-a30a-40f5-a209-642e00dbe928}</UniqueIdentifier>
+      <UniqueIdentifier>{6511b5ab-ac8c-48e7-ac6e-d0356f289f58}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +67,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\GameCardFsMetaGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\GameCardHeader.h">
@@ -156,6 +159,9 @@
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\PartitionFsMetaGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -163,6 +169,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\Result.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\RomFsMetaGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControl.h">
@@ -192,7 +201,13 @@
     <ClInclude Include="..\..\..\include\nn\hac\define\aci.h">
       <Filter>Header Files\define</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\define\bktr.h">
+      <Filter>Header Files\define</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\define\cnmt.h">
+      <Filter>Header Files\define</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\define\compression.h">
       <Filter>Header Files\define</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\define\delta.h">
@@ -217,9 +232,6 @@
       <Filter>Header Files\define</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\define\kip.h">
-      <Filter>Header Files\define</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\define\macro.h">
       <Filter>Header Files\define</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\define\meta.h">
@@ -300,6 +312,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\FileSystemAccessUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\GameCardFsMetaGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\GameCardHeader.cpp">
@@ -386,6 +401,9 @@
     <ClCompile Include="..\..\..\src\PartitionFsHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\PartitionFsMetaGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\PartitionFsUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -393,6 +411,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\Result.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\RomFsMetaGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ServiceAccessControl.cpp">
