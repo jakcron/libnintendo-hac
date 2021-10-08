@@ -88,7 +88,7 @@ namespace hac
 		byte_t key_flag;
 		byte_t rom_size;
 		byte_t card_header_version;
-		byte_t flags;
+		tc::bn::bitarray<sizeof(byte_t)> flags;
 		tc::bn::le64<uint64_t> package_id;
 		tc::bn::le32<uint32_t> valid_data_end_page;
 		std::array<byte_t, 0x4> reserved_00;

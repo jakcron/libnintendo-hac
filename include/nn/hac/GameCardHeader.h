@@ -36,8 +36,8 @@ namespace hac
 		void setRomSizeType(byte_t romSizeType);
 		byte_t getCardHeaderVersion() const;
 		void setCardHeaderVersion(byte_t version);
-		byte_t getFlags() const;
-		void setFlags(byte_t flags);
+		const std::vector<nn::hac::gc::HeaderFlags>& getFlags() const;
+		void setFlags(const std::vector<nn::hac::gc::HeaderFlags>& flags);
 		uint64_t getPackageId() const;
 		void setPackageId(uint64_t id);
 		uint32_t getValidDataEndPage() const;
@@ -97,7 +97,7 @@ namespace hac
 		byte_t mTitleKeyDecIndex;
 		byte_t mRomSize;
 		byte_t mCardHeaderVersion;
-		byte_t mFlags;
+		std::vector<nn::hac::gc::HeaderFlags> mFlags;
 		uint64_t mPackageId;
 		uint32_t mValidDataEndPage;
 		nn::hac::detail::aes_iv_t mAesCbcIv;

@@ -116,7 +116,13 @@ void nn::hac::GameCardHeader::fromBytes(const byte_t* data, size_t len)
 	mTitleKeyDecIndex = (hdr->key_flag >> 4) & 7;
 	mRomSize = hdr->rom_size;
 	mCardHeaderVersion = hdr->card_header_version;
-	mFlags = hdr->flags;
+	for (size_t i = 0; i < hdr->flags.bit_size(); i++)
+	{
+		if (hdr->flags.test(i))
+		{
+			mFlags.push_back(nn::hac::gc::HeaderFlags(i));
+		}
+	}
 	mPackageId = hdr->package_id.unwrap();
 	mValidDataEndPage = hdr->valid_data_end_page.unwrap();
 	for (size_t i = 0; i < mAesCbcIv.size(); i++)
@@ -157,7 +163,7 @@ void nn::hac::GameCardHeader::clear()
 	mTitleKeyDecIndex = 0;
 	mRomSize = 0;
 	mCardHeaderVersion = 0;
-	mFlags = 0;
+	mFlags.clear();
 	mPackageId = 0;
 	mValidDataEndPage = 0;
 	memset(mAesCbcIv.data(), 0, mAesCbcIv.size());
@@ -443,12 +449,12 @@ void nn::hac::GameCardHeader::setUppVersion(uint32_t version)
 	mUppVersion = version;
 }
 
-byte_t nn::hac::GameCardHeader::getFlags() const
+const std::vector<nn::hac::gc::HeaderFlags>& nn::hac::GameCardHeader::getFlags() const
 {
 	return mFlags;
 }
 
-void nn::hac::GameCardHeader::setFlags(byte_t flags)
+void nn::hac::GameCardHeader::setFlags(const std::vector<nn::hac::gc::HeaderFlags>& flags)
 {
 	mFlags = flags;
 }
