@@ -29,6 +29,10 @@ namespace hac
 	};
 	static_assert(sizeof(sRomfsHeader) == 0x50, "sRomfsHeader size.");
 
+#ifdef _WIN32
+#pragma warning(disable : 4200) // silence warnings for usage of empty arrays in stucts (for char name[];)
+#endif
+
 	struct sRomfsDirEntry
 	{
 		tc::bn::le32<uint32_t> parent_offset;
@@ -52,6 +56,11 @@ namespace hac
 		char name[];
 	};
 	static_assert(sizeof(sRomfsFileEntry) == 0x20, "sRomfsFileEntry size.");
+
+#ifdef _WIN32
+#pragma warning(default : 4200)
+#endif
+
 #pragma pack(pop)
 }
 }
