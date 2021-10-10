@@ -32,8 +32,8 @@ namespace hac
 
 	struct sHierarchicalIntegrityLayerInfo
 	{
-		tc::bn::le64<uint64_t> offset;
-		tc::bn::le64<uint64_t> size;
+		tc::bn::le64<int64_t> offset;
+		tc::bn::le64<int64_t> size;
 		tc::bn::le32<uint32_t> block_size;
 		std::array<byte_t, 0x4> reserved;
 	};

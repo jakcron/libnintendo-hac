@@ -1,5 +1,6 @@
-#include <sstream>
 #include <nn/hac/HierarchicalIntegrityHeader.h>
+
+#include <fmt/format.h>
 
 nn::hac::HierarchicalIntegrityHeader::HierarchicalIntegrityHeader()
 {
@@ -43,8 +44,6 @@ void nn::hac::HierarchicalIntegrityHeader::toBytes()
 
 void nn::hac::HierarchicalIntegrityHeader::fromBytes(const byte_t* data, size_t len)
 {
-	std::stringstream error_str;
-
 	// validate size for at least header
 	if (len < sizeof(nn::hac::sHierarchicalIntegrityHeader))
 	{
@@ -62,18 +61,13 @@ void nn::hac::HierarchicalIntegrityHeader::fromBytes(const byte_t* data, size_t 
 	// Validate TypeId
 	if (hdr->type_id.unwrap() != (uint32_t)nn::hac::hierarchicalintegrity::TypeId::HAC_RomFs)
 	{
-		error_str.clear();
-		error_str << "Unsupported type id (" << std::hex << hdr->type_id.unwrap() << ")";
-		throw tc::ArgumentOutOfRangeException(kModuleName, error_str.str());
+		throw tc::ArgumentOutOfRangeException(kModuleName, fmt::format("Unsupported type id (0x{:x})", hdr->type_id.unwrap()));
 	}
 
 	// Validate Layer Num
 	if (hdr->layer_num.unwrap() != hierarchicalintegrity::kDefaultLayerNumForRomFs+1)
 	{
-		error_str.clear();
-		error_str << "Invalid layer count. ";
-		error_str << "(actual=" << std::dec << hdr->layer_num.unwrap() << ", expected=" << nn::hac::hierarchicalintegrity::kDefaultLayerNumForRomFs+1 << ")";
-		throw tc::ArgumentOutOfRangeException(kModuleName, error_str.str());
+		throw tc::ArgumentOutOfRangeException(kModuleName, fmt::format("Invalid layer count. (actual={:d}, expected={:d})", hdr->layer_num.unwrap(), nn::hac::hierarchicalintegrity::kDefaultLayerNumForRomFs + 1));
 	}
 	
 	// Get Sizes/Offsets
