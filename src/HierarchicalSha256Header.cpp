@@ -1,5 +1,6 @@
-#include <sstream>
 #include <nn/hac/HierarchicalSha256Header.h>
+
+#include <fmt/format.h>
 
 nn::hac::HierarchicalSha256Header::HierarchicalSha256Header()
 {
@@ -44,8 +45,6 @@ void nn::hac::HierarchicalSha256Header::toBytes()
 
 void nn::hac::HierarchicalSha256Header::fromBytes(const byte_t* data, size_t len)
 {
-	std::stringstream error_str;
-
 	if (len < sizeof(nn::hac::sHierarchicalSha256Header))
 	{
 		throw tc::ArgumentOutOfRangeException(kModuleName, "Header too small");
@@ -55,10 +54,7 @@ void nn::hac::HierarchicalSha256Header::fromBytes(const byte_t* data, size_t len
 
 	if (hdr->layer_num.unwrap() != nn::hac::hierarchicalsha256::kDefaultLayerNum)
 	{
-		error_str.clear();
-		error_str << "Invalid layer count. ";
-		error_str << "(actual=" << std::dec << hdr->layer_num.unwrap() << ", expected=" << nn::hac::hierarchicalsha256::kDefaultLayerNum << ")";
-		throw tc::ArgumentOutOfRangeException(kModuleName, error_str.str());
+		throw tc::ArgumentOutOfRangeException(kModuleName, fmt::format("Invalid layer count. (actual={:d}, expected={:d})", hdr->layer_num.unwrap(), nn::hac::hierarchicalsha256::kDefaultLayerNum));
 	}
 
 	mMasterHash = hdr->master_hash;

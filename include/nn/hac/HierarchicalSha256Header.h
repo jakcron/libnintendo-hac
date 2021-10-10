@@ -12,8 +12,8 @@ namespace hac
 	public:
 		struct sLayer
 		{
-			size_t offset;
-			size_t size;
+			int64_t offset;
+			int64_t size;
 
 			void operator=(const sLayer& other)
 			{

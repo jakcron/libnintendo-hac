@@ -19,8 +19,8 @@ namespace hac
 		tc::bn::le32<uint32_t> layer_num;
 		struct sLayer
 		{
-			tc::bn::le64<uint64_t> offset;
-			tc::bn::le64<uint64_t> size;
+			tc::bn::le64<int64_t> offset;
+			tc::bn::le64<int64_t> size;
 		} layer[hierarchicalsha256::kMaxLayerNum];
 	};
 	static_assert(sizeof(sHierarchicalSha256Header) == 0x48, "sHierarchicalSha256Header size.");
