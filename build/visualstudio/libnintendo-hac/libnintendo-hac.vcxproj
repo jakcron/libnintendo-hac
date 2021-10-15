@@ -69,6 +69,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\HandleTableSizeHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HierarchicalIntegrityHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HierarchicalSha256Header.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\HierarchicalValidatedStream.h" />
     <ClInclude Include="..\..\..\include\nn\hac\IdConverter.h" />
     <ClInclude Include="..\..\..\include\nn\hac\IKernelCapabilityHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\IniHeader.h" />
@@ -131,6 +132,7 @@
     <ClCompile Include="..\..\..\src\HandleTableSizeHandler.cpp" />
     <ClCompile Include="..\..\..\src\HierarchicalIntegrityHeader.cpp" />
     <ClCompile Include="..\..\..\src\HierarchicalSha256Header.cpp" />
+    <ClCompile Include="..\..\..\src\HierarchicalValidatedStream.cpp" />
     <ClCompile Include="..\..\..\src\IdConverter.cpp" />
     <ClCompile Include="..\..\..\src\IniHeader.cpp" />
     <ClCompile Include="..\..\..\src\InteruptEntry.cpp" />
