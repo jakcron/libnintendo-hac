@@ -1,5 +1,5 @@
 #pragma once
-#include "types.h"
+//#include <nn/hac/define/types.h>
 #include <tc/ByteData.h>
 #include <tc/io/IStream.h>
 #include <tc/io/IOUtil.h>
@@ -21,6 +21,12 @@ public:
 			int64_t offset;
 			int64_t size;
 			int64_t block_size;
+
+			LayerInfo() :
+				offset(0),
+				size(0),
+				block_size(0)
+			{}
 		};
 
 		std::vector<LayerInfo> hash_layer_info;
@@ -29,6 +35,13 @@ public:
 		tc::ByteData master_hash_data;
 
 		bool align_hash_layer_to_block;
+
+		StreamInfo() :
+			hash_layer_info(),
+			data_layer_info(),
+			master_hash_data(),
+			align_hash_layer_to_block(false)
+		{}
 	};
 
 	HierarchicalValidatedStream();
@@ -151,7 +164,7 @@ private:
 
 	// hash calc temp
 	std::array<byte_t, tc::crypto::Sha256Generator::kHashSize> mHash;
-	tc::crypto::Sha256Generator mHashCalc;
+	std::shared_ptr<tc::crypto::Sha256Generator> mHashCalc;
 
 	bool validateLayerBlocksWithHashLayer(const byte_t* layer, size_t block_size, size_t block_num, const byte_t* hash_layer);
 	bool validateLayerBlocksWithHashLayer(const byte_t* layer, size_t layer_size, size_t block_size, size_t block_num, bool align_partial_block_to_blocksize, const byte_t* hash_layer);

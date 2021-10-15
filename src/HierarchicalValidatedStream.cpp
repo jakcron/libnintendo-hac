@@ -12,7 +12,8 @@ nn::hac::HierarchicalValidatedStream::HierarchicalValidatedStream() :
 	mDataStreamBlockSize(0),
 	mDataStreamLogicalLength(0),
 	mDataStream(),
-	mHashCache()
+	mHashCache(),
+	mHashCalc(new tc::crypto::Sha256Generator())
 {
 }
 
@@ -344,18 +345,18 @@ bool nn::hac::HierarchicalValidatedStream::validateLayerBlocksWithHashLayer(cons
 		const byte_t* blk_ptr = layer + (block_size * i);
 		size_t blk_size = block_size;
 
-		const byte_t* blk_hash_ptr = hash_layer + (mHashCalc.kHashSize * i);
+		const byte_t* blk_hash_ptr = hash_layer + (mHashCalc->kHashSize * i);
 		//std::cout << tc::cli::FormatUtil::formatBytesAsHxdHexString(blk_hash_ptr, block_size);
 
-		mHashCalc.initialize();
-		mHashCalc.update(blk_ptr, blk_size);
-		mHashCalc.getHash(mHash.data());
+		mHashCalc->initialize();
+		mHashCalc->update(blk_ptr, blk_size);
+		mHashCalc->getHash(mHash.data());
 
 		//std::cout << "test hash: " << tc::cli::FormatUtil::formatBytesAsString(blk_hash_ptr, 32, true, ":") << std::endl;
 		//std::cout << "calc hash: " << tc::cli::FormatUtil::formatBytesAsString(mHash.data(), 32, true, ":") << std::endl;
 
 		// if good hash, reduce bad block count
-		if (memcmp(mHash.data(), blk_hash_ptr, mHashCalc.kHashSize) == 0)
+		if (memcmp(mHash.data(), blk_hash_ptr, mHashCalc->kHashSize) == 0)
 		{
 			bad_block -= 1;
 		}
@@ -380,18 +381,18 @@ bool nn::hac::HierarchicalValidatedStream::validateLayerBlocksWithHashLayer(cons
 		const byte_t* blk_ptr = layer + (block_size * i);
 		size_t blk_size = (i+1 == block_num && partial_final_block_size != 0 && !align_partial_block_to_blocksize) ? partial_final_block_size : block_size;
 
-		const byte_t* blk_hash_ptr = hash_layer + (mHashCalc.kHashSize * i);
+		const byte_t* blk_hash_ptr = hash_layer + (mHashCalc->kHashSize * i);
 		//std::cout << tc::cli::FormatUtil::formatBytesAsHxdHexString(blk_hash_ptr, block_size);
 
-		mHashCalc.initialize();
-		mHashCalc.update(blk_ptr, blk_size);
-		mHashCalc.getHash(mHash.data());
+		mHashCalc->initialize();
+		mHashCalc->update(blk_ptr, blk_size);
+		mHashCalc->getHash(mHash.data());
 
 		//std::cout << "test hash: " << tc::cli::FormatUtil::formatBytesAsString(blk_hash_ptr, 32, true, ":") << std::endl;
 		//std::cout << "calc hash: " << tc::cli::FormatUtil::formatBytesAsString(mHash.data(), 32, true, ":") << std::endl;
 
 		// if good hash, reduce bad block count
-		if (memcmp(mHash.data(), blk_hash_ptr, mHashCalc.kHashSize) == 0)
+		if (memcmp(mHash.data(), blk_hash_ptr, mHashCalc->kHashSize) == 0)
 		{
 			bad_block -= 1;
 		}
