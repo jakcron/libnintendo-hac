@@ -88,7 +88,7 @@ void nn::hac::HierarchicalIntegrityHeader::fromBytes(const byte_t* data, size_t 
 	const nn::hac::sHierarchicalIntegrityLayerInfo* layer_info = (const nn::hac::sHierarchicalIntegrityLayerInfo*)(mRawBinary.data() + sizeof(nn::hac::sHierarchicalIntegrityHeader));
 	for (size_t i = 0; i < hierarchicalintegrity::kDefaultLayerNumForRomFs; i++)
 	{
-		mLayerInfo.push_back({layer_info[i].offset.unwrap(), layer_info[i].size.unwrap(), layer_info[i].block_size.unwrap()});
+		mLayerInfo.push_back({layer_info[i].offset.unwrap(), layer_info[i].size.unwrap(), (int64_t)1 << (int64_t)layer_info[i].block_size.unwrap()});
 	}
 
 	// save hash list

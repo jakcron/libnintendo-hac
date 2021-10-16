@@ -1,5 +1,4 @@
 #pragma once
-//#include <nn/hac/define/types.h>
 #include <tc/ByteData.h>
 #include <tc/io/IStream.h>
 #include <tc/io/IOUtil.h>
@@ -9,43 +8,15 @@
 #include <tc/ArgumentOutOfRangeException.h>
 #include <tc/ObjectDisposedException.h>
 
+#include <nn/hac/HierarchicalIntegrityHeader.h>
+
 namespace nn { namespace hac {
 
-class HierarchicalValidatedStream : public tc::io::IStream
+class HierarchicalIntegrityStream : public tc::io::IStream
 {
 public:
-	struct StreamInfo
-	{
-		struct LayerInfo
-		{
-			int64_t offset;
-			int64_t size;
-			int64_t block_size;
-
-			LayerInfo() :
-				offset(0),
-				size(0),
-				block_size(0)
-			{}
-		};
-
-		std::vector<LayerInfo> hash_layer_info;
-		LayerInfo data_layer_info;
-
-		tc::ByteData master_hash_data;
-
-		bool align_hash_layer_to_block;
-
-		StreamInfo() :
-			hash_layer_info(),
-			data_layer_info(),
-			master_hash_data(),
-			align_hash_layer_to_block(false)
-		{}
-	};
-
-	HierarchicalValidatedStream();
-	HierarchicalValidatedStream(const std::shared_ptr<tc::io::IStream>& stream, const StreamInfo& info);
+	HierarchicalIntegrityStream();
+	HierarchicalIntegrityStream(const std::shared_ptr<tc::io::IStream>& stream, const nn::hac::HierarchicalIntegrityHeader& hash_header);
 
 		/**
 		 * @brief Indicates whether the current stream supports reading.
@@ -167,7 +138,6 @@ private:
 	std::shared_ptr<tc::crypto::Sha256Generator> mHashCalc;
 
 	bool validateLayerBlocksWithHashLayer(const byte_t* layer, size_t block_size, size_t block_num, const byte_t* hash_layer);
-	bool validateLayerBlocksWithHashLayer(const byte_t* layer, size_t layer_size, size_t block_size, size_t block_num, bool align_partial_block_to_blocksize, const byte_t* hash_layer);
 };
 
 }} // namespace nn::hac
