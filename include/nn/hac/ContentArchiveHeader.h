@@ -11,8 +11,8 @@ namespace hac
 		struct sPartitionEntry
 		{
 			byte_t header_index;
-			uint64_t offset;
-			uint64_t size;
+			int64_t offset;
+			int64_t size;
 			detail::sha256_hash_t fs_header_hash;
 
 			const sPartitionEntry& operator=(const sPartitionEntry& other)
@@ -91,8 +91,8 @@ namespace hac
 		const std::vector<sPartitionEntry>& getPartitionEntryList() const;
 		void setPartitionEntryList(const std::vector<sPartitionEntry>& partition_entry_list);
 		
-		const byte_t* getKeyArea() const;
-		void setKeyArea(const byte_t* key_area);
+		const nn::hac::nca::key_area_t& getKeyArea() const;
+		void setKeyArea(const nn::hac::nca::key_area_t& key_area);
 
 	private:
 		const std::string kModuleName = "CONTENT_ARCHIVE_HEADER";
@@ -113,10 +113,10 @@ namespace hac
 		uint32_t mSdkAddonVersion;
 		nn::hac::detail::rights_id_t mRightsId;
 		std::vector<sPartitionEntry> mPartitionEntryList;
-		tc::ByteData mKeyArea;
+		nn::hac::nca::key_area_t mKeyArea;
 
-		uint64_t blockNumToSize(uint32_t block_num) const;
-		uint32_t sizeToBlockNum(uint64_t real_size) const;
+		int64_t blockNumToSize(uint32_t block_num) const;
+		uint32_t sizeToBlockNum(int64_t real_size) const;
 	};
 }
 }

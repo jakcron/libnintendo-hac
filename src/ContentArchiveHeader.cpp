@@ -1,4 +1,7 @@
+#include <limits>
 #include <nn/hac/ContentArchiveHeader.h>
+
+#include <tc/io/IOUtil.h>
 
 nn::hac::ContentArchiveHeader::ContentArchiveHeader()
 {
@@ -88,7 +91,7 @@ void nn::hac::ContentArchiveHeader::toBytes()
 	hdr->content_index.wrap(mContentIndex);
 	hdr->sdk_addon_version.wrap(mSdkAddonVersion);
 	memcpy(hdr->rights_id.data(), mRightsId.data(), hdr->rights_id.size());
-	memcpy(hdr->key_area.data(), mKeyArea.data(), hdr->key_area.size());
+	hdr->key_area = mKeyArea;
 
 	for (size_t i = 0; i < mPartitionEntryList.size(); i++)
 	{
@@ -97,7 +100,7 @@ void nn::hac::ContentArchiveHeader::toBytes()
 		if (index >= nca::kPartitionNum) continue;
 
 		hdr->partition_entry[index].start_blk.wrap(sizeToBlockNum(mPartitionEntryList[index].offset));
-		hdr->partition_entry[index].end_blk.wrap((sizeToBlockNum(mPartitionEntryList[index].offset) + sizeToBlockNum(mPartitionEntryList[index].size)));
+		hdr->partition_entry[index].end_blk.wrap((sizeToBlockNum(mPartitionEntryList[index].offset + mPartitionEntryList[index].size)));
 		hdr->partition_entry[index].enabled = true;
 		hdr->fs_header_hash[index] = mPartitionEntryList[i].fs_header_hash;	
 	}
@@ -140,7 +143,7 @@ void nn::hac::ContentArchiveHeader::fromBytes(const byte_t * data, size_t len)
 	mContentIndex = hdr->content_index.unwrap();
 	mSdkAddonVersion = hdr->sdk_addon_version.unwrap();
 	mRightsId = hdr->rights_id;
-	mKeyArea = tc::ByteData(mKeyArea.data(), mKeyArea.size());
+	mKeyArea = hdr->key_area;
 
 	for (size_t i = 0; i < nca::kPartitionNum; i++)
 	{
@@ -169,7 +172,10 @@ void nn::hac::ContentArchiveHeader::clear()
 	mSdkAddonVersion = 0;
 	memset(mRightsId.data(), 0, mRightsId.size());
 	mPartitionEntryList.clear();
-	mKeyArea = tc::ByteData(nca::kKeyAreaSize);
+	for (auto itr = mKeyArea.begin(); itr != mKeyArea.end(); itr++)
+	{
+		memset(itr->data(), 0, itr->size());
+	}
 }
 
 byte_t nn::hac::ContentArchiveHeader::getFormatVersion() const
@@ -325,22 +331,26 @@ void nn::hac::ContentArchiveHeader::setPartitionEntryList(const std::vector<nn::
 	}
 }
 
-const byte_t* nn::hac::ContentArchiveHeader::getKeyArea() const
+const nn::hac::nca::key_area_t& nn::hac::ContentArchiveHeader::getKeyArea() const
 {
-	return mKeyArea.data();
+	return mKeyArea;
 }
 
-void nn::hac::ContentArchiveHeader::setKeyArea(const byte_t* key_area)
+void nn::hac::ContentArchiveHeader::setKeyArea(const nn::hac::nca::key_area_t& key_area)
 {
-	memcpy(mKeyArea.data(), key_area, nca::kKeyAreaSize);
+	mKeyArea = key_area;
 }
 
-uint64_t nn::hac::ContentArchiveHeader::blockNumToSize(uint32_t block_num) const
+int64_t nn::hac::ContentArchiveHeader::blockNumToSize(uint32_t block_num) const
 {
 	return block_num * nca::kSectorSize;
 }
 
-uint32_t nn::hac::ContentArchiveHeader::sizeToBlockNum(uint64_t real_size) const
+uint32_t nn::hac::ContentArchiveHeader::sizeToBlockNum(int64_t real_size) const
 {
-	return (uint32_t)(align<uint64_t>(real_size, (uint64_t)nca::kSectorSize) / (uint64_t)nca::kSectorSize);
+	static const int64_t kMaxValue = int64_t(std::numeric_limits<uint32_t>::max()) * int64_t(nca::kSectorSize);
+
+	if (real_size >= kMaxValue) { throw tc::Exception (kModuleName, "Cannot convert address to block address"); }
+
+	return uint32_t(align<int64_t>(real_size, int64_t(nca::kSectorSize)) / int64_t(nca::kSectorSize));
 }
