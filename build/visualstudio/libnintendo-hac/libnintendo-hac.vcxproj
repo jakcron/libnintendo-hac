@@ -32,6 +32,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlProperty.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlPropertyUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationMetaExtendedHeader.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\CombinedFsMetaGenerator.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentInfo.h" />
@@ -68,8 +69,9 @@
     <ClInclude Include="..\..\..\include\nn\hac\HandleTableSizeEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HandleTableSizeHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HierarchicalIntegrityHeader.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\HierarchicalIntegrityStream.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HierarchicalSha256Header.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\HierarchicalValidatedStream.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\HierarchicalSha256Stream.h" />
     <ClInclude Include="..\..\..\include\nn\hac\IdConverter.h" />
     <ClInclude Include="..\..\..\include\nn\hac\IKernelCapabilityHandler.h" />
     <ClInclude Include="..\..\..\include\nn\hac\IniHeader.h" />
@@ -116,6 +118,7 @@
     <ClCompile Include="..\..\..\src\ApplicationControlProperty.cpp" />
     <ClCompile Include="..\..\..\src\ApplicationControlPropertyUtil.cpp" />
     <ClCompile Include="..\..\..\src\ApplicationMetaExtendedHeader.cpp" />
+    <ClCompile Include="..\..\..\src\CombinedFsMetaGenerator.cpp" />
     <ClCompile Include="..\..\..\src\ContentArchiveHeader.cpp" />
     <ClCompile Include="..\..\..\src\ContentArchiveUtil.cpp" />
     <ClCompile Include="..\..\..\src\ContentInfo.cpp" />
@@ -131,8 +134,9 @@
     <ClCompile Include="..\..\..\src\HandleTableSizeEntry.cpp" />
     <ClCompile Include="..\..\..\src\HandleTableSizeHandler.cpp" />
     <ClCompile Include="..\..\..\src\HierarchicalIntegrityHeader.cpp" />
+    <ClCompile Include="..\..\..\src\HierarchicalIntegrityStream.cpp" />
     <ClCompile Include="..\..\..\src\HierarchicalSha256Header.cpp" />
-    <ClCompile Include="..\..\..\src\HierarchicalValidatedStream.cpp" />
+    <ClCompile Include="..\..\..\src\HierarchicalSha256Stream.cpp" />
     <ClCompile Include="..\..\..\src\IdConverter.cpp" />
     <ClCompile Include="..\..\..\src\IniHeader.cpp" />
     <ClCompile Include="..\..\..\src\InteruptEntry.cpp" />

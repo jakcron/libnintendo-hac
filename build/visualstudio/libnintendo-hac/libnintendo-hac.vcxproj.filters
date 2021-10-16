@@ -42,6 +42,9 @@
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationMetaExtendedHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\CombinedFsMetaGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -87,10 +90,13 @@
     <ClInclude Include="..\..\..\include\nn\hac\HierarchicalIntegrityHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\nn\hac\HierarchicalIntegrityStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\HierarchicalSha256Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\HierarchicalValidatedStream.h">
+    <ClInclude Include="..\..\..\include\nn\hac\HierarchicalSha256Stream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\IdConverter.h">
@@ -290,6 +296,9 @@
     <ClCompile Include="..\..\..\src\ApplicationMetaExtendedHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\CombinedFsMetaGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\ContentArchiveHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -335,10 +344,13 @@
     <ClCompile Include="..\..\..\src\HierarchicalIntegrityHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\HierarchicalIntegrityStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\HierarchicalSha256Header.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\HierarchicalValidatedStream.cpp">
+    <ClCompile Include="..\..\..\src\HierarchicalSha256Stream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\IdConverter.cpp">
