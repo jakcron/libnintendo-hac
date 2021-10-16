@@ -20,7 +20,7 @@ nn::hac::CombinedFsMetaGenerator::CombinedFsMetaGenerator(const std::vector<Moun
 	for (auto mount = mount_point_info.begin(); mount != mount_point_info.end(); mount++)
 	{
 		// save new base path
-		tc::io::Path new_base_path = tc::io::Path("/") + mount->name;
+		tc::io::Path new_base_path = dir_entries[root_dir_index].dir_listing.abs_path + mount->name;
 
 		// write this directory to the root directory record
 		dir_entries[root_dir_index].dir_listing.dir_list.push_back(mount->name);
