@@ -94,7 +94,8 @@ nn::hac::HierarchicalSha256Stream::HierarchicalSha256Stream(const std::shared_pt
 	mDataStreamLogicalLength = data_layer.size;
 	mDataStreamFinalBlockIndex = offsetToBlock(mDataStreamLogicalLength + (mDataStreamBlockSize-1)) - 1;
 	mDataStreamFinalBlockSize = offsetInBlock(mDataStreamLogicalLength) != 0 ? offsetInBlock(mDataStreamLogicalLength) : mDataStreamBlockSize;
-	mDataStream = std::shared_ptr<tc::io::SubStream>(new tc::io::SubStream(mBaseStream, data_layer.offset, data_layer.size));
+	int64_t data_layer_physical_size = mBaseStream->length() > data_layer.offset ? (mBaseStream->length() - data_layer.offset) : 0;
+	mDataStream = std::shared_ptr<tc::io::SubStream>(new tc::io::SubStream(mBaseStream, data_layer.offset, data_layer_physical_size));
 }
 
 bool nn::hac::HierarchicalSha256Stream::canRead() const

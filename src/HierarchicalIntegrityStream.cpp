@@ -103,8 +103,9 @@ nn::hac::HierarchicalIntegrityStream::HierarchicalIntegrityStream(const std::sha
 	// create data layer
 	mDataStreamBlockSize = data_layer.block_size;
 	mDataStreamLogicalLength = data_layer.size;
+	int64_t data_layer_physical_size = mBaseStream->length() > data_layer.offset ? (mBaseStream->length() - data_layer.offset) : 0;
 	//fmt::print("make IVFC data stream:\n offset=0x{:x}\n size=0x{:x}\n", data_layer.offset, mDataStreamLogicalLength);
-	mDataStream = std::shared_ptr<tc::io::SubStream>(new tc::io::SubStream(mBaseStream, data_layer.offset, mDataStreamLogicalLength));
+	mDataStream = std::shared_ptr<tc::io::SubStream>(new tc::io::SubStream(mBaseStream, data_layer.offset, data_layer_physical_size));
 	//fmt::print("make IVFC data stream done\n");
 }
 
@@ -188,6 +189,7 @@ size_t nn::hac::HierarchicalIntegrityStream::read(byte_t* ptr, size_t count)
 	size_t continuous_block_num   = block_num - (size_t)read_partial_begin_block - (size_t)read_partial_end_block;
 	size_t continuous_begin_block = (continuous_block_num == 0) ? 0 : (offsetToBlock(begin_aligned_offset) + (size_t)read_partial_begin_block);
 
+	/*
 	fmt::print("##############################################\n");
 	fmt::print("count:                  0x{:x}\n", count);
 	fmt::print("begin_read_offset:      0x{:x}\n", begin_read_offset);
@@ -211,6 +213,7 @@ size_t nn::hac::HierarchicalIntegrityStream::read(byte_t* ptr, size_t count)
 	fmt::print("continuous:\n");
 	fmt::print("  block:                0x{:x}\n", continuous_begin_block);
 	fmt::print("  block_num:            0x{:x}\n", continuous_block_num);
+	*/
 
 	if (block_num == 0)
 	{
@@ -364,8 +367,8 @@ bool nn::hac::HierarchicalIntegrityStream::validateLayerBlocksWithHashLayer(cons
 		mHashCalc->update(blk_ptr, blk_size);
 		mHashCalc->getHash(mHash.data());
 
-		fmt::print("test hash: {:s}\n", tc::cli::FormatUtil::formatBytesAsString(blk_hash_ptr, 32, true, ":"));
-		fmt::print("calc hash: {:s}\n", tc::cli::FormatUtil::formatBytesAsString(mHash.data(), 32, true, ":"));
+		//fmt::print("test hash: {:s}\n", tc::cli::FormatUtil::formatBytesAsString(blk_hash_ptr, 32, true, ":"));
+		//fmt::print("calc hash: {:s}\n", tc::cli::FormatUtil::formatBytesAsString(mHash.data(), 32, true, ":"));
 
 		// if good hash, reduce bad block count
 		if (memcmp(mHash.data(), blk_hash_ptr, mHashCalc->kHashSize) == 0)
@@ -374,8 +377,8 @@ bool nn::hac::HierarchicalIntegrityStream::validateLayerBlocksWithHashLayer(cons
 		}
 		else
 		{
-			fmt::print("BadBlock:\n");
-			fmt::print("{:s}", tc::cli::FormatUtil::formatBytesAsHxdHexString(blk_ptr, blk_size));
+			//fmt::print("BadBlock:\n");
+			//fmt::print("{:s}", tc::cli::FormatUtil::formatBytesAsHxdHexString(blk_ptr, blk_size));
 		}
 		
 	}
