@@ -20,35 +20,6 @@ void nn::hac::ContentArchiveUtil::decryptContentArchiveHeader(const byte_t* src,
 	}
 }
 
-byte_t nn::hac::ContentArchiveUtil::getMasterKeyRevisionFromKeyGeneration(byte_t key_generation)
-{
-	byte_t masterkey_rev;
-
-	switch (key_generation)
-	{
-		case(0):
-		case(1):
-			masterkey_rev = 0;
-			break;
-		case(2):
-			masterkey_rev = 1;
-			break;
-		case(3):
-			masterkey_rev = 2;
-			break;
-		case(4):
-			masterkey_rev = 3;
-			break;
-		case(5):
-			masterkey_rev = 4;
-			break;
-		default:
-			masterkey_rev = key_generation - 1;
-	}
-
-	return masterkey_rev;
-}
-
 void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(const nn::hac::sContentArchiveFsHeader* hdr, byte_t* aes_ctr)
 {
 	getNcaPartitionAesCtr(hdr->generation.unwrap(), hdr->secure_value.unwrap(), aes_ctr);

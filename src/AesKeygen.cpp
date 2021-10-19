@@ -17,3 +17,8 @@ void nn::hac::AesKeygen::generateKey(byte_t* dst, const byte_t* src1, const byte
 	generateKey(src3_key.data(), src1, src2, src1_key);
 	generateKey(dst, src3, src3_key.data());
 }
+
+byte_t nn::hac::AesKeygen::getMasterKeyRevisionFromKeyGeneration(byte_t key_generation)
+{
+	return key_generation == 0 ? 0 : key_generation-1;
+}
