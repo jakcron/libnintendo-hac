@@ -131,6 +131,13 @@ namespace hac
 	};
 	static_assert(sizeof(sContentArchiveBucketInfo) == 0x20, "sContentArchiveBucketInfo size.");
 
+	struct sContentArchiveFsHeaderPatchInfo
+	{
+		sContentArchiveBucketInfo indirect_bucket;
+		sContentArchiveBucketInfo aes_ctr_ex_bucket;
+	};
+	static_assert(sizeof(sContentArchiveFsHeaderPatchInfo) == nca::kPatchInfoLen, "sContentArchiveFsHeaderPatchInfo size.");
+
 	struct sContentArchiveFsHeaderSparseInfo
 	{
 		// if sparse info generation is non-zero then a sparse layer exists
@@ -156,7 +163,8 @@ namespace hac
 		// 0x8
 		std::array<byte_t, nca::kHashInfoLen> hash_info; // size=0xf8
 		// 0x100
-		std::array<byte_t, nca::kPatchInfoLen> patch_info; // size=0x40
+		sContentArchiveFsHeaderPatchInfo patch_info;
+		//std::array<byte_t, nca::kPatchInfoLen> patch_info; // size=0x40
 		// 0x140
 		tc::bn::le32<uint32_t> generation;
 		// 0x144
