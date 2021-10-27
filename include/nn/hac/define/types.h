@@ -16,6 +16,9 @@ namespace nn { namespace hac { namespace detail {
 	using rsa2048_signature_t = std::array<byte_t, tc::crypto::Rsa2048Pkcs1Sha256Signer::kSignatureSize>;
 	using rsa2048_block_t = std::array<byte_t, tc::crypto::Rsa2048OaepSha256Encryptor::kBlockSize>;
 
+	using rsa4096_signature_t = std::array<byte_t, tc::crypto::Rsa4096Pkcs1Sha256Signer::kSignatureSize>;
+	using rsa4096_block_t = std::array<byte_t, tc::crypto::Rsa4096OaepSha256Encryptor::kBlockSize>;
+
 	using rights_id_t = std::array<byte_t, 16>;
 
 	using module_id_t = std::array<byte_t, 32>;
