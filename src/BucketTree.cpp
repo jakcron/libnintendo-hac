@@ -1,5 +1,7 @@
 #include <nn/hac/BucketTree.h>
 
+#include <fmt/core.h>
+
 nn::hac::BucketTree::BucketTree() :
 	mModuleName("nn::hac::BucketTree"),
 	mEntryCount(0),
@@ -40,7 +42,7 @@ void nn::hac::BucketTree::parse(const std::shared_ptr<tc::io::IStream>& table_st
 
 	int64_t stream_length = table_stream->length();
 
-	size_t expected_table_size = getHeaderNodeDataSize(node_size, entry_size, entry_count) + geEntryNodeDataSize(node_size, entry_size, entry_count);
+	size_t expected_table_size = getNodeStorageSize(node_size, entry_size, entry_count) + geEntrySetStorageSize(node_size, entry_size, entry_count);
 
 	if (!tc::is_size_t_too_large_for_int64_t(expected_table_size) || stream_length < int64_t(expected_table_size))
 	{
@@ -57,4 +59,6 @@ void nn::hac::BucketTree::parse(const std::shared_ptr<tc::io::IStream>& table_st
 	{
 		throw tc::io::IOException(mModuleName, "Failed to read raw bucket tree data.");
 	}
+
+	fmt::print("{} test\n", mModuleName);
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <nn/hac/detail/bktr.h>
+#include <nn/hac/define/bktr.h>
 
 #include <tc/ArgumentNullException.h>
 #include <tc/ArgumentOutOfRangeException.h>
@@ -11,8 +11,8 @@ class BucketTree
 {
 public:
 	using sNodeHeader = sBucketTreeNodeHeader;
-	using kNodeSizeMin = bktr::kNodeSizeMin;
-	using kNodeSizeMax = bktr::kNodeSizeMax;
+	static const size_t kNodeSizeMin = bktr::kNodeSizeMin;
+	static const size_t kNodeSizeMax = bktr::kNodeSizeMax;
 
 	BucketTree();
 
@@ -40,8 +40,8 @@ private:
 
 	static size_t getL2NodeCount(size_t node_size, size_t entry_size, size_t entry_count)
 	{
-		const size_t offset_count_per_node = GetOffsetCount(node_size); // how many offsets can be stored in a node 
-		const size_t entry_set_count       = GetEntrySetCount(node_size, entry_size, entry_count);  // how many nodes are needed to store the entries
+		const size_t offset_count_per_node = getNodeOffsetCapacity(node_size); // how many offsets can be stored in a node 
+		const size_t entry_set_count       = getEntrySetCount(node_size, entry_size, entry_count);  // how many nodes are needed to store the entries
 
 		// if there are less entry sets than offsets storable in a node, then there needs not be any L2 nodes
 		if (entry_set_count <= offset_count_per_node)
@@ -73,7 +73,7 @@ private:
 		return (1 + getL2NodeCount(entry_count, node_size, entry_size)) * node_size;
 	}
 
-	static int64_t geEntrySetDataSize(size_t node_size, size_t entry_size, size_t entry_count)
+	static int64_t geEntrySetStorageSize(size_t node_size, size_t entry_size, size_t entry_count)
 	{
 		return getEntrySetCount(entry_count, node_size, entry_size) * node_size;
 	}
