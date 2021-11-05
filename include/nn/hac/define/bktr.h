@@ -31,15 +31,6 @@ namespace hac
 		tc::bn::le64<int64_t> offset;
 	};
 	static_assert(sizeof(sBucketTreeNodeHeader) == 0x10, "sBucketTreeNodeHeader size.");
-
-	struct sBucketTreeEntrySetHeader
-	{
-		tc::bn::le32<int32_t> index;
-		tc::bn::le32<int32_t> count;
-		tc::bn::le64<int64_t> offset;
-		tc::bn::le64<int64_t> size;
-	};
-	static_assert(sizeof(sBucketTreeEntrySetHeader) == 0x18, "sBucketTreeEntrySetHeader size.");
 #pragma pack(pop)
 }
 }
