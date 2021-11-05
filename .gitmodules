@@ -1,6 +1,3 @@
-[submodule "deps/libfnd"]
-	path = deps/libfnd
-	url = https://github.com/jakcron/libfnd.git
 [submodule "deps/liblz4"]
 	path = deps/liblz4
 	url = https://github.com/jakcron/liblz4.git
