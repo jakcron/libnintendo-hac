@@ -40,6 +40,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\ContentMetaInfo.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentMetaUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\aci.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\define\aesctrexstorage.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\bktr.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\cnmt.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\compression.h" />
@@ -48,6 +49,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\define\gc.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\hierarchicalintegrity.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\hierarchicalsha256.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\define\indirectstorage.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\ini.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\kc.h" />
     <ClInclude Include="..\..\..\include\nn\hac\define\kip.h" />
