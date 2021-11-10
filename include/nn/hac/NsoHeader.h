@@ -13,6 +13,11 @@ namespace hac
 			uint32_t offset;
 			uint32_t size;
 
+			sLayout() :
+				offset(0),
+				size(0)
+			{}
+
 			void operator=(const sLayout& other)
 			{
 				offset = other.offset;
@@ -39,6 +44,14 @@ namespace hac
 			bool is_hashed;
 			detail::sha256_hash_t hash;
 
+			sCodeSegment() :
+				file_layout(),
+				memory_layout(),
+				is_compressed(false),
+				is_hashed(false),
+				hash({0})
+			{}
+			
 			void operator=(const sCodeSegment& other)
 			{
 				file_layout = other.file_layout;

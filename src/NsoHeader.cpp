@@ -199,15 +199,15 @@ const tc::ByteData& nn::hac::NsoHeader::getBytes() const
 void nn::hac::NsoHeader::clear()
 {
 	mRawBinary = tc::ByteData();
-	memset(&mModuleId, 0, sizeof(mModuleId));
+	memset(mModuleId.data(), 0, mModuleId.size());
 	mBssSize = 0;
-	memset(&mTextSegmentInfo, 0, sizeof(mTextSegmentInfo));
-	memset(&mRoSegmentInfo, 0, sizeof(mRoSegmentInfo));
-	memset(&mDataSegmentInfo, 0, sizeof(mDataSegmentInfo));
-	memset(&mModuleNameInfo, 0, sizeof(mModuleNameInfo));
-	memset(&mRoEmbeddedInfo, 0, sizeof(mRoEmbeddedInfo));
-	memset(&mRoDynStrInfo, 0, sizeof(mRoDynStrInfo));
-	memset(&mRoDynSymInfo, 0, sizeof(mRoDynSymInfo));
+	mTextSegmentInfo = sCodeSegment();
+	mRoSegmentInfo = sCodeSegment();
+	mDataSegmentInfo = sCodeSegment();
+	mModuleNameInfo = sLayout();
+	mRoEmbeddedInfo = sLayout();
+	mRoDynStrInfo = sLayout();
+	mRoDynSymInfo = sLayout();
 }
 
 const nn::hac::detail::module_id_t& nn::hac::NsoHeader::getModuleId() const

@@ -33,7 +33,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 
 	// validate and read ROMFS header
 	nn::hac::sRomfsHeader hdr;
-	if (mBaseStream->length() < sizeof(nn::hac::sRomfsHeader))
+	if (mBaseStream->length() < tc::io::IOUtil::castSizeToInt64(sizeof(nn::hac::sRomfsHeader)))
 	{
 		throw tc::ArgumentOutOfRangeException("nn::hac::RomFsMetaGenerator", "Input stream is too small.");
 	}

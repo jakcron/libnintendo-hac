@@ -164,14 +164,14 @@ void nn::hac::NroHeader::clear()
 	mRawBinary = tc::ByteData();
 	mRoCrtEntryPoint = 0;
 	mRoCrtModOffset = 0;
-	memset(&mTextInfo, 0, sizeof(mTextInfo));
-	memset(&mRoInfo, 0, sizeof(mRoInfo));
-	memset(&mDataInfo, 0, sizeof(mDataInfo));
+	mTextInfo = sSection();
+	mRoInfo = sSection();
+	mDataInfo = sSection();
 	mBssSize = 0;
-	memset(&mModuleId, 0, sizeof(mModuleId));
-	memset(&mRoEmbeddedInfo, 0, sizeof(mRoEmbeddedInfo));
-	memset(&mRoDynStrInfo, 0, sizeof(mRoDynStrInfo));
-	memset(&mRoDynSymInfo, 0, sizeof(mRoDynSymInfo));
+	memset(mModuleId.data(), 0, mModuleId.size());
+	mRoEmbeddedInfo = sSection();
+	mRoDynStrInfo = sSection();
+	mRoDynSymInfo = sSection();
 }
 
 uint32_t nn::hac::NroHeader::getRoCrtEntryPoint() const

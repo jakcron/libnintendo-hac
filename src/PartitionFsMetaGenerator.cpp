@@ -23,7 +23,7 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 
 	// validate and read base PartitionFs header
 	nn::hac::sPfsHeader hdr;
-	if (stream->length() < sizeof(nn::hac::sPfsHeader))
+	if (stream->length() < tc::io::IOUtil::castSizeToInt64(sizeof(nn::hac::sPfsHeader)))
 	{
 		throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsMetaGenerator", "Input stream is too small.");
 	}

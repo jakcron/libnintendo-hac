@@ -13,6 +13,11 @@ namespace hac
 			uint32_t memory_offset;
 			uint32_t size;
 
+			sSection() :
+				memory_offset(0),
+				size(0)
+			{}
+
 			void operator=(const sSection& other)
 			{
 				memory_offset = other.memory_offset;
