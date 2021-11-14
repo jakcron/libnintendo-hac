@@ -73,25 +73,25 @@ namespace hac
 
 		enum class FormatType : byte_t
 		{
-			RomFs,
-			PartitionFs
+			RomFs = 0,
+			PartitionFs = 1
 		};
 
 		enum class HashType : byte_t
 		{
-			Auto,
-			None,
-			HierarchicalSha256,
-			HierarchicalIntegrity // IVFC
+			Auto = 0,
+			None = 1,
+			HierarchicalSha256 = 2,
+			HierarchicalIntegrity = 3 // IVFC
 		};
 
 		enum class EncryptionType : byte_t 
 		{
-			Auto,
-			None,
-			AesXts,
-			AesCtr,
-			AesCtrEx
+			Auto = 0,
+			None = 1,
+			AesXts = 2,
+			AesCtr = 3,
+			AesCtrEx = 4
 		};
 	}
 	
