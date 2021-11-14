@@ -54,9 +54,11 @@ namespace hac
 
 		enum FwVersion
 		{
-			FWVER_DEV,
-			FWVER_PROD,
-			FWVER_PROD_SINCE_4_0_0NUP
+			FWVER_DEV = 0,
+			FWVER_PROD = 1,
+			FWVER_PROD_SINCE_4_0_0NUP = 2,
+			FWVER_PROD_SINCE_11_0_0NUP = 4,
+			FWVER_PROD_SINCE_12_0_0NUP = 5,
 		};
 
 		enum CardClockRate

@@ -115,6 +115,12 @@ std::string nn::hac::GameCardUtil::getCardFwVersionDescriptionAsString(nn::hac::
 	case (nn::hac::gc::FWVER_PROD_SINCE_4_0_0NUP):
 		ss << "4.0.0+";
 		break;
+	case (nn::hac::gc::FWVER_PROD_SINCE_11_0_0NUP):
+		ss << "11.0.0+";
+		break;
+	case (nn::hac::gc::FWVER_PROD_SINCE_12_0_0NUP):
+		ss << "12.0.0+";
+		break;
 	default:
 		ss << "unk_0x" << std::hex << std::setw(16) << std::setfill('0') << (uint64_t)val;
 		break;
