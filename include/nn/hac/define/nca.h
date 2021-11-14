@@ -21,6 +21,7 @@ namespace hac
 		static const size_t kHashInfoLen = 0xF8;
 		static const size_t kPatchInfoLen = 0x40;
 		static const size_t kSparseInfoLen = 0x30;
+		static const size_t kCompressionInfoLen = 0x28;
 		static const uint16_t kDefaultFsHeaderVersion = 2;
 
 		using key_area_t = std::array<detail::aes128_key_t, kKeyAreaKeyNum>;
@@ -148,6 +149,16 @@ namespace hac
 	};
 	static_assert(sizeof(sContentArchiveFsHeaderSparseInfo) == nca::kSparseInfoLen, "sContentArchiveFsHeaderSparseInfo size.");
 
+	struct sContentArchiveFsHeaderCompressionInfo
+	{
+		// 0x00
+		sContentArchiveBucketInfo bucket;
+		// 0x20
+		tc::bn::pad<8> reserved_0;
+		// 0x28
+	};
+	static_assert(sizeof(sContentArchiveFsHeaderCompressionInfo) == nca::kCompressionInfoLen, "sContentArchiveFsHeaderCompressionInfo size.");
+
 	struct sContentArchiveFsHeader
 	{
 		// 0x00
@@ -171,9 +182,12 @@ namespace hac
 		tc::bn::le32<uint32_t> secure_value;
 		// 0x148
 		sContentArchiveFsHeaderSparseInfo sparse_info;
-		//std::array<byte_t, nca::kSparseInfoLen>  sparse_info; // size=0x30
+		//std::array<byte_t, nca::kSparseInfoLen> sparse_info; // size=0x30
 		// 0x178
-		std::array<byte_t, 0x88> reserved_1;
+		sContentArchiveFsHeaderCompressionInfo compression_info;
+		//std::array<byte_t, nca::kCompressionInfoLen> compression_info; // size=0x28
+		// 0x1A0
+		std::array<byte_t, 0x60> reserved_1;
 		// 0x200
 	};
 	static_assert(sizeof(sContentArchiveFsHeader) == 0x200, "sContentArchiveFsHeader size.");
