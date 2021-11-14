@@ -7,7 +7,7 @@
 	 **/
 #pragma once
 #include <limits>
-#include <nn/hac/IndirectStream.h>
+#include <nn/hac/IndirectStorageStream.h>
 
 #include <tc/io/IStream.h>
 
@@ -23,12 +23,11 @@ namespace nn { namespace hac {
 	 * @class SparseStorageStream
 	 * @brief Class for constructing read-only a logical stream from a Nintendo Switch SparseStorage
 	 */
-class SparseStorageStream : public nn::hac::IndirectStream
+class SparseStorageStream : public nn::hac::IndirectStorageStream
 {
 public:
 	SparseStorageStream();
 	SparseStorageStream(const std::shared_ptr<tc::io::IStream>& compacted_stream, int64_t stream_length, const nn::hac::BucketTree& bucket_tree);
-
 
 private:	
 	class ZerosStream : public tc::io::IStream

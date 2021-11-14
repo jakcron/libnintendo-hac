@@ -7,7 +7,7 @@
 #include <tc/cli/FormatUtil.h>
 
 nn::hac::SparseStorageStream::SparseStorageStream(const std::shared_ptr<tc::io::IStream>& compacted_stream, int64_t stream_length, const nn::hac::BucketTree& bucket_tree) :
-	IndirectStream(compacted_stream, std::make_shared<ZerosStream>(ZerosStream()), stream_length, bucket_tree)
+	IndirectStorageStream(compacted_stream, std::make_shared<ZerosStream>(ZerosStream()), stream_length, bucket_tree)
 {
 }
 
