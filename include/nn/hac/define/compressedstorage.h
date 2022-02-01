@@ -14,7 +14,7 @@ namespace hac
 		enum CompressionType
 		{
 			CompressionType_None = 0,
-    		CompressionType_Lz4  = 3
+			CompressionType_Lz4  = 3
 		};
 	}
 
