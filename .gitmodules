@@ -4,9 +4,10 @@
 [submodule "deps/libmbedtls"]
 	path = deps/libmbedtls
 	url = https://github.com/jakcron/libmbedtls
-[submodule "deps/libtoolchain"]
-	path = deps/libtoolchain
-	url = https://github.com/jakcron/libtoolchain.git
 [submodule "deps/libfmt"]
 	path = deps/libfmt
 	url = https://github.com/jakcron/libfmt.git
+[submodule "deps/libtoolchain"]
+	path = deps/libtoolchain
+	url = https://github.com/jakcron/libtoolchain.git
+
