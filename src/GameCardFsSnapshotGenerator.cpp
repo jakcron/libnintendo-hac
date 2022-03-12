@@ -1,5 +1,6 @@
-#include <nn/hac/GameCardFsMetaGenerator.h>
+#include <nn/hac/GameCardFsSnapshotGenerator.h>
 #include <tc/io/SubStream.h>
+#include <tc/io/IOUtil.h>
 #include <tc/crypto/Sha256Generator.h>
 #include <tc/crypto/CryptoException.h>
 
@@ -8,23 +9,23 @@
 #include <fmt/core.h>
 #include <tc/cli/FormatUtil.h>
 
-nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<tc::io::IStream>& stream, size_t root_header_size, ValidationMode validate_mode) :
-	FileSystemMeta()
+nn::hac::GameCardFsSnapshotGenerator::GameCardFsSnapshotGenerator(const std::shared_ptr<tc::io::IStream>& stream, size_t root_header_size, ValidationMode validate_mode) :
+	FileSystemSnapshot()
 {
 	// validate stream properties
 	if (stream == nullptr)
 	{
-		throw tc::ObjectDisposedException("nn::hac::GameCardFsMetaGenerator", "Failed to open input stream.");
+		throw tc::ObjectDisposedException("nn::hac::GameCardFsSnapshotGenerator", "Failed to open input stream.");
 	}
 	if (stream->canRead() == false || stream->canSeek() == false)
 	{
-		throw tc::NotSupportedException("nn::hac::GameCardFsMetaGenerator", "Input stream requires read/seek permissions.");
+		throw tc::NotSupportedException("nn::hac::GameCardFsSnapshotGenerator", "Input stream requires read/seek permissions.");
 	}
 
 	// read/validate root HFS0 header
 	if (stream->length() < tc::io::IOUtil::castSizeToInt64(root_header_size))
 	{
-		throw tc::ArgumentOutOfRangeException("nn::hac::GameCardFsMetaGenerator", "Input stream is too small.");
+		throw tc::ArgumentOutOfRangeException("nn::hac::GameCardFsSnapshotGenerator", "Input stream is too small.");
 	}
 
 	tc::ByteData root_header_raw = tc::ByteData(root_header_size);
@@ -35,12 +36,12 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 	try {
 		root_header.fromBytes(root_header_raw.data(), root_header_raw.size());
 	} catch (tc::Exception&) {
-		throw tc::Exception("nn::hac::GameCardFsMetaGenerator", "Failed to process root HFS0 header.");
+		throw tc::Exception("nn::hac::GameCardFsSnapshotGenerator", "Failed to process root HFS0 header.");
 	}
 	
 	if (root_header.getFsType() != nn::hac::PartitionFsHeader::TYPE_HFS0)
 	{
-		throw tc::Exception("nn::hac::GameCardFsMetaGenerator", "Root header was not HFS0.");
+		throw tc::Exception("nn::hac::GameCardFsSnapshotGenerator", "Root header was not HFS0.");
 	}
 
 	// parse header sections
@@ -87,7 +88,7 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 				std::string error_msg = fmt::format("Partition \"{:s}\" failed hash check.", dirItr->name);
 				if (validate_mode == ValidationMode_Throw)
 				{
-					throw tc::crypto::CryptoException("nn::hac::GameCardFsMetaGenerator", error_msg);
+					throw tc::crypto::CryptoException("nn::hac::GameCardFsSnapshotGenerator", error_msg);
 				}
 				else if (validate_mode == ValidationMode_Warn)
 				{
@@ -101,13 +102,13 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 		try {
 			part_header.fromBytes(part_header_raw.data(), part_header_raw.size());
 		} catch (tc::Exception&) {
-			throw tc::Exception("nn::hac::GameCardFsMetaGenerator", "Failed to process partition HFS0 header.");
+			throw tc::Exception("nn::hac::GameCardFsSnapshotGenerator", "Failed to process partition HFS0 header.");
 		}
 		
 		// check the FsType is HFS0
 		if (part_header.getFsType() != nn::hac::PartitionFsHeader::TYPE_HFS0)
 		{
-			throw tc::Exception("nn::hac::GameCardFsMetaGenerator", "Partition header was not HFS0.");
+			throw tc::Exception("nn::hac::GameCardFsSnapshotGenerator", "Partition header was not HFS0.");
 		}
 
 		// iterate over files
@@ -132,10 +133,10 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 	dir_entries.push_back(DirEntry());
 	auto cur_dir = &dir_entries.front();
 	cur_dir->dir_listing.abs_path = tc::io::Path("/");
-	dir_hash_map[tc::io::Path("/")] = dir_entries.size()-1;
+	dir_entry_path_map[tc::io::Path("/")] = dir_entries.size()-1;
 
 	// save root_dir_index
-	size_t root_dir_index = dir_hash_map[tc::io::Path("/")];
+	size_t root_dir_index = dir_entry_path_map[tc::io::Path("/")];
 
 
 	// populate virtual filesystem
@@ -151,13 +152,13 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 		dir_entries.push_back(std::move(dir_tmp));
 
 		// add dir entry to map
-		dir_hash_map[dir_path] = dir_entries.size() - 1;
+		dir_entry_path_map[dir_path] = dir_entries.size() - 1;
 
 		// add name to parent directory listing
 		dir_entries[root_dir_index].dir_listing.dir_list.push_back(dirItr->name);
 
 		// save index for current directory
-		size_t current_directory_index = dir_hash_map[dir_path];
+		size_t current_directory_index = dir_entry_path_map[dir_path];
 
 		for (auto fileItr = dirItr->file_list.begin(); fileItr != dirItr->file_list.end(); fileItr++)
 		{
@@ -174,7 +175,7 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 					std::string error_msg = fmt::format("\"{:s}\" failed hash check.", fileItr->name);
 					if (validate_mode == ValidationMode_Throw)
 					{
-						throw tc::crypto::CryptoException("nn::hac::GameCardFsMetaGenerator", error_msg);
+						throw tc::crypto::CryptoException("nn::hac::GameCardFsSnapshotGenerator", error_msg);
 					}
 					else if (validate_mode == ValidationMode_Warn)
 					{
@@ -197,7 +198,7 @@ nn::hac::GameCardFsMetaGenerator::GameCardFsMetaGenerator(const std::shared_ptr<
 			file_entries.push_back(std::move(file_tmp));
 
 			// add file entry to map
-			file_hash_map[file_path] = file_entries.size()-1;
+			file_entry_path_map[file_path] = file_entries.size()-1;
 
 			// add name to parent directory listing
 			dir_entries[current_directory_index].dir_listing.file_list.push_back(fileItr->name);

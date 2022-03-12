@@ -5,12 +5,12 @@
 
 namespace nn { namespace hac {
 
-struct RomFsMetaGenerator : public tc::io::VirtualFileSystem::FileSystemMeta
+struct RomFsSnapshotGenerator : public tc::io::VirtualFileSystem::FileSystemSnapshot
 {
 public:
-	RomFsMetaGenerator(const std::shared_ptr<tc::io::IStream>& stream);
+	RomFsSnapshotGenerator(const std::shared_ptr<tc::io::IStream>& stream);
 private:
-	RomFsMetaGenerator();
+	RomFsSnapshotGenerator();
 
 	std::shared_ptr<tc::io::IStream> mBaseStream;
 

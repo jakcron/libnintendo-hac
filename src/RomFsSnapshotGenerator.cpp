@@ -1,4 +1,4 @@
-#include <nn/hac/RomFsMetaGenerator.h>
+#include <nn/hac/RomFsSnapshotGenerator.h>
 #include <tc/io/SubStream.h>
 #include <tc/io/IOUtil.h>
 #include <tc/crypto/Sha256Generator.h>
@@ -9,24 +9,24 @@
 #include <fmt/core.h>
 #include <tc/cli/FormatUtil.h>
 
-nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IStream>& stream) :
-	FileSystemMeta(),
+nn::hac::RomFsSnapshotGenerator::RomFsSnapshotGenerator(const std::shared_ptr<tc::io::IStream>& stream) :
+	FileSystemSnapshot(),
 	mBaseStream(stream),
 	mDataOffset(0),
 	mDirEntryTable(),
 	mDirParentVaddrMap(),
 	mFileEntryTable()
 {
-	//std::cout << "RomFsMetaGenerator begin" << std::endl;
+	//std::cout << "RomFsSnapshotGenerator begin" << std::endl;
 
 	// validate stream properties
 	if (mBaseStream == nullptr)
 	{
-		throw tc::ObjectDisposedException("nn::hac::RomFsMetaGenerator", "Failed to open input stream.");
+		throw tc::ObjectDisposedException("nn::hac::RomFsSnapshotGenerator", "Failed to open input stream.");
 	}
 	if (mBaseStream->canRead() == false || mBaseStream->canSeek() == false)
 	{
-		throw tc::NotSupportedException("nn::hac::RomFsMetaGenerator", "Input stream requires read/seek permissions.");
+		throw tc::NotSupportedException("nn::hac::RomFsSnapshotGenerator", "Input stream requires read/seek permissions.");
 	}
 
 	//std::cout << "pos() -> " << mBaseStream->position() << std::endl;
@@ -35,7 +35,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 	nn::hac::sRomfsHeader hdr;
 	if (mBaseStream->length() < tc::io::IOUtil::castSizeToInt64(sizeof(nn::hac::sRomfsHeader)))
 	{
-		throw tc::ArgumentOutOfRangeException("nn::hac::RomFsMetaGenerator", "Input stream is too small.");
+		throw tc::ArgumentOutOfRangeException("nn::hac::RomFsSnapshotGenerator", "Input stream is too small.");
 	}
 	mBaseStream->seek(0, tc::io::SeekOrigin::Begin);
 	mBaseStream->read((byte_t*)(&hdr), sizeof(nn::hac::sRomfsHeader));
@@ -53,7 +53,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 	    hdr.dir_entry.offset.unwrap() != (hdr.dir_hash_bucket.offset.unwrap() + hdr.dir_hash_bucket.size.unwrap()) ||
 	    hdr.data_offset.unwrap() != align<int64_t>(hdr.header_size.unwrap(), nn::hac::romfs::kRomfsHeaderAlign))
 	{
-		throw tc::ArgumentOutOfRangeException("nn::hac::RomFsMetaGenerator", "RomFsHeader is corrupted.");
+		throw tc::ArgumentOutOfRangeException("nn::hac::RomFsSnapshotGenerator", "RomFsHeader is corrupted.");
 	}
 
 	// save data offset
@@ -127,7 +127,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 	    getDirEntry(0)->sibling_offset.unwrap() != 0xffffffff ||
 	    getDirEntry(0)->name_size.unwrap() != 0)
 	{
-		throw tc::ArgumentOutOfRangeException("nn::hac::RomFsMetaGenerator", "Root sRomfsDirEntry corrupted.");
+		throw tc::ArgumentOutOfRangeException("nn::hac::RomFsSnapshotGenerator", "Root sRomfsDirEntry corrupted.");
 	}
 
 	// add/index directories
@@ -145,7 +145,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 			dir_entries.push_back(dir_tmp);
 
 			// add dir entry to map
-			dir_hash_map[dir_path] = dir_entries.size() - 1;
+			dir_entry_path_map[dir_path] = dir_entries.size() - 1;
 			mDirParentVaddrMap[v_addr] = dir_entries.size() - 1;
 		}
 		// else create a regular entry
@@ -153,7 +153,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 		{
 			// check parent is in map
 			if (mDirParentVaddrMap.find(getDirEntry(v_addr)->parent_offset.unwrap()) == mDirParentVaddrMap.end())
-				throw tc::InvalidOperationException("nn::hac::RomFsMetaGenerator", "Directory had invalid parent");
+				throw tc::InvalidOperationException("nn::hac::RomFsSnapshotGenerator", "Directory had invalid parent");
 
 			// save file name
 			std::string file_name_str = std::string(getDirEntry(v_addr)->name, getDirEntry(v_addr)->name_size.unwrap());
@@ -167,7 +167,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 			dir_entries.push_back(std::move(dir_tmp));
 
 			// add dir entry to map
-			dir_hash_map[dir_path] = dir_entries.size() - 1;
+			dir_entry_path_map[dir_path] = dir_entries.size() - 1;
 			mDirParentVaddrMap[v_addr] = dir_entries.size() - 1;
 
 			// add name to parent directory listing
@@ -179,7 +179,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 
 		if (getDirEntry(v_addr)->sibling_offset.unwrap() < v_addr)
 		{
-			throw tc::InvalidOperationException("nn::hac::RomFsMetaGenerator", "Possibly corrupted directory entry");
+			throw tc::InvalidOperationException("nn::hac::RomFsSnapshotGenerator", "Possibly corrupted directory entry");
 		}
 
 		v_addr += total_size;
@@ -191,7 +191,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 	{
 		// check parent is in map
 		if (mDirParentVaddrMap.find(getFileEntry(v_addr)->parent_offset.unwrap()) == mDirParentVaddrMap.end())
-			throw tc::InvalidOperationException("nn::hac::RomFsMetaGenerator", "File had invalid parent");
+			throw tc::InvalidOperationException("nn::hac::RomFsSnapshotGenerator", "File had invalid parent");
 
 		if (getFileEntry(v_addr)->data_size.unwrap() != 0)
 		{
@@ -220,7 +220,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 		file_entries.push_back(std::move(file_tmp));
 
 		// add file entry to map
-		file_hash_map[file_path] = file_entries.size() - 1;
+		file_entry_path_map[file_path] = file_entries.size() - 1;
 
 		// add name to parent directory listing
 		dir_entries[parent_index].dir_listing.file_list.push_back(file_name_str);
@@ -229,7 +229,7 @@ nn::hac::RomFsMetaGenerator::RomFsMetaGenerator(const std::shared_ptr<tc::io::IS
 
 		if (getFileEntry(v_addr)->sibling_offset.unwrap() < v_addr)
 		{
-			throw tc::InvalidOperationException("nn::hac::RomFsMetaGenerator", "Possibly corrupted file entry");
+			throw tc::InvalidOperationException("nn::hac::RomFsSnapshotGenerator", "Possibly corrupted file entry");
 		}
 
 		v_addr += total_size;

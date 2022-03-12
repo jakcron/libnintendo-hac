@@ -61,7 +61,7 @@ void nn::hac::KernelInitialProcessHeader::toBytes()
 	hdr->st_magic.wrap(kip::kKipStructMagic);
 
 	// properties
-	strncpy(hdr->name.data(), mName.c_str(), hdr->name.max_size());
+	hdr->name.encode(mName);
 	hdr->title_id.wrap(mTitleId);
 	hdr->version.wrap(mVersion);
 	hdr->flags.is_64bit_instruction = mIs64BitInstructionFlag;
@@ -134,7 +134,7 @@ void nn::hac::KernelInitialProcessHeader::fromBytes(const byte_t* data, size_t l
 	}
 
 	// properties
-	mName = hdr->name.str();
+	mName = hdr->name.decode();
 	mTitleId = hdr->title_id.unwrap();
 	mVersion = hdr->version.unwrap();
 	mIs64BitInstructionFlag = hdr->flags.is_64bit_instruction;

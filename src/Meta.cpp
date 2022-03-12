@@ -90,8 +90,8 @@ void nn::hac::Meta::toBytes()
 	hdr->system_resource_size.wrap(mSystemResourceSize);
 	hdr->version.wrap(mVersion);
 	hdr->main_thread_stack_size.wrap(mMainThreadStackSize);
-	strncpy(hdr->name.data(), mName.c_str(), hdr->name.max_size());
-	strncpy(hdr->product_code.data(), mProductCode.c_str(), hdr->product_code.max_size());
+	hdr->name.encode(mName);
+	hdr->product_code.encode(mProductCode);
 
 	// set offset/size
 	hdr->aci.offset.wrap(aci.offset);
@@ -141,8 +141,8 @@ void nn::hac::Meta::fromBytes(const byte_t* data, size_t len)
 	mSystemResourceSize = hdr.system_resource_size.unwrap();
 	mVersion = hdr.version.unwrap();
 	mMainThreadStackSize = hdr.main_thread_stack_size.unwrap();
-	mName = hdr.name.str();
-	mProductCode = hdr.product_code.str();
+	mName = hdr.name.decode();
+	mProductCode = hdr.product_code.decode();
 
 	// total size
 	size_t total_size = std::max<size_t>((size_t)std::max<uint32_t>(hdr.aci_desc.offset.unwrap() + hdr.aci_desc.size.unwrap(), hdr.aci.offset.unwrap() + hdr.aci.size.unwrap()), sizeof(sMetaHeader));

@@ -42,7 +42,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationMetaExtendedHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\CombinedFsMetaGenerator.h">
+    <ClInclude Include="..\..\..\include\nn\hac\CombinedFsSnapshotGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveHeader.h">
@@ -72,7 +72,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\GameCardFsMetaGenerator.h">
+    <ClInclude Include="..\..\..\include\nn\hac\GameCardFsSnapshotGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\GameCardHeader.h">
@@ -168,7 +168,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\PartitionFsMetaGenerator.h">
+    <ClInclude Include="..\..\..\include\nn\hac\PartitionFsSnapshotGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsUtil.h">
@@ -180,7 +180,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\Result.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\nn\hac\RomFsMetaGenerator.h">
+    <ClInclude Include="..\..\..\include\nn\hac\RomFsSnapshotGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControl.h">
@@ -302,7 +302,7 @@
     <ClCompile Include="..\..\..\src\ApplicationMetaExtendedHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\CombinedFsMetaGenerator.cpp">
+    <ClCompile Include="..\..\..\src\CombinedFsSnapshotGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ContentArchiveHeader.cpp">
@@ -332,7 +332,7 @@
     <ClCompile Include="..\..\..\src\FileSystemAccessUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\GameCardFsMetaGenerator.cpp">
+    <ClCompile Include="..\..\..\src\GameCardFsSnapshotGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\GameCardHeader.cpp">
@@ -425,7 +425,7 @@
     <ClCompile Include="..\..\..\src\PartitionFsHeader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\PartitionFsMetaGenerator.cpp">
+    <ClCompile Include="..\..\..\src\PartitionFsSnapshotGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\PartitionFsUtil.cpp">
@@ -437,7 +437,7 @@
     <ClCompile Include="..\..\..\src\Result.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\RomFsMetaGenerator.cpp">
+    <ClCompile Include="..\..\..\src\RomFsSnapshotGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\ServiceAccessControl.cpp">

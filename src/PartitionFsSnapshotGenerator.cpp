@@ -1,5 +1,6 @@
-#include <nn/hac/PartitionFsMetaGenerator.h>
+#include <nn/hac/PartitionFsSnapshotGenerator.h>
 #include <tc/io/SubStream.h>
+#include <tc/io/IOUtil.h>
 #include <tc/crypto/Sha256Generator.h>
 #include <tc/crypto/CryptoException.h>
 
@@ -8,24 +9,24 @@
 #include <fmt/core.h>
 #include <tc/cli/FormatUtil.h>
 
-nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_ptr<tc::io::IStream>& stream, ValidationMode validate_mode) :
-	FileSystemMeta()
+nn::hac::PartitionFsSnapshotGenerator::PartitionFsSnapshotGenerator(const std::shared_ptr<tc::io::IStream>& stream, ValidationMode validate_mode) :
+	FileSystemSnapshot()
 {
 	// validate stream properties
 	if (stream == nullptr)
 	{
-		throw tc::ObjectDisposedException("nn::hac::PartitionFsMetaGenerator", "Failed to open input stream.");
+		throw tc::ObjectDisposedException("nn::hac::PartitionFsSnapshotGenerator", "Failed to open input stream.");
 	}
 	if (stream->canRead() == false || stream->canSeek() == false)
 	{
-		throw tc::NotSupportedException("nn::hac::PartitionFsMetaGenerator", "Input stream requires read/seek permissions.");
+		throw tc::NotSupportedException("nn::hac::PartitionFsSnapshotGenerator", "Input stream requires read/seek permissions.");
 	}
 
 	// validate and read base PartitionFs header
 	nn::hac::sPfsHeader hdr;
 	if (stream->length() < tc::io::IOUtil::castSizeToInt64(sizeof(nn::hac::sPfsHeader)))
 	{
-		throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsMetaGenerator", "Input stream is too small.");
+		throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsSnapshotGenerator", "Input stream is too small.");
 	}
 	stream->seek(0, tc::io::SeekOrigin::Begin);
 	stream->read((byte_t*)(&hdr), sizeof(nn::hac::sPfsHeader));
@@ -48,14 +49,14 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 			file_entry_size = sizeof(sHashedPfsFile);
 			break;	
 		default:
-			throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsMetaGenerator", "sPfsHeader header is corrupt (Bad struct magic).");
+			throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsSnapshotGenerator", "sPfsHeader header is corrupt (Bad struct magic).");
 	}
 
 	// determine complete header size
 	size_t pfs_full_header_size = sizeof(sPfsHeader) + file_entry_size * hdr.file_num.unwrap() + hdr.name_table_size.unwrap();
 	if (stream->length() < tc::io::IOUtil::castSizeToInt64(pfs_full_header_size))
 	{
-		throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsMetaGenerator", "Input stream is too small.");
+		throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsSnapshotGenerator", "Input stream is too small.");
 	}
 
 	// read raw file entry table data
@@ -90,7 +91,7 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 
 			if (file_entry.data_offset.unwrap() != pos)
 			{
-				throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsMetaGenerator", "sPfsFile entry had unexpected data offset.");
+				throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsSnapshotGenerator", "sPfsFile entry had unexpected data offset.");
 			}
 
 			tmp.name = std::string((char*)name_table_raw.data() + file_entry.name_offset.unwrap());
@@ -108,7 +109,7 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 			// HFS partitions do not strictly follow each other as the secure partition offset also has to lie on the beginning of a page.
 			//if (file_entry.data_offset.unwrap() != pos)
 			//{
-			//	throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsMetaGenerator", "sHashedPfsFile entry had unexpected data offset.");
+			//	throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsSnapshotGenerator", "sHashedPfsFile entry had unexpected data offset.");
 			//}
 
 			tmp.name = std::string((char*)name_table_raw.data() + file_entry.name_offset.unwrap());
@@ -127,7 +128,7 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 	dir_entries.push_back(DirEntry());
 	auto cur_dir = &dir_entries.front();
 	cur_dir->dir_listing.abs_path = tc::io::Path("/");
-	dir_hash_map[tc::io::Path("/")] = dir_entries.size()-1;
+	dir_entry_path_map[tc::io::Path("/")] = dir_entries.size()-1;
 
 	// populate virtual filesystem
 	std::array<byte_t, tc::crypto::Sha256Generator::kHashSize> hash_tmp;
@@ -150,7 +151,7 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 					std::string error_msg = fmt::format("\"{:s}\" failed hash check.", section[i].name);
 					if (validate_mode == ValidationMode_Throw)
 					{
-						throw tc::crypto::CryptoException("nn::hac::PartitionFsMetaGenerator", error_msg);
+						throw tc::crypto::CryptoException("nn::hac::PartitionFsSnapshotGenerator", error_msg);
 					}
 					else if (validate_mode == ValidationMode_Warn)
 					{
@@ -174,7 +175,7 @@ nn::hac::PartitionFsMetaGenerator::PartitionFsMetaGenerator(const std::shared_pt
 			file_entries.push_back(std::move(tmp));
 
 			// add file entry to map
-			file_hash_map[file_path] = file_entries.size()-1;
+			file_entry_path_map[file_path] = file_entries.size()-1;
 
 			// add name to parent directory listing
 			cur_dir->dir_listing.file_list.push_back(section[i].name);

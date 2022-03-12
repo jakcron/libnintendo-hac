@@ -41,7 +41,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlProperty.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationControlPropertyUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ApplicationMetaExtendedHeader.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\CombinedFsMetaGenerator.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\CombinedFsSnapshotGenerator.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentArchiveUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ContentInfo.h" />
@@ -74,7 +74,7 @@
     <ClInclude Include="..\..\..\include\nn\hac\DeltaMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessControl.h" />
     <ClInclude Include="..\..\..\include\nn\hac\FileSystemAccessUtil.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\GameCardFsMetaGenerator.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\GameCardFsSnapshotGenerator.h" />
     <ClInclude Include="..\..\..\include\nn\hac\GameCardHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\GameCardUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\HandleTableSizeEntry.h" />
@@ -106,11 +106,11 @@
     <ClInclude Include="..\..\..\include\nn\hac\NrrUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\NsoHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsHeader.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\PartitionFsMetaGenerator.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\PartitionFsSnapshotGenerator.h" />
     <ClInclude Include="..\..\..\include\nn\hac\PartitionFsUtil.h" />
     <ClInclude Include="..\..\..\include\nn\hac\PatchMetaExtendedHeader.h" />
     <ClInclude Include="..\..\..\include\nn\hac\Result.h" />
-    <ClInclude Include="..\..\..\include\nn\hac\RomFsMetaGenerator.h" />
+    <ClInclude Include="..\..\..\include\nn\hac\RomFsSnapshotGenerator.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControl.h" />
     <ClInclude Include="..\..\..\include\nn\hac\ServiceAccessControlEntry.h" />
     <ClInclude Include="..\..\..\include\nn\hac\SystemCallEntry.h" />
@@ -129,7 +129,7 @@
     <ClCompile Include="..\..\..\src\ApplicationControlProperty.cpp" />
     <ClCompile Include="..\..\..\src\ApplicationControlPropertyUtil.cpp" />
     <ClCompile Include="..\..\..\src\ApplicationMetaExtendedHeader.cpp" />
-    <ClCompile Include="..\..\..\src\CombinedFsMetaGenerator.cpp" />
+    <ClCompile Include="..\..\..\src\CombinedFsSnapshotGenerator.cpp" />
     <ClCompile Include="..\..\..\src\ContentArchiveHeader.cpp" />
     <ClCompile Include="..\..\..\src\ContentArchiveUtil.cpp" />
     <ClCompile Include="..\..\..\src\ContentInfo.cpp" />
@@ -139,7 +139,7 @@
     <ClCompile Include="..\..\..\src\DeltaMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\FileSystemAccessControl.cpp" />
     <ClCompile Include="..\..\..\src\FileSystemAccessUtil.cpp" />
-    <ClCompile Include="..\..\..\src\GameCardFsMetaGenerator.cpp" />
+    <ClCompile Include="..\..\..\src\GameCardFsSnapshotGenerator.cpp" />
     <ClCompile Include="..\..\..\src\GameCardHeader.cpp" />
     <ClCompile Include="..\..\..\src\GameCardUtil.cpp" />
     <ClCompile Include="..\..\..\src\HandleTableSizeEntry.cpp" />
@@ -170,11 +170,11 @@
     <ClCompile Include="..\..\..\src\NrrUtil.cpp" />
     <ClCompile Include="..\..\..\src\NsoHeader.cpp" />
     <ClCompile Include="..\..\..\src\PartitionFsHeader.cpp" />
-    <ClCompile Include="..\..\..\src\PartitionFsMetaGenerator.cpp" />
+    <ClCompile Include="..\..\..\src\PartitionFsSnapshotGenerator.cpp" />
     <ClCompile Include="..\..\..\src\PartitionFsUtil.cpp" />
     <ClCompile Include="..\..\..\src\PatchMetaExtendedHeader.cpp" />
     <ClCompile Include="..\..\..\src\Result.cpp" />
-    <ClCompile Include="..\..\..\src\RomFsMetaGenerator.cpp" />
+    <ClCompile Include="..\..\..\src\RomFsSnapshotGenerator.cpp" />
     <ClCompile Include="..\..\..\src\ServiceAccessControl.cpp" />
     <ClCompile Include="..\..\..\src\ServiceAccessControlEntry.cpp" />
     <ClCompile Include="..\..\..\src\SystemCallEntry.cpp" />

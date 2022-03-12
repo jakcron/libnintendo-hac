@@ -130,8 +130,8 @@ void nn::hac::ApplicationControlProperty::toBytes()
 	// strings
 	for (size_t i = 0; i < mTitle.size(); i++)
 	{
-		strncpy(nacp->title[(byte_t)mTitle[i].language].name.data(), mTitle[i].name.c_str(), nacp->title[(byte_t)mTitle[i].language].name.max_size());
-		strncpy(nacp->title[(byte_t)mTitle[i].language].publisher.data(), mTitle[i].publisher.c_str(), nacp->title[(byte_t)mTitle[i].language].publisher.max_size());
+		nacp->title[(byte_t)mTitle[i].language].name.encode(mTitle[i].name);
+		nacp->title[(byte_t)mTitle[i].language].publisher.encode(mTitle[i].publisher);
 	}
 
 	for (size_t i = 0; i < mSupportedLanguage.size(); i++)
@@ -139,11 +139,11 @@ void nn::hac::ApplicationControlProperty::toBytes()
 		nacp->supported_language_flag.set((size_t)mSupportedLanguage[i]);
 	}
 
-	strncpy(nacp->isbn.data(), mIsbn.c_str(), nacp->isbn.max_size());
-	strncpy(nacp->display_version.data(), mDisplayVersion.c_str(), nacp->display_version.max_size());
-	strncpy(nacp->application_error_code_category.data(), mApplicationErrorCodeCategory.c_str(), nacp->application_error_code_category.max_size());
-	strncpy(nacp->bcat_passphrase.data(), mBcatPassphase.c_str(), nacp->bcat_passphrase.size());
-
+	nacp->isbn.encode(mIsbn);
+	nacp->display_version.encode(mDisplayVersion);
+	nacp->application_error_code_category.encode(mApplicationErrorCodeCategory);
+	nacp->bcat_passphrase.encode(mBcatPassphase);
+	
 	// bitfields
 	for (size_t i = 0; i < mAttribute.size(); i++)
 	{
@@ -263,16 +263,16 @@ void nn::hac::ApplicationControlProperty::fromBytes(const byte_t* bytes, size_t 
 		{
 			mSupportedLanguage.push_back(nacp::Language(i));
 		}
-		if (!nacp->title[i].name.str().empty() && !nacp->title[i].publisher.str().empty())
+		if (!nacp->title[i].name.decode().empty() && !nacp->title[i].publisher.decode().empty())
 		{
-			mTitle.push_back({ nacp::Language(i), nacp->title[i].name.str(), nacp->title[i].publisher.str() });
+			mTitle.push_back({ nacp::Language(i), nacp->title[i].name.decode(), nacp->title[i].publisher.decode() });
 		}
 	}
 
-	mIsbn = nacp->isbn.str();
-	mDisplayVersion = nacp->display_version.str();
-	mApplicationErrorCodeCategory = nacp->application_error_code_category.str();
-	mBcatPassphase = nacp->bcat_passphrase.str();
+	mIsbn = nacp->isbn.decode();
+	mDisplayVersion = nacp->display_version.decode();
+	mApplicationErrorCodeCategory = nacp->application_error_code_category.decode();
+	mBcatPassphase = nacp->bcat_passphrase.decode();
 
 	// bitfield values
 	for (size_t i = 0; i < nacp->attribute_flag.bit_size(); i++)
