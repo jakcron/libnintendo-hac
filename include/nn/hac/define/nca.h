@@ -22,6 +22,7 @@ namespace hac
 		static const size_t kPatchInfoLen = 0x40;
 		static const size_t kSparseInfoLen = 0x30;
 		static const size_t kCompressionInfoLen = 0x28;
+		static const size_t kMetaDataHashDataInfoLen = 0x30;
 		static const uint16_t kDefaultFsHeaderVersion = 2;
 
 		using key_area_t = std::array<detail::aes128_key_t, kKeyAreaKeyNum>;
@@ -91,7 +92,16 @@ namespace hac
 			None = 1,
 			AesXts = 2,
 			AesCtr = 3,
-			AesCtrEx = 4
+			AesCtrEx = 4,
+			AesCtrSkipLayerHash = 5,
+			AesCtrExSkipLayerHash = 6
+		};
+
+		enum class MetaHashType : byte_t
+		{
+			None = 0,
+			HierarchicalIntegrity = 1,
+			HierarchicalIntegritySha3 = 2
 		};
 	}
 	
@@ -159,6 +169,18 @@ namespace hac
 	};
 	static_assert(sizeof(sContentArchiveFsHeaderCompressionInfo) == nca::kCompressionInfoLen, "sContentArchiveFsHeaderCompressionInfo size.");
 
+	struct sContentArchiveFsHeaderMetaDataHashDataInfo
+	{
+		// 0x00
+		tc::bn::le16<uint64_t> table_offset;
+		tc::bn::le16<uint64_t> table_size;
+		// 0x10
+		detail::sha256_hash_t table_hash;
+		// 0x30
+	};
+	static_assert(sizeof(sContentArchiveFsHeaderMetaDataHashDataInfo) == nca::kMetaDataHashDataInfoLen, "sContentArchiveFsHeaderMetaDataHashDataInfo size.");
+
+
 	struct sContentArchiveFsHeader
 	{
 		// 0x00
@@ -170,7 +192,9 @@ namespace hac
 		// 0x04
 		byte_t encryption_type;
 		// 0x5
-		std::array<byte_t, 0x3> reserved_0;
+		byte_t meta_hash_type;
+		// 0x6
+		std::array<byte_t, 0x2> reserved_0;
 		// 0x8
 		std::array<byte_t, nca::kHashInfoLen> hash_info; // size=0xf8
 		// 0x100
@@ -187,7 +211,10 @@ namespace hac
 		sContentArchiveFsHeaderCompressionInfo compression_info;
 		//std::array<byte_t, nca::kCompressionInfoLen> compression_info; // size=0x28
 		// 0x1A0
-		std::array<byte_t, 0x60> reserved_1;
+		sContentArchiveFsHeaderMetaDataHashDataInfo meta_data_hash_data_info;
+		//std::array<byte_t, nca::kMetaDataHashDataInfoLen> meta_data_hash_data_info; // size=0x30
+		// 0x1D0
+		std::array<byte_t, 0x30> reserved_1;
 		// 0x200
 	};
 	static_assert(sizeof(sContentArchiveFsHeader) == 0x200, "sContentArchiveFsHeader size.");
