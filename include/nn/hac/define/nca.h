@@ -84,6 +84,9 @@ namespace hac
 			None = 1,
 			HierarchicalSha256 = 2,
 			HierarchicalIntegrity = 3 // IVFC
+			AutoSha3 = 4,
+			HierarchicalSha3256 = 5,
+			HierarchicalIntegritySha3 = 6 // IVFC
 		};
 
 		enum class EncryptionType : byte_t 
@@ -97,7 +100,7 @@ namespace hac
 			AesCtrExSkipLayerHash = 6
 		};
 
-		enum class MetaHashType : byte_t
+		enum class MetaDataHashType : byte_t
 		{
 			None = 0,
 			HierarchicalIntegrity = 1,
@@ -192,7 +195,7 @@ namespace hac
 		// 0x04
 		byte_t encryption_type;
 		// 0x5
-		byte_t meta_hash_type;
+		byte_t meta_data_hash_type;
 		// 0x6
 		std::array<byte_t, 0x2> reserved_0;
 		// 0x8
