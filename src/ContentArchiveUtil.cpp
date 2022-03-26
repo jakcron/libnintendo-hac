@@ -1,6 +1,5 @@
 #include <nn/hac/ContentArchiveUtil.h>
-#include <sstream>
-#include <iomanip>
+#include <fmt/core.h>
 
 void nn::hac::ContentArchiveUtil::decryptContentArchiveHeader(const byte_t* src, byte_t* dst, const detail::aes128_xtskey_t& key)
 {
@@ -47,211 +46,251 @@ void nn::hac::ContentArchiveUtil::getNcaPartitionAesCtr(uint32_t generation, uin
 
 std::string nn::hac::ContentArchiveUtil::getFormatHeaderVersionAsString(nn::hac::nca::HeaderFormatVersion val)
 {
-	std::stringstream ss;
+	std::string str;
 
 	switch (val)
 	{
 	case (nn::hac::nca::FORMAT_NCA2):
-		ss << "NCA2";
+		str = "NCA2";
 		break;
 	case (nn::hac::nca::FORMAT_NCA3):
-		ss << "NCA3";
+		str = "NCA3";
 		break;
 	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
 		break;
 	}
 
-	return ss.str();
+	return str;
 }
 
 std::string nn::hac::ContentArchiveUtil::getProgramContentParititionIndexAsString(nn::hac::nca::ProgramContentPartitionIndex val)
 {
-	std::stringstream ss;
+	std::string str;
 
 	switch (val)
 	{
 	case (nn::hac::nca::PARTITION_CODE):
-		ss << "code";
+		str = "code";
 		break;
 	case (nn::hac::nca::PARTITION_DATA):
-		ss << "data";
+		str = "data";
 		break;
 	case (nn::hac::nca::PARTITION_LOGO):
-		ss << "logo";
+		str = "logo";
 		break;
 	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
 		break;
 	}
 
-	return ss.str();
+	return str;
 }
 
 std::string nn::hac::ContentArchiveUtil::getDistributionTypeAsString(nn::hac::nca::DistributionType val)
 {
-	std::stringstream ss;
+	std::string str;
 
 	switch (val)
 	{
 	case (nn::hac::nca::DistributionType::Download):
-		ss << "Download";
+		str = "Download";
 		break;
 	case (nn::hac::nca::DistributionType::GameCard):
-		ss << "Game Card";
+		str = "Game Card";
 		break;
 	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
 		break;
 	}
 
-	return ss.str();
+	return str;
 }
 
 std::string nn::hac::ContentArchiveUtil::getContentTypeAsString(nn::hac::nca::ContentType val)
 {
-	std::stringstream ss;
+	std::string str;
 
 	switch (val)
 	{
 	case (nn::hac::nca::ContentType::Program):
-		ss << "Program";
+		str = "Program";
 		break;
 	case (nn::hac::nca::ContentType::Meta):
-		ss << "Meta";
+		str = "Meta";
 		break;
 	case (nn::hac::nca::ContentType::Control):
-		ss << "Control";
+		str = "Control";
 		break;
 	case (nn::hac::nca::ContentType::Manual):
-		ss << "Manual";
+		str = "Manual";
 		break;
 	case (nn::hac::nca::ContentType::Data):
-		ss << "Data";
+		str = "Data";
 		break;
 	case (nn::hac::nca::ContentType::PublicData):
-		ss << "PublicData";
+		str = "PublicData";
 		break;
 	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
 		break;
 	}
 
-	return ss.str();
+	return str;
 }
 
 std::string nn::hac::ContentArchiveUtil::getFormatTypeAsString(nn::hac::nca::FormatType val)
 {
-	std::stringstream ss;
+	std::string str;
 
 	switch (val)
 	{
 	case (nn::hac::nca::FormatType::RomFs):
-		ss << "RomFs";
+		str = "RomFs";
 		break;
 	case (nn::hac::nca::FormatType::PartitionFs):
-		ss << "PartitionFs";
+		str = "PartitionFs";
 		break;
 	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
 		break;
 	}
 
-	return ss.str();
+	return str;
 }
 
 std::string nn::hac::ContentArchiveUtil::getHashTypeAsString(nn::hac::nca::HashType val)
 {
-	std::stringstream ss;
+	std::string str;
 
 	switch (val)
 	{
 	case (nn::hac::nca::HashType::Auto):
-		ss << "Auto";
+		str = "Auto";
 		break;
 	case (nn::hac::nca::HashType::None):
-		ss << "None";
+		str = "None";
 		break;
 	case (nn::hac::nca::HashType::HierarchicalSha256):
-		ss << "HierarchicalSha256";
+		str = "HierarchicalSha256";
 		break;
 	case (nn::hac::nca::HashType::HierarchicalIntegrity):
-		ss << "HierarchicalIntegrity";
+		str = "HierarchicalIntegrity";
+		break;
+	case (nn::hac::nca::HashType::AutoSha3):
+		str = "AutoSha3";
+		break;
+	case (nn::hac::nca::HashType::HierarchicalSha3256):
+		str = "HierarchicalSha3256";
+		break;
+	case (nn::hac::nca::HashType::HierarchicalIntegritySha3):
+		str = "HierarchicalIntegritySha3";
 		break;
 	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
 		break;
 	}
 
-	return ss.str();
+	return str;
 }
 
 std::string nn::hac::ContentArchiveUtil::getEncryptionTypeAsString(nn::hac::nca::EncryptionType val)
 {
-	std::stringstream ss;
+	std::string str;
 
 	switch (val)
 	{
 	case (nn::hac::nca::EncryptionType::Auto):
-		ss << "Auto";
+		str = "Auto";
 		break;
 	case (nn::hac::nca::EncryptionType::None):
-		ss << "None";
+		str = "None";
 		break;
 	case (nn::hac::nca::EncryptionType::AesXts):
-		ss << "AesXts";
+		str = "AesXts";
 		break;
 	case (nn::hac::nca::EncryptionType::AesCtr):
-		ss << "AesCtr";
+		str = "AesCtr";
 		break;
 	case (nn::hac::nca::EncryptionType::AesCtrEx):
-		ss << "AesCtrEx";
+		str = "AesCtrEx";
+		break;
+	case (nn::hac::nca::EncryptionType::AesCtrSkipLayerHash):
+		str = "AesCtrSkipLayerHash";
+		break;
+	case (nn::hac::nca::EncryptionType::AesCtrExSkipLayerHash):
+		str = "AesCtrExSkipLayerHash";
 		break;
 	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
 		break;
 	}
 
-	return ss.str();
+	return str;
+}
+
+
+std::string nn::hac::ContentArchiveUtil::getMetaDataHashTypeAsString(nn::hac::nca::MetaDataHashType val)
+{
+	std::string str;
+
+	switch (val)
+	{
+	case (nn::hac::nca::MetaDataHashType::None):
+		str = "None";
+		break;
+	case (nn::hac::nca::MetaDataHashType::HierarchicalIntegrity):
+		str = "HierarchicalIntegrity";
+		break;
+	case (nn::hac::nca::MetaDataHashType::HierarchicalIntegritySha3):
+		str = "HierarchicalIntegritySha3";
+		break;
+	default:
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
+		break;
+	}
+
+	return str;
 }
 
 std::string nn::hac::ContentArchiveUtil::getKeyAreaEncryptionKeyIndexAsString(nn::hac::nca::KeyAreaEncryptionKeyIndex val)
 {
-	std::stringstream ss;
+	std::string str;
 
 	switch (val)
 	{
 	case (nn::hac::nca::KAEK_IDX_APPLICATION):
-		ss << "Application";
+		str = "Application";
 		break;
 	case (nn::hac::nca::KAEK_IDX_OCEAN):
-		ss << "Ocean";
+		str = "Ocean";
 		break;
 	case (nn::hac::nca::KAEK_IDX_SYSTEM):
-		ss << "System";
+		str = "System";
 		break;
 	default:
-		ss << "unk_0x" << std::hex << std::setw(2) << std::setfill('0') << (uint32_t)val;
+		str = fmt::format("unk_0x{:02x}", (uint32_t)val);
 		break;
 	}
 
-	return ss.str();
+	return str;
 }
 
 std::string nn::hac::ContentArchiveUtil::getSdkAddonVersionAsString(uint32_t version)
 {
-	std::stringstream ss;
+	std::string str;
 
-	ss << (uint32_t)((version>>24) & 0xff);
-	ss << ".";
-	ss << (uint32_t)((version>>16) & 0xff);
-	ss << ".";
-	ss << (uint32_t)((version>>8) & 0xff);
-	if (((version>>0) & 0xff) > 0)
+	uint32_t major, minor, build, relstep;
+	major = (uint32_t)((version>>24) & 0xff);
+	minor = (uint32_t)((version>>16) & 0xff);
+	build = (uint32_t)((version>>8) & 0xff);
+	relstep = (uint32_t)((version>>0) & 0xff);
+
+	str = fmt::format("{:d}.{:d}.{:d}", major, minor, build);
+	if (relstep > 0)
 	{
-		ss << "-";
-		ss << (uint32_t)((version>>0) & 0xff);
+		str += fmt::format("-{:d}", relstep);
 	}
 	
-	return ss.str();
+	return str;
 }

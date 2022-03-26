@@ -20,6 +20,7 @@ namespace hac
 		static std::string getFormatTypeAsString(nn::hac::nca::FormatType val);
 		static std::string getHashTypeAsString(nn::hac::nca::HashType val);
 		static std::string getEncryptionTypeAsString(nn::hac::nca::EncryptionType val);
+		static std::string getMetaDataHashTypeAsString(nn::hac::nca::MetaDataHashType val);
 		static std::string getKeyAreaEncryptionKeyIndexAsString(nn::hac::nca::KeyAreaEncryptionKeyIndex val);
 		static std::string getSdkAddonVersionAsString(uint32_t version);
 
