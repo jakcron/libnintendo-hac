@@ -83,7 +83,7 @@ namespace hac
 			Auto = 0,
 			None = 1,
 			HierarchicalSha256 = 2,
-			HierarchicalIntegrity = 3 // IVFC
+			HierarchicalIntegrity = 3, // IVFC
 			AutoSha3 = 4,
 			HierarchicalSha3256 = 5,
 			HierarchicalIntegritySha3 = 6 // IVFC
