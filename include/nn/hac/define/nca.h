@@ -175,8 +175,8 @@ namespace hac
 	struct sContentArchiveFsHeaderMetaDataHashDataInfo
 	{
 		// 0x00
-		tc::bn::le16<uint64_t> table_offset;
-		tc::bn::le16<uint64_t> table_size;
+		tc::bn::le64<uint64_t> table_offset;
+		tc::bn::le64<uint64_t> table_size;
 		// 0x10
 		detail::sha256_hash_t table_hash;
 		// 0x30
