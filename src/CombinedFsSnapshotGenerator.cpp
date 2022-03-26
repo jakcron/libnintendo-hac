@@ -1,6 +1,5 @@
 #include <nn/hac/CombinedFsSnapshotGenerator.h>
 #include <tc/io/IOUtil.h>
-#include <tc/io/PathUtil.h>
 
 #include <fmt/core.h>
 #include <tc/cli/FormatUtil.h>
@@ -33,9 +32,7 @@ nn::hac::CombinedFsSnapshotGenerator::CombinedFsSnapshotGenerator(const std::vec
 			new_dir_path.pop_front();
 			new_dir_path = new_base_path + new_dir_path;
 			
-			//tc::io::PathUtil::pathToUnixUTF8(old_dir_path, old_path_str);
-			//tc::io::PathUtil::pathToUnixUTF8(new_dir_path, new_path_str);
-			//fmt::print("Migrate DirEntry from: \"{:s}\" -> \"{:s}\"\n", old_path_str, new_path_str);
+			//fmt::print("Migrate DirEntry from: \"{:s}\" -> \"{:s}\"\n", old_dir_path.to_string(), new_dir_path.to_string());
 
 			// migriate dir entry (update abs path aswell)
 			dir_entries.push_back(*oldDirEntry);
@@ -48,9 +45,7 @@ nn::hac::CombinedFsSnapshotGenerator::CombinedFsSnapshotGenerator(const std::vec
 				tc::io::Path old_file_path = old_dir_path + *oldDirChildFileName;
 				tc::io::Path new_file_path = new_dir_path + *oldDirChildFileName;
 
-				//tc::io::PathUtil::pathToUnixUTF8(old_file_path, old_path_str);
-				//tc::io::PathUtil::pathToUnixUTF8(new_file_path, new_path_str);
-				//fmt::print("Migrate FileEntry from: \"{:s}\" -> \"{:s}\"\n", old_path_str, new_path_str);
+				//fmt::print("Migrate FileEntry from: \"{:s}\" -> \"{:s}\"\n", old_file_path.to_string(), new_file_path.to_string());
 
 				size_t old_file_entry_index = mount->fs_meta.file_entry_path_map.at(old_file_path);
 
