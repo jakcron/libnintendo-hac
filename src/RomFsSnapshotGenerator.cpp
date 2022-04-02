@@ -1,5 +1,6 @@
 #include <nn/hac/RomFsSnapshotGenerator.h>
 #include <tc/io/SubStream.h>
+#include <tc/io/MemoryStream.h>
 #include <tc/io/IOUtil.h>
 #include <tc/crypto/Sha256Generator.h>
 #include <tc/crypto/CryptoException.h>
@@ -205,7 +206,7 @@ nn::hac::RomFsSnapshotGenerator::RomFsSnapshotGenerator(const std::shared_ptr<tc
 		else
 		{
 			// empty stream
-			file_tmp.stream = std::shared_ptr<tc::io::SubStream>(new tc::io::SubStream());
+			file_tmp.stream = std::shared_ptr<tc::io::MemoryStream>(new tc::io::MemoryStream());
 		}
 
 		// save file name
