@@ -80,7 +80,6 @@ nn::hac::PartitionFsSnapshotGenerator::PartitionFsSnapshotGenerator(const std::s
 	
 	std::vector<SectionInformation> section;
 
-	int64_t pos = 0;
 	for (size_t i = 0, file_num = hdr.file_num.unwrap(); i < file_num; i++)
 	{
 		SectionInformation tmp;
@@ -89,36 +88,21 @@ nn::hac::PartitionFsSnapshotGenerator::PartitionFsSnapshotGenerator(const std::s
 		{
 			nn::hac::sPfsFile& file_entry = ((nn::hac::sPfsFile*)file_entry_table_raw.data())[i];
 
-			if (file_entry.data_offset.unwrap() != pos)
-			{
-				throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsSnapshotGenerator", "sPfsFile entry had unexpected data offset.");
-			}
-
 			tmp.name = std::string((char*)name_table_raw.data() + file_entry.name_offset.unwrap());
 			tmp.offset = file_entry.data_offset.unwrap() + tc::io::IOUtil::castSizeToInt64(pfs_full_header_size);
 			tmp.size = file_entry.size.unwrap();
 			tmp.hashed_size = 0;
 			memset(tmp.hash.data(), 0, tmp.hash.size());
-
-			pos += file_entry.size.unwrap();
 		}
 		else if (fs_type == TYPE_HFS0)
 		{
 			nn::hac::sHashedPfsFile& file_entry = ((nn::hac::sHashedPfsFile*)file_entry_table_raw.data())[i];
-
-			// HFS partitions do not strictly follow each other as the secure partition offset also has to lie on the beginning of a page.
-			//if (file_entry.data_offset.unwrap() != pos)
-			//{
-			//	throw tc::ArgumentOutOfRangeException("nn::hac::PartitionFsSnapshotGenerator", "sHashedPfsFile entry had unexpected data offset.");
-			//}
 
 			tmp.name = std::string((char*)name_table_raw.data() + file_entry.name_offset.unwrap());
 			tmp.offset = file_entry.data_offset.unwrap() + tc::io::IOUtil::castSizeToInt64(pfs_full_header_size);
 			tmp.size = file_entry.size.unwrap();
 			tmp.hashed_size = file_entry.hash_protected_size.unwrap();
 			memcpy(tmp.hash.data(), file_entry.hash.data(), tmp.hash.size());
-
-			pos += file_entry.size.unwrap();
 		}
 
 		section.push_back(tmp);
